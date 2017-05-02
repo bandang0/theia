@@ -9,7 +9,7 @@
 import numpy as np
 np.seterr(divide = 'raise', invalid = 'raise')  # np raises FloatingPointError
 
-import errors as ex
+from helpers import TotalReflectionError
 
 def refrAngle(theta, n1, n2):
     '''Returns the refraction angle at n1/n2 interface for incoming theta.
@@ -20,7 +20,7 @@ def refrAngle(theta, n1, n2):
         return np.arcsin(n1*np.sin(theta)/n2)
     except FloatingPointError:
         msg = 'Total reflection occured.'
-        raise ex.TotalReflectionError(msg)
+        raise TotalReflectionError(msg)
 
 def linePlaneInter(pos, dirV, planeC, normV, diameter):
     '''Computes the intersection between a line and a plane.

@@ -11,7 +11,7 @@ from optics import geometry as geo
 from optics import beam as gbeam
 from optics import mirror
 from units import *
-
+from helpers import *
 
 # geometrical data
 pos1 = [0.5, 0., 0.]

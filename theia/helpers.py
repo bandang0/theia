@@ -19,7 +19,7 @@ def hitTrue(dic):
 def rotMatrix(a,b):
     '''Provides the rotation matrix which maps a (unit) to b (unit).
 
-    a,b: unit 3D vecctors. [3D np.arrays]
+    a,b: unit 3D vectors. [3D np.arrays]
 
     Returns an np.array such that np.matmul(M,a) == b.
 

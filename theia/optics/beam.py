@@ -17,7 +17,7 @@
 
 import numpy as np
 from units import *
-import tools
+import helpers
 
 class GaussianBeam(object):
     '''
@@ -123,7 +123,7 @@ class GaussianBeam(object):
 
         self.__class__.BeamCount = self.__class__.BeamCount + 1
 
-    
+
 
     def Q(self, d = 0.):
         '''Return the Q tensor at a distance d of origin.

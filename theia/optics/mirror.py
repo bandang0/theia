@@ -8,7 +8,7 @@ import numpy as np
 from component import OpticalComponent
 from optics import geometry as geo
 from optics import beam as gbeam
-import tools
+import helpers
 
 class Mirror(OpticalComponent):
     '''
@@ -73,7 +73,7 @@ class Mirror(OpticalComponent):
         self.ARK = float(ARK)
         self.Wedge = float(Wedge)
         self.Alpha = float(Alpha)
-        self.RotMatrix = tools.rotMatrix(np.array([1., 0., 0.]), HRNorm)
+        self.RotMatrix = helpers.rotMatrix(np.array([1., 0., 0.]), HRNorm)
         self.HRr = float(HRr)
         self.HRt = float(HRt)
         self.ARr = float(ARr)
@@ -142,7 +142,7 @@ class Mirror(OpticalComponent):
 
 
         # determine first hit
-        hitFaces = filter(tools.hitTrue, [HRDict, ARDict, SideDict])
+        hitFaces = filter(helpers.hitTrue, [HRDict, ARDict, SideDict])
 
         if len(hitFaces) == 0:
             return noInterDict
@@ -248,14 +248,14 @@ class Mirror(OpticalComponent):
 
         # Calculate new basis
         if not 'refl' in ans:   # for reflected
-            Uxr, Uyr = tools.basis(dir2['refl'])
+            Uxr, Uyr = helpers.basis(dir2['refl'])
             Uzr = dir2['refl']
 
         if not 'refr' in ans:   # for refracted
-            Uxt, Uyt = tools.basis(dir2['refr'])
+            Uxt, Uyt = helpers.basis(dir2['refr'])
             Uzt = dir2['refr']
 
-        Lx, Ly = tools.basis(localNorm)
+        Lx, Ly = helpers.basis(localNorm)
 
         # Calculate daughter curv tensors
         C = np.array([self.HRK, 0.], [0, self.HRK])
@@ -365,14 +365,14 @@ class Mirror(OpticalComponent):
 
         # Calculate new basis
         if not 'refl' in ans:   # for reflected
-            Uxr, Uyr = tools.basis(dir2['refl'])
+            Uxr, Uyr = helpers.basis(dir2['refl'])
             Uzr = dir2['refl']
 
         if not 'refr' in ans:   # for refracted
-            Uxt, Uyt = tools.basis(dir2['refr'])
+            Uxt, Uyt = helpers.basis(dir2['refr'])
             Uzt = dir2['refr']
 
-        Lx, Ly = tools.basis(localNorm)
+        Lx, Ly = helpers.basis(localNorm)
 
         # Calculate daughter curv tensors
         C = np.array([[self.ARK, 0.], [0, self.ARK]])
