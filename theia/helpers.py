@@ -81,8 +81,23 @@ def timer(func):
         func(*args, **kw)
         t2 = tm.time()
         dt = t2 -t1
-        st = str(func.__name__) + " exec with " + str(*args) + " in " \
-                        + str(dt) + "."
+        st = str(func.__name__) + " exec with '" + str(*args) + "' in " \
+                        + str(dt*1000.) + "ms."
         print st
 
     return wrapped
+
+def formatter(stringList):
+    '''Returns a formatted version of the text formed by the list of lines.
+    '''
+    count = 0   # counts '{' and '}'
+    ans = ""
+    for line in stringList:
+        if '}' in line:
+            count = count - 1
+        ans = ans + count * '\t' + line + '\n'
+        if '{' in line:
+            count = count + 1
+
+
+    return ans

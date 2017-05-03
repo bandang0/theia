@@ -14,7 +14,10 @@ test-optics:
 	python theia/tests/test_optics.py
 
 test-rendering:
-	python theia/test/test_rendering.py
+	python theia/tests/test_rendering.py
 
 test-tree:
-	python theia/test/test_tree.py
+	python theia/tests/test_tree.py
+
+test-simulation:
+	python theia/tests/test_simulation.py

@@ -9,6 +9,7 @@ from component import OpticalComponent
 from optics import geometry as geo
 from optics import beam as gbeam
 import helpers
+from helpers import formatter
 
 class Mirror(OpticalComponent):
     '''
@@ -41,11 +42,17 @@ class Mirror(OpticalComponent):
     KeepI: whether of not to keep data of rays for interference calculations
         on the HR. [boolean]
 
-    **Note**: the curvature of ant surfac is positive for a concave surface
-    (HR inside the sphere). Thus kurv*HRNorm/|kurv| always points to the center
+    **Note**: the curvature of any surface is positive for a concave surface
+    (coating inside the sphere).
+    Thus kurv*HRNorm/|kurv| always points to the center
     of the sphere of the surface, as is the convention for the lineSurfInter of
     geometry module. Same for AR.
 
+    *******     HRK > 0 and ARK > 0     *******           HRK > 0 and ARK < 0
+     *****                               ********         and |ARK| > |HRK|
+     H***A                               H*********A
+     *****                               ********
+    *******                             *******
 
     *=== Methods ===*
 
@@ -66,6 +73,7 @@ class Mirror(OpticalComponent):
         super(Mirror, self).__init__(Name, Ref)
         self.Thick = float(thickness)
         self.Dia = float(diameter)
+        HRCenter = [float(x) for x in HRCenter]
         self.HRCenter = np.array(HRCenter)
         self.HRNorm = np.array(HRNorm)
         self.HRNorm = self.HRNorm/np.linalg.norm(self.HRNorm)
@@ -80,6 +88,31 @@ class Mirror(OpticalComponent):
         self.ARt = float(ARt)
         self.N = float(N)
         self.KeepI = KeepI
+
+    def __str__(self):
+        '''String representation of the mirror, when calling print(beam).
+
+        '''
+
+        return formatter(self.lineList())
+
+    def lineList(self):
+        '''Returns the list of lines necessary to print the object.
+        '''
+        ans = []
+        ans.append("Mirror: " + self.Name + " (" + str(self.Ref) + ") {")
+        ans.append("Thick: " + str(self.Thick) + "m")
+        ans.append("Diameter: " + str(self.Dia) + "m")
+        ans.append("Wedge: " + str(self.Wedge) + "rad")
+        ans.append("Origin: " + str(self.HRCenter))
+        ans.append("HRNorm: " + str(self.HRNorm))
+        ans.append("Index: " + str(self.N))
+        ans.append("HRKurv, ARKurv: " + str(self.HRK) + ", " + str(self.ARK))
+        ans.append("HRr, HRt, ARr, ARt: " + str(self.HRr) + ", " + str(self.HRt) \
+            + ", " + str(self.ARr) + ", " + str(self.ARt) )
+        ans.append("}")
+
+        return ans
 
     def isHit(self, beam):
         '''Determine if a beam hits the mirror.
@@ -126,7 +159,7 @@ class Mirror(OpticalComponent):
                                         beam.Dir, ARCenter,
                                         self.ARK*ARNorm/np.abs(self.ARK),
                                         np.abs(self.ARK),
-                                        self.Dia/np.sin(self.Wedge))
+                                        self.Dia/np.cos(self.Wedge))
         else:
             ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, ARCenter,
                                         ARNorm, self.Dia)
@@ -164,17 +197,20 @@ class Mirror(OpticalComponent):
     def hit(self, beam, order = None, threshold = None):
         '''Compute the refracted and reflected beams after interaction.
 
+        The beams returned are those selected after the order and threshold
+        criterion.
+
         beam: incident beam. [GaussianBeam]
         order: maximum strayness of daughter beams, whixh are not returned if
             their strayness is over this order. [integer]
         threshold: idem for the power of the daughter beams. [float]
 
         Returns a dictionnary of beams with keys:
-            'refr': refracted beam. [GaussianBeam]
-            'refl': reflected beam. [GaussianBeam]
+            't': refracted beam. [GaussianBeam]
+            'r': reflected beam. [GaussianBeam]
 
         '''
-        # get impact parameters
+        # get impact parameters and update beam
         dic = self.isHit(beam)
         beam.Length = dic['distance']
         beam.OptDist = beam.N * beam.Length
@@ -196,8 +232,8 @@ class Mirror(OpticalComponent):
         threshold: idem for the power of the daughter beams. [float]
 
         Returns a dictionnary of beams with keys:
-            'refr': refracted beam. [GaussianBeam]
-            'refl': reflected beam. [GaussianBeam]
+            't': refracted beam. [GaussianBeam]
+            'r': reflected beam. [GaussianBeam]
 
         '''
 
@@ -206,18 +242,18 @@ class Mirror(OpticalComponent):
 
         # Calculate the local normal in opposite direction
         if self.HRK == 0.:
-            localNor = self.HRNorm
+            localNorm = self.HRNorm
         else:
             # normal pointing to center of the sphere
-            nor = self.HRK * self.NRNorm/np.abs(self.HRK)
+            nor = self.HRK * self.HRNorm/np.abs(self.HRK)
 
             # center of sphere:
             theta = np.arcsin(self.Dia * self.HRK/2.)   #undertending angle
             sphereC = self.HRCenter + np.cos(theta)*nor/self.HRK
-            localNor = sphereC - point
-            localNor = localNor/np.linalg.norm(localNor)
+            localNorm = sphereC - point
+            localNorm = localNorm/np.linalg.norm(localNorm)
 
-        if np.dot(beamDir, localNorm) > 0.:
+        if np.dot(beam.Dir, localNorm) > 0.:
             localNorm = - localNorm
 
         # determine whether we're entering or exiting the substrate
@@ -235,48 +271,48 @@ class Mirror(OpticalComponent):
 
         # if there is no refracted
         if beam.P * self.HRt < threshold or beam.StrayOrder + 1 > order \
-                                        or dir2['refr'] is None:
-            ans['refr'] = None
+                                        or dir2['t'] is None:
+            ans['t'] = None
 
         # if there is no reflected
         if beam.P * self.HRr < threshold:
-            ans['refl'] = None
+            ans['r'] = None
 
         # we're done if there are two Nones
         if len(ans) == 2:
             return ans
 
         # Calculate new basis
-        if not 'refl' in ans:   # for reflected
-            Uxr, Uyr = helpers.basis(dir2['refl'])
-            Uzr = dir2['refl']
+        if not 'r' in ans:   # for reflected
+            Uxr, Uyr = helpers.basis(dir2['r'])
+            Uzr = dir2['r']
 
-        if not 'refr' in ans:   # for refracted
-            Uxt, Uyt = helpers.basis(dir2['refr'])
-            Uzt = dir2['refr']
+        if not 't' in ans:   # for refracted
+            Uxt, Uyt = helpers.basis(dir2['t'])
+            Uzt = dir2['t']
 
         Lx, Ly = helpers.basis(localNorm)
 
         # Calculate daughter curv tensors
-        C = np.array([self.HRK, 0.], [0, self.HRK])
-        Ki = np.array([np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
-                        [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)])
+        C = np.array([[self.HRK, 0.], [0, self.HRK]])
+        Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
+                        [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
         Qi = beam.Q(d)
         Kit = np.transpose(Ki)
         Xi = np.matmul(np.matmul(Kit, Qi), Ki)
 
-        if not 'refr' in ans:
-            Kt = np.array([np.dot(Uxt, Lx), np.dot(Uxt, Ly)],
-                            [np.dot(Uyt, Lx), np.dot(Uyt, Ly)])
+        if not 't' in ans:
+            Kt = np.array([[np.dot(Uxt, Lx), np.dot(Uxt, Ly)],
+                            [np.dot(Uyt, Lx), np.dot(Uyt, Ly)]])
             Ktt = np.transpose(Kt)
             Ktinv = np.linalg.inv(Kt)
             Kttinv = np.linalg.inv(Ktt)
             Xt = (np.dot(localNorm, beam.Dir) -n2*np.dot(localNorm, Uzt)/n1) * C
             Qt = n1*np.matmul(np.matmul(Kttinv, Xi - Xt), Ktinv)/n2
 
-        if not 'refl' in ans:
-            Kr = np.array([np.dot(Uxr, Lx), np.dot(Uxr, Ly)],
-                            [np.dot(Uyr, Lx), np.dot(Uyr, Ly)])
+        if not 'r' in ans:
+            Kr = np.array([[np.dot(Uxr, Lx), np.dot(Uxr, Ly)],
+                            [np.dot(Uyr, Lx), np.dot(Uyr, Ly)]])
             Krt = np.transpose(Kr)
             Krinv = np.linalg.inv(Kr)
             Krtinv = np.linalg.inv(Krt)
@@ -284,16 +320,17 @@ class Mirror(OpticalComponent):
             Qr = np.matmul(np.matmul(Krtinv, Xi - Xr), Krinv)
 
         # Create new beams
-        if not 'refl' in ans:
-            ans['refl'] = gbeam.GaussianBeam(ortho = False, Q = Qr,
+        if not 'r' in ans:
+            ans['r'] = gbeam.GaussianBeam(ortho = False, Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
-                    StrayOrder = beam.StrayOrder)
+                    StrayOrder = beam.StrayOrder, Ref = beam.Ref + 'r')
 
-        if not 'refr' in ans:
-            ans['refr'] = gbeam.GaussianBeam(ortho = False, Q = Qt, Pos = point,
+        if not 't' in ans:
+            ans['t'] = gbeam.GaussianBeam(ortho = False, Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
-                P = beam.P * self.HRt, StrayOrder = beam.StrayOrder + 1)
+                P = beam.P * self.HRt, StrayOrder = beam.StrayOrder + 1,
+                Ref = beam.Ref + 't')
 
         return ans
 
@@ -307,8 +344,8 @@ class Mirror(OpticalComponent):
         threshold: idem for the power of the daughter beams. [float]
 
         Returns a dictionnary of beams with keys:
-            'refr': refracted beam. [GaussianBeam]
-            'refl': reflected beam. [GaussianBeam]
+            't': refracted beam. [GaussianBeam]
+            'r': reflected beam. [GaussianBeam]
 
         '''
 
@@ -352,25 +389,25 @@ class Mirror(OpticalComponent):
         dir2 = geo.newDir(beam.Dir, localNorm, n1, n2)
 
         # if there is no refracted
-        if beam.P * self.ARt < threshold or dir2['refr'] is None:
-            ans['refr'] = None
+        if beam.P * self.ARt < threshold or dir2['t'] is None:
+            ans['t'] = None
 
         # if there is no reflected
         if beam.P * self.ARr < threshold or beam.StrayOrder + 1 > order:
-            ans['refl'] = None
+            ans['r'] = None
 
         # we're done if there are two Nones
         if len(ans) == 2:
             return ans
 
         # Calculate new basis
-        if not 'refl' in ans:   # for reflected
-            Uxr, Uyr = helpers.basis(dir2['refl'])
-            Uzr = dir2['refl']
+        if not 'r' in ans:   # for reflected
+            Uxr, Uyr = helpers.basis(dir2['r'])
+            Uzr = dir2['r']
 
-        if not 'refr' in ans:   # for refracted
-            Uxt, Uyt = helpers.basis(dir2['refr'])
-            Uzt = dir2['refr']
+        if not 't' in ans:   # for refracted
+            Uxt, Uyt = helpers.basis(dir2['t'])
+            Uzt = dir2['t']
 
         Lx, Ly = helpers.basis(localNorm)
 
@@ -382,7 +419,7 @@ class Mirror(OpticalComponent):
         Kit = np.transpose(Ki)
         Xi = np.matmul(np.matmul(Kit, Qi), Ki)
 
-        if not 'refr' in ans:
+        if not 't' in ans:
             Kt = np.array([[np.dot(Uxt, Lx), np.dot(Uxt, Ly)],
                             [np.dot(Uyt, Lx), np.dot(Uyt, Ly)]])
             Ktt = np.transpose(Kt)
@@ -391,7 +428,7 @@ class Mirror(OpticalComponent):
             Xt = (np.dot(localNorm, beam.Dir) -n2*np.dot(localNorm, Uzt)/n1) * C
             Qt = n1*np.matmul(np.matmul(Kttinv, Xi - Xt), Ktinv)/n2
 
-        if not 'refl' in ans:
+        if not 'r' in ans:
             Kr = np.array([[np.dot(Uxr, Lx), np.dot(Uxr, Ly)],
                             [np.dot(Uyr, Lx), np.dot(Uyr, Ly)]])
             Krt = np.transpose(Kr)
@@ -401,16 +438,17 @@ class Mirror(OpticalComponent):
             Qr = np.matmul(np.matmul(Krtinv, Xi - Xr), Krinv)
 
         # Create new beams
-        if not 'refl' in ans:
-            ans['refl'] = gbeam.GaussianBeam(ortho = False, Q = Qr,
+        if not 'r' in ans:
+            ans['r'] = gbeam.GaussianBeam(ortho = False, Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
-                    StrayOrder = beam.StrayOrder + 1)
+                    StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r')
 
-        if not 'refr' in ans:
-            ans['refr'] = gbeam.GaussianBeam(ortho = False, Q = Qt, Pos = point,
+        if not 't' in ans:
+            ans['t'] = gbeam.GaussianBeam(ortho = False, Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
-                P = beam.P * self.ARt, StrayOrder = beam.StrayOrder)
+                P = beam.P * self.ARt, StrayOrder = beam.StrayOrder,
+                Ref = beam.Ref + 't')
 
 
         return ans
@@ -420,7 +458,7 @@ class Mirror(OpticalComponent):
 
         beam: incident beam. [GaussianBeam]
 
-        Returns {'refr': None, 'refl': None}
+        Returns {'t': None, 'r': None}
 
         '''
-        return {'refr': None, 'refl': None}
+        return {'t': None, 'r': None}

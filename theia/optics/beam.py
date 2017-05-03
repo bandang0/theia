@@ -18,6 +18,7 @@
 import numpy as np
 from units import *
 import helpers
+from helpers import formatter
 
 class GaussianBeam(object):
     '''
@@ -63,7 +64,7 @@ class GaussianBeam(object):
     def __init__(self, Wx = None, Wy = None, WDistx = None, WDisty = None,
         Q = None, ortho = True, N = 1.,
         Wl = 1064.*nm, P = 1*W, Pos = [0., 0., 0.], Dir = [1., 0., 0.],
-        Ux = [0., -1., 0.], Uy = None, Name = None, OptDist = 0.*m,
+        Ux = [0., -1., 0.], Uy = None, Name = None, Ref = None, OptDist = 0.*m,
         Length = 0.*m, StrayOrder = 0):
         '''Beam constructor.
 
@@ -93,7 +94,13 @@ class GaussianBeam(object):
         else:
             self.Name = 'Beam' + str(self.__class__.BeamCount)
 
+        if Ref is not None:
+            self.Ref = Ref
+        else:
+            self.Ref = 'Beam' + str(self.__class__.BeamCount)
+
         # orthonormal basis in which Q is expressed
+        Pos = [float(x) for x in Pos]
         self.Pos = np.array(Pos)
         self.Dir = np.array(Dir)
         self.Dir = self.Dir/np.linalg.norm(Dir)
@@ -123,7 +130,35 @@ class GaussianBeam(object):
 
         self.__class__.BeamCount = self.__class__.BeamCount + 1
 
+    def __str__(self):
+        '''String representation of the beam, when calling print(beam).
 
+        '''
+        return formatter(self.lineList())
+
+    def lineList(self):
+        '''Returns the list of lines necessary to print the object.
+
+        '''
+        ans = []
+        ans.append("Beam: " + self.Name + " {")
+        ans.append("Ref: " + self.Ref)
+        ans.append("Power: " + str(self.P) + "W")
+        ans.append("Index: " + str(self.N))
+        ans.append("Wavelength: " + str(self.Wl) + "m")
+        ans.append("Origin: " + str(self.Pos))
+        ans.append("Direction: " + str(self.Dir))
+        ans.append("Length: " + str(self.Length) + "m")
+        ans.append("Order: " + str(self.StrayOrder))
+        ans.append("Ux: " + str(self.U[0]))
+        ans.append("Uy: " + str(self.U[1]))
+        ans.append("Tens: [" +str(self.QTens[0][0]) + ", " \
+                            + str(self.QTens[0][1]) + "]")
+        ans.append("      [" +str(self.QTens[1][0]) + ", " \
+                            + str(self.QTens[1][1]) + "]")
+        ans.append("}")
+
+        return ans
 
     def Q(self, d = 0.):
         '''Return the Q tensor at a distance d of origin.

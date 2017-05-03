@@ -4,6 +4,8 @@
 #   class Simulation
 
 from units import *
+import helpers
+from helpers import formatter
 from tree import beamtree
 class Simulation(object):
     '''
@@ -36,12 +38,42 @@ class Simulation(object):
         self.FName = FName
         self.OptList = []
         self.InBeams = []
-        self.BeamTree = beamtree.BeamTree()
+        self.BeamTreeList = []
 
-    def load(self):
-        '''Initialize simulation attributes by input from .tia file.'''
+    def __str__(self):
+        '''String representation of the simulation, for print(simulation).
 
-    def run(self, threshold = 1*W, write3D = True):
+        '''
+        sList = ["Simulation: " + str(self.LName) + " (" + str(self.FName)\
+                 + ") {"]
+        sList.append("OptList: {")
+        for opt in self.OptList:
+            sList = sList + opt.lineList()
+        sList.append("}")
+        sList.append("InBeams: {")
+        for beam in self.InBeams:
+            sList = sList + beam.lineList()
+        sList.append("}")
+        sList.append("BeamTrees: {")
+        for tree in self.BeamTreeList:
+            sList = sList + tree.lineList()
+        sList.append("}")
+        sList.append("}")
+
+        return formatter(sList)
+
+
+    def load(self, InBeams, OptList):
+        '''Initialize simulation attributes by input from .tia file.
+
+        No return value.
+
+        '''
+
+        self.InBeams = InBeams
+        self.OptList = OptList
+
+    def run(self, threshold = 1*mW, order = 10, write3D = True):
         '''Run simulation with input as read by load.
 
         *=== Arguments ===*
@@ -49,5 +81,15 @@ class Simulation(object):
                     beams
         write3D: whether or not to write to the .fcstd file for FreeCAD
                     rendering
-        *=== Returns a integer exit code according to success of simulation ===*
+
+        No return value.
         '''
+
+        BeamTreeList = []
+
+        for k in range(len(self.InBeams)):
+            BeamTreeList.append(beamtree.treeOfBeam(self.InBeams[k],
+            self.OptList, order, threshold ))
+
+
+        self.BeamTreeList = BeamTreeList

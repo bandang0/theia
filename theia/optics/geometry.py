@@ -296,8 +296,8 @@ def newDir(inc, nor, n1, n2):
     n2: idem.
 
     Returns a dictionnary with keys:
-        'refl': normalized direction of reflected beam. [3D vector]
-        'refr': normalized direction of refracted beam. [3D vector]
+        'r': normalized direction of reflected beam. [3D vector]
+        't': normalized direction of refracted beam. [3D vector]
 
     Note: if total reflection then refr is None.
 
@@ -310,8 +310,8 @@ def newDir(inc, nor, n1, n2):
 
     # normal incidence case:
     if np.abs(np.dot(inc,nor)) == 1.:
-        return {'refl': nor,
-                'refr': inc}
+        return {'r': nor,
+                't': inc}
 
     # reflected (see documentation):
     refl = inc - 2.*np.dot(inc,nor)*nor
@@ -322,20 +322,20 @@ def newDir(inc, nor, n1, n2):
     try:
         theta2 = refrAngle(theta1, n1, n2)
     except TotalReflectionError :
-        return {'refl': refl,
-                'refr': None}
+        return {'r': refl,
+                't': None}
 
     # sines and cosines
     c1 = np.cos(theta1)
     c2 = np.cos(theta2)
     s1 = np.sin(theta1)
 
-    alpha = n1/n2 - 2.*c1*c2/(s1**2.)
-    beta = -c2*(1. + c1**2.)/(s1**2.) + c1*n1/n2
+    alpha = n1/n2
+    beta = n1*c1/n2 - c2
 
     # refracted:
     refr = (alpha*inc + beta*nor)
     refr = refr/np.linalg.norm(refr)
 
-    return {'refl': refl,
-            'refr': refr}
+    return {'r': refl,
+            't': refr}
