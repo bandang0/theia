@@ -59,9 +59,9 @@ class Mirror(OpticalComponent):
     '''
 
     def __init__(self, thickness, diameter, HRCenter =  [0., 0., 0.],
-                HRNorm = [1., 0., 0.], HRK = 0., ARK = 0., Wedge = 0.,
-                Alpha = 0., HRr = 1., HRt = 0., ARr = 0., ARt = 1., N = 1.4585,
-                Name = None, Ref = None, KeepI = True):
+                ARNorm = None, HRNorm = [1., 0., 0.], HRK = 0., ARK = 0.,
+                Wedge = 0., Alpha = 0., HRr = 1., HRt = 0., ARr = 0., ARt = 1.,
+                N = 1.4585, Name = None, Ref = None, KeepI = True):
         '''Mirror constructor.
 
         Parameters are the attributes.
@@ -73,13 +73,25 @@ class Mirror(OpticalComponent):
         super(Mirror, self).__init__(Name, Ref)
         self.Thick = float(thickness)
         self.Dia = float(diameter)
-        HRCenter = [float(x) for x in HRCenter]
-        self.HRCenter = np.array(HRCenter)
-        self.HRNorm = np.array(HRNorm)
+        self.Wedge = float(Wedge)
+        self.HRCenter = np.array(HRCenter, dtype=np.float64)
+        self.HRNorm = np.array(HRNorm, dtype=np.float64)
         self.HRNorm = self.HRNorm/np.linalg.norm(self.HRNorm)
+
+        # determine ARCenter and ARNorm
+        self.ARCenter = self.HRCenter - self.Thick*self.HRNorm \
+                            - self.Dia*np.tan(self.Wedge)*self.HRNorm/2.
+
+        if ARNorm is not None:
+            self.ARNorm = np.array(ARNorm, dtype=np.float64)
+        else:
+            #The following expression is false
+            self.ARNorm = np.matmul(self.RotMatrix,
+                        np.array([-np.cos(self.Wedge), 0., np.sin(self.Wedge)]))
+
+        self.ARNorm = self.ARNorm/np.linalg.norm(self.ARNorm)
         self.HRK = float(HRK)
         self.ARK = float(ARK)
-        self.Wedge = float(Wedge)
         self.Alpha = float(Alpha)
         self.RotMatrix = helpers.rotMatrix(np.array([1., 0., 0.]), HRNorm)
         self.HRr = float(HRr)
@@ -132,16 +144,10 @@ class Mirror(OpticalComponent):
         '''
 
         noInterDict = {'isHit': False,
-                        'intersection point': np.array([0., 0., 0.]),
+                        'intersection point': np.array([0., 0., 0.],
+                                                    dtype=np.float64),
                         'face': None,
                         'distance': 0.}
-
-        # determine ARCenter and ARNorm
-        ARCenter = self.HRCenter - self.Thick*self.HRNorm \
-                            - self.Dia*np.tan(self.Wedge)*self.HRNorm/2.
-
-        ARNorm = np.matmul(self.RotMatrix,
-                        np.array([-np.cos(self.Wedge), 0., np.sin(self.Wedge)]))
 
         # get impact parameters on HR, AR and side:
         if np.abs(self.HRK) > 0.:
@@ -156,13 +162,13 @@ class Mirror(OpticalComponent):
 
         if np.abs(self.ARK) > 0.:
             ARDict = geo.lineSurfInter(beam.Pos,
-                                        beam.Dir, ARCenter,
-                                        self.ARK*ARNorm/np.abs(self.ARK),
+                                        beam.Dir, self.ARCenter,
+                                        self.ARK*self.ARNorm/np.abs(self.ARK),
                                         np.abs(self.ARK),
                                         self.Dia/np.cos(self.Wedge))
         else:
-            ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, ARCenter,
-                                        ARNorm, self.Dia)
+            ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.ARCenter,
+                                        self.ARNorm, self.Dia)
 
         SideDict = geo.lineCylInter(beam.Pos, beam.Dir,
                                     self.HRCenter, self.HRNorm,
@@ -194,7 +200,7 @@ class Mirror(OpticalComponent):
                 'distance': hitFaces[j]['distance']
                 }
 
-    def hit(self, beam, order = None, threshold = None):
+    def hit(self, beam, order, threshold):
         '''Compute the refracted and reflected beams after interaction.
 
         The beams returned are those selected after the order and threshold
@@ -303,7 +309,7 @@ class Mirror(OpticalComponent):
 
         if not 't' in ans:
             Kt = np.array([[np.dot(Uxt, Lx), np.dot(Uxt, Ly)],
-                            [np.dot(Uyt, Lx), np.dot(Uyt, Ly)]])
+                        [np.dot(Uyt, Lx), np.dot(Uyt, Ly)]])
             Ktt = np.transpose(Kt)
             Ktinv = np.linalg.inv(Kt)
             Kttinv = np.linalg.inv(Ktt)
@@ -312,7 +318,7 @@ class Mirror(OpticalComponent):
 
         if not 'r' in ans:
             Kr = np.array([[np.dot(Uxr, Lx), np.dot(Uxr, Ly)],
-                            [np.dot(Uyr, Lx), np.dot(Uyr, Ly)]])
+                        [np.dot(Uyr, Lx), np.dot(Uyr, Ly)]])
             Krt = np.transpose(Kr)
             Krinv = np.linalg.inv(Kr)
             Krtinv = np.linalg.inv(Krt)
@@ -352,23 +358,16 @@ class Mirror(OpticalComponent):
         ans = {}
         d = np.linalg.norm(point - beam.Pos)
 
-        # determine ARCenter and ARNorm
-        ARCenter = self.HRCenter - self.Thick*self.HRNorm \
-                            - self.Dia*np.tan(self.Wedge)*self.HRNorm/2.
-
-        ARNorm = np.matmul(self.RotMatrix,
-                        np.array([-np.cos(self.Wedge), 0., np.sin(self.Wedge)]))
-
         # Calculate the local normal
         if self.ARK == 0.:
-            localNorm = ARNorm
+            localNorm = self.ARNorm
         else:
             # normal pointing to center of the sphere
-            nor = self.ARK * ARNorm/np.abs(self.ARK)
+            nor = self.ARK * self.ARNorm/np.abs(self.ARK)
 
             # center of sphere:
             theta = np.arcsin(self.Dia * self.ARK/2.)   #undertending angle
-            sphereC = ARCenter + np.cos(theta)*nor/self.ARK
+            sphereC = self.ARCenter + np.cos(theta)*nor/self.ARK
             localNorm = sphereC - point
             localNorm = localNorm/np.linalg.norm(localNorm)
 
@@ -376,7 +375,7 @@ class Mirror(OpticalComponent):
             localNorm = - localNorm
 
         # determine whether we're entering or exiting the substrate
-        if np.dot(beam.Dir, ARNorm) < 0.:
+        if np.dot(beam.Dir, self.ARNorm) < 0.:
             #entering
             n1 = beam.N
             n2 = self.N

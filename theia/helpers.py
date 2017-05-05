@@ -26,12 +26,14 @@ def rotMatrix(a,b):
     '''
 
     if np.abs(np.dot(a,b)) == 1.:
-        return np.dot(a,b) *np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
+        return np.dot(a,b) *np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+                                    dtype=np.float64)
 
     v = np.cross(a,b)
-    vx = np.array([0., -v[2], v[1]], [v[2], 0., -v[0]], [-v[1], v[0], 0.])
+    vx = np.array([0., -v[2], v[1]], [v[2], 0., -v[0]], [-v[1], v[0], 0.],
+                    dtype=np.float64)
 
-    return np.array([1., 0., 0.], [0., 1., 0.], [0., 0., 1.]) \
+    return np.array([1., 0., 0.], [0., 1., 0.], [0., 0., 1.], dtype=np.float64)\
             + vx + (1.0/(1.0 + np.dot(a,b)))*np.matmul(vx,vx)
 
 def basis(a):
@@ -39,12 +41,13 @@ def basis(a):
 
     '''
     if np.abs(np.dot(a, np.array([1., 0., 0.]))) == 1.:
-        u = np.array([0., -1., 0.])
+        u = np.cross(a, np.array([0., -1., 0.], dtype=np.float64))
     else:
-        u = np.cross(a, np.array([1., 0., 0. ]))
-        u = u/np.linalg.norm(u)
+        u = np.cross(a, np.array([1., 0., 0. ], dtype=np.float64))
 
+    u = u/np.linalg.norm(u)
     v = np.cross(a, u)
+    v = v/np.linalg.norm(v)
 
     return u, v
 
@@ -98,6 +101,5 @@ def formatter(stringList):
         ans = ans + count * '\t' + line + '\n'
         if '{' in line:
             count = count + 1
-
 
     return ans

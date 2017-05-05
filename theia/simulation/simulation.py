@@ -7,6 +7,8 @@ from units import *
 import helpers
 from helpers import formatter
 from tree import beamtree
+
+
 class Simulation(object):
     '''
 
@@ -73,7 +75,7 @@ class Simulation(object):
         self.InBeams = InBeams
         self.OptList = OptList
 
-    def run(self, threshold = 1*mW, order = 10, write3D = True):
+    def run(self, threshold = -1*mW, order = np.Inf, write3D = True):
         '''Run simulation with input as read by load.
 
         *=== Arguments ===*

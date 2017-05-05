@@ -100,19 +100,18 @@ class GaussianBeam(object):
             self.Ref = 'Beam' + str(self.__class__.BeamCount)
 
         # orthonormal basis in which Q is expressed
-        Pos = [float(x) for x in Pos]
-        self.Pos = np.array(Pos)
-        self.Dir = np.array(Dir)
-        self.Dir = self.Dir/np.linalg.norm(Dir)
-        u = np.array(Ux)
+        self.Pos = np.array(Pos, dtype=np.float64)
+        self.Dir = np.array(Dir, dtype=np.float64)
+        self.Dir = self.Dir/np.linalg.norm(self.Dir)
+        u = np.array(Ux, dtype=np.float64)
         u = u/np.linalg.norm(u)
 
         if Uy is not None:
-            v = np.array(Uy)
+            v = np.array(Uy, dtype=np.float64)
         else:
             v = np.cross(self.Dir, u)
-            v = v/np.linalg.norm(v)
 
+        v = v/np.linalg.norm(v)
         self.U = (u, v)
 
 
@@ -123,7 +122,8 @@ class GaussianBeam(object):
             qx = complex(- float(WDistx)  + 1.j * np.pi*Wx**2./lam )
             qy = complex(- float(WDisty)  + 1.j * np.pi*Wy**2./lam )
             # Q tensor for orthogonal beam
-            self.QTens = np.array([[1./qx, 0.],[0., 1./qy]], dtype = np.complex64)
+            self.QTens = np.array([[1./qx, 0.],[0., 1./qy]],
+                        dtype = np.complex64)
 
         elif not ortho:
             self.QTens = Q
@@ -156,6 +156,9 @@ class GaussianBeam(object):
                             + str(self.QTens[0][1]) + "]")
         ans.append("      [" +str(self.QTens[1][0]) + ", " \
                             + str(self.QTens[1][1]) + "]")
+        ans.append("Waist Pos: " + str(self.waistPos()) + 'm')
+        ans.append("Waist Size: " + str(self.waistSize()) + "m")
+        ans.append("Rayleigh: " + str(self.rayleigh()) + "m")
         ans.append("}")
 
         return ans
@@ -165,5 +168,79 @@ class GaussianBeam(object):
 
         '''
         d = float(d)
-        I = np.array([[1., 0.], [0., 1.]])
+        I = np.array([[1., 0.], [0., 1.]], dtype=np.float64)
         return np.matmul(np.linalg.inv(I + d * self.QTens),self.QTens)
+
+    def QParam(self, d = 0.):
+        '''Compute the complex parameters q1 and q2 and theta of beam.
+
+            Returns a disctionnary with keys:
+            '1': q1
+            '2': q2
+            'theta': theta
+        '''
+        d = float(d)
+
+        a = self.Q(d)[0][0]
+        b = self.Q(d)[0][1]
+        d = self.Q(d)[1][1]
+
+        q1inv = .5*(a + d + np.sqrt((a - d)**2. + 4.*b**2.))
+        q2inv = .5*(a + d - np.sqrt((a - d)**2. + 4.*b**2.))
+
+        if q1inv == q2inv:
+            theta = 0.
+        else:
+            theta = .5*np.arcsin(2.*b/(q1inv - q2inv))
+
+        return {'1': 1/q1inv, '2': 1/q2inv, 'theta':theta}
+
+    def ROC(self, dist = 0.):
+        '''Return the tuple of ROC of the beam.
+
+        '''
+        dist = float(dist)
+        Q = self.QParam(dist)
+        return (1./np.real(1./Q['1']),
+                1./np.real(1./Q['2']) )
+
+    def width(self, d = 0.):
+        '''Return the tuple of beam widths.
+
+        '''
+        d = float(d)
+        lam = self.Wl/self.N
+        Q = self.QParam(d)
+        return (1./np.sqrt(np.abs(np.pi*np.imag(1./Q['1']))/lam) ,
+                1./np.sqrt(np.abs(np.pi*np.imag(1./Q['2']))/lam))
+
+    def waistPos(self):
+        '''Return the tuple of positions of the waists of the beam along Dir.
+
+        '''
+        Q = self.QParam(0.)
+        return (-np.real(Q['1']), -np.real(Q['2']))
+
+    def gouy(self, d = 0.):
+        '''Return the tuple of Gouy phases.
+
+        '''
+        d = float(d)
+        zR = self.rayleigh()
+        WDist = self.waistPos()
+        return (np.arctan((d-WDist[0])/zR[0]),
+                np.arctan((d-WDist[1])/zR[1]))
+
+    def waistSize(self):
+        '''Return a tuple with the waist sizes in x and y.
+
+        '''
+        pos = self.waistPos()
+        return (self.width(pos[0])[0], self.width(pos[1])[1] )
+
+    def rayleigh(self):
+        '''Return the tuple of Rayleigh ranges of the beam.
+
+        '''
+        Q = self.QParam()
+        return (np.abs(np.imag(Q['1'])), np.abs(np.imag(Q['2'])))

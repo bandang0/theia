@@ -41,13 +41,13 @@ def linePlaneInter(pos, dirV, planeC, normV, diameter):
     '''
 
     # Convert to np arrays and normalize
-    pos = np.array(pos, dtype=np.float64)
-    planeC = np.array(planeC, dtype=np.float64)
-    dirV = np.array(dirV, dtype=np.float64)
-    dirV = dirV/np.linalg.norm(dirV)
-    normV = np.array(normV, dtype=np.float64)
-    normV = normV/np.linalg.norm(normV)
-    diameter = float(diameter)
+    #pos = np.array(pos, dtype=np.float64)
+    #planeC = np.array(planeC, dtype=np.float64)
+    #dirV = np.array(dirV, dtype=np.float64)
+    #dirV = dirV/np.linalg.norm(dirV)
+    #normV = np.array(normV, dtype=np.float64)
+    #normV = normV/np.linalg.norm(normV)
+    #diameter = float(diameter)
 
     noInterDict = {'isHit': False,  # return this if no intersect
             'distance': 0.,
@@ -85,7 +85,8 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
         the vector normal to the 'chord', ie the plane which undertends
         the surface.
 
-    Note: the normal vector always looks to the center of the sphere
+    Note: the normal vector always looks to the center of the sphere and the
+        surface is supposed to ocupy less than a semi-sphere
 
     pos: position of the begingin of the line. [3D vector]
     dirV: direction of the line. [3D vector]
@@ -104,14 +105,14 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
     '''
 
     # Convert to np.array and normalize
-    pos = np.array(pos, dtype=np.float64)
-    chordC = np.array(chordC, dtype=np.float64)
-    dirV = np.array(dirV, dtype=np.float64)
-    dirV = dirV/np.linalg.norm(dirV)
-    chordNorm = np.array(chordNorm, dtype=np.float64)
-    chordNorm = chordNorm/np.linalg.norm(chordNorm)
-    diameter = float(diameter)
-    kurv = float(kurv)
+    #pos = np.array(pos, dtype=np.float64)
+    #chordC = np.array(chordC, dtype=np.float64)
+    #dirV = np.array(dirV, dtype=np.float64)
+    #dirV = dirV/np.linalg.norm(dirV)
+    #chordNorm = np.array(chordNorm, dtype=np.float64)
+    #chordNorm = chordNorm/np.linalg.norm(chordNorm)
+    #diameter = float(diameter)
+    #kurv = float(kurv)
 
     noInterDict = {'isHit': False,  # return this if no intersect
             'distance': 0.,
@@ -156,7 +157,11 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
 
         # compare angles theta and thetai (between chordN and localN) to
         # to know if the point is on the coated surface
-        if np.dot(localNorm, chordNorm) > diameter * kurv/2. :
+        if np.dot(localNorm, chordNorm) < 0.:
+            # the intersection point is on the wrong semi-sphere:
+            return noInterDict
+
+        if np.linalg.norm(np.cross(localNorm, chordNorm)) < diameter * kurv/2. :
             # it is on the surface
             return {'isHit': True,
                     'distance': lam2,
@@ -168,20 +173,24 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
         localNorm = sphereC - intersect
         localNorm = localNorm/np.linalg.norm(localNorm)
 
-        if np.dot(localNorm, chordNorm) > diameter * kurv/2. :
-            # the first is on the surface
-            return {'isHit': True,
-                    'distance': lam1,
-                    'intersection point': intersect}
+        if np.dot(localNorm, chordNorm) > 0. :
+            if np.linalg.norm(np.cross(localNorm, chordNorm)) \
+                            < diameter * kurv/2.:
+                            # the first is on the surface
+                return {'isHit': True,
+                        'distance': lam1,
+                        'intersection point': intersect}
 
         # try the second
         intersect = pos + lam2 * dirV
         localNorm = sphereC - intersect
         localNorm = localNorm/np.linalg.norm(localNorm)
 
-        if np.dot(localNorm, chordNorm) > diameter * kurv/2. :
-            # the second is on the surface
-            return {'isHit': True,
+        if np.dot(localNorm, chordNorm) > 0. :
+            if np.linalg.norm(np.cross(localNorm, chordNorm)) \
+                            < diameter * kurv/2. :
+                # the second is on the surface
+                return {'isHit': True,
                     'distance': lam2,
                     'intersection point': intersect}
 
@@ -211,12 +220,12 @@ def lineCylInter(pos, dirV, faceC, normV, thickness, diameter):
     '''
 
     # Convert to np.array and normalize
-    pos = np.array(pos, dtype=np.float64)
-    faceC = np.array(faceC, dtype=np.float64)
-    dirV = np.array(dirV, dtype=np.float64)
-    dirV = dirV/np.linalg.norm(dirV)
-    normV = np.array(normV, dtype=np.float64)
-    normV = normV/np.linalg.norm(normV)
+    #pos = np.array(pos, dtype=np.float64)
+    #faceC = np.array(faceC, dtype=np.float64)
+    #dirV = np.array(dirV, dtype=np.float64)
+    #dirV = dirV/np.linalg.norm(dirV)
+    #normV = np.array(normV, dtype=np.float64)
+    #normV = normV/np.linalg.norm(normV)
     diameter = float(diameter)
     thickness = float(thickness)
 
@@ -302,10 +311,10 @@ def newDir(inc, nor, n1, n2):
     Note: if total reflection then refr is None.
 
     '''
-    inc = np.array(inc, dtype=np.float64)
-    inc = inc/np.linalg.norm(inc)
-    nor = np.array(nor, dtype=np.float64)
-    nor = nor/np.linalg.norm(nor)
+    #inc = np.array(inc, dtype=np.float64)
+    #inc = inc/np.linalg.norm(inc)
+    #nor = np.array(nor, dtype=np.float64)
+    #nor = nor/np.linalg.norm(nor)
 
 
     # normal incidence case:

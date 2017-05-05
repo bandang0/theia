@@ -121,6 +121,7 @@ def treeOfBeam(srcBeam, optList, order, threshold):
 
     # initialize next beam dictionnaries
     dist = 1.e15
+    mini = 1.e-12
     finalHit = {}
     fianlisHit = {}
     finalOpt = optList[0]
@@ -129,7 +130,8 @@ def treeOfBeam(srcBeam, optList, order, threshold):
     # look for closest impact
     for opt in optList:
         dicoisHit = opt.isHit(srcBeam)
-        if dicoisHit['isHit'] and dicoisHit['distance'] < dist:
+        if dicoisHit['isHit'] and dicoisHit['distance'] < dist \
+                                and dicoisHit['distance'] > mini:
             hitAtLeastOnce = True
             dist = dicoisHit['distance']
             finalOpt = opt
