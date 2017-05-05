@@ -61,10 +61,10 @@ class GaussianBeam(object):
     '''
     BeamCount = 0   # counts beams
 
-    def __init__(self, Wx = None, Wy = None, WDistx = None, WDisty = None,
+    def __init__(self, Wx = None, Wy = None, WDistx = 0., WDisty = 0.,
         Q = None, ortho = True, N = 1.,
         Wl = 1064.*nm, P = 1*W, Pos = [0., 0., 0.], Dir = [1., 0., 0.],
-        Ux = [0., -1., 0.], Uy = None, Name = None, Ref = None, OptDist = 0.*m,
+        Ux = None, Uy = None, Name = None, Ref = None, OptDist = 0.*m,
         Length = 0.*m, StrayOrder = 0):
         '''Beam constructor.
 
@@ -103,15 +103,23 @@ class GaussianBeam(object):
         self.Pos = np.array(Pos, dtype=np.float64)
         self.Dir = np.array(Dir, dtype=np.float64)
         self.Dir = self.Dir/np.linalg.norm(self.Dir)
-        u = np.array(Ux, dtype=np.float64)
-        u = u/np.linalg.norm(u)
 
-        if Uy is not None:
-            v = np.array(Uy, dtype=np.float64)
-        else:
+        if Ux is None and Uy is None:
+            (u,v) = helpers.basis(self.Dir)
+        elif Ux is not None and Uy is None:
+            u = np.array(Ux, dtype = np.float64)
+            u = u/np.linalg.norm(Ux)
             v = np.cross(self.Dir, u)
+        elif Ux is None and Uy is not None:
+            v = np.array(Uy, dtype = np.float64)
+            v = v/np.linalg.norm(v)
+            u = np.cross(v, self.Dir)
+        else:
+            u = np.array(Ux, dtype = np.float64)
+            v = np.array(Uy, dtype = np.float64)
+            u = u/np.linalg.norm(u)
+            v = v/np.linalg.norm(v)
 
-        v = v/np.linalg.norm(v)
         self.U = (u, v)
 
 
@@ -119,6 +127,7 @@ class GaussianBeam(object):
         if ortho:
             lam = self.Wl/N
             Wx = float(Wx)
+            Wy = float(Wy)
             qx = complex(- float(WDistx)  + 1.j * np.pi*Wx**2./lam )
             qy = complex(- float(WDisty)  + 1.j * np.pi*Wy**2./lam )
             # Q tensor for orthogonal beam
@@ -159,6 +168,7 @@ class GaussianBeam(object):
         ans.append("Waist Pos: " + str(self.waistPos()) + 'm')
         ans.append("Waist Size: " + str(self.waistSize()) + "m")
         ans.append("Rayleigh: " + str(self.rayleigh()) + "m")
+        ans.append("ROC: " + str(self.ROC()))
         ans.append("}")
 
         return ans
@@ -201,8 +211,25 @@ class GaussianBeam(object):
         '''
         dist = float(dist)
         Q = self.QParam(dist)
-        return (1./np.real(1./Q['1']),
+        try:
+            return (1./np.real(1./Q['1']),
                 1./np.real(1./Q['2']) )
+        except FloatingPointError:
+            return  np.Inf
+
+    def waistPos(self):
+        '''Return the tuple of positions of the waists of the beam along Dir.
+
+        '''
+        Q = self.QParam(0.)
+        return (-np.real(Q['1']), -np.real(Q['2']))
+
+    def rayleigh(self):
+        '''Return the tuple of Rayleigh ranges of the beam.
+
+        '''
+        Q = self.QParam()
+        return (np.abs(np.imag(Q['1'])), np.abs(np.imag(Q['2'])))
 
     def width(self, d = 0.):
         '''Return the tuple of beam widths.
@@ -211,15 +238,18 @@ class GaussianBeam(object):
         d = float(d)
         lam = self.Wl/self.N
         Q = self.QParam(d)
-        return (1./np.sqrt(np.abs(np.pi*np.imag(1./Q['1']))/lam) ,
-                1./np.sqrt(np.abs(np.pi*np.imag(1./Q['2']))/lam))
+        zR = self.rayleigh()
+        D = self.waistPos()
 
-    def waistPos(self):
-        '''Return the tuple of positions of the waists of the beam along Dir.
+        return (np.sqrt((lam/np.pi)*((d - D[0])**2. + zR[0]**2.)/zR[0]) ,
+                np.sqrt((lam/np.pi)*((d - D[1])**2. + zR[1]**2.)/zR[1]))
+
+    def waistSize(self):
+        '''Return a tuple with the waist sizes in x and y.
 
         '''
-        Q = self.QParam(0.)
-        return (-np.real(Q['1']), -np.real(Q['2']))
+        pos = self.waistPos()
+        return (self.width(pos[0])[0], self.width(pos[1])[1] )
 
     def gouy(self, d = 0.):
         '''Return the tuple of Gouy phases.
@@ -230,17 +260,3 @@ class GaussianBeam(object):
         WDist = self.waistPos()
         return (np.arctan((d-WDist[0])/zR[0]),
                 np.arctan((d-WDist[1])/zR[1]))
-
-    def waistSize(self):
-        '''Return a tuple with the waist sizes in x and y.
-
-        '''
-        pos = self.waistPos()
-        return (self.width(pos[0])[0], self.width(pos[1])[1] )
-
-    def rayleigh(self):
-        '''Return the tuple of Rayleigh ranges of the beam.
-
-        '''
-        Q = self.QParam()
-        return (np.abs(np.imag(Q['1'])), np.abs(np.imag(Q['2'])))

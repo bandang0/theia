@@ -47,7 +47,7 @@ class Simulation(object):
 
         '''
         sList = ["Simulation: " + str(self.LName) + " (" + str(self.FName)\
-                 + ") {"]
+                 + ".*) {"]
         sList.append("OptList: {")
         for opt in self.OptList:
             sList = sList + opt.lineList()

@@ -11,13 +11,13 @@ clean-doc:
 # tests
 
 test-optics:
-	python theia/tests/test_optics.py
+	python tests/test_optics.py
 
 test-rendering:
-	python theia/tests/test_rendering.py
+	python tests/test_rendering.py
 
 test-tree:
-	python theia/tests/test_tree.py
+	python tests/test_tree.py
 
 test-simulation:
-	python theia/tests/test_simulation.py
+	python tests/test_simulation.py
