@@ -84,6 +84,7 @@ class Mirror(OpticalComponent):
 
         if ARNorm is not None:
             self.ARNorm = np.array(ARNorm, dtype=np.float64)
+            self.ARNorm = self.ARNorm/np.linalg.norm(self.ARNorm)
         else:
             self.ARNorm = - self.HRNorm
 

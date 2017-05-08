@@ -98,3 +98,13 @@ ENV/
 
 # mkdocs documentation
 /site
+
+# latex stuff
+.aux
+.nav
+.out
+.pdf
+.snm
+.synctex.gz
+.toc
+.vrb
