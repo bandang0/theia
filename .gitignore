@@ -108,3 +108,7 @@ ENV/
 .synctex.gz
 .toc
 .vrb
+.ps
+
+# OptoCAD executables
+.opt

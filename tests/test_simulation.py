@@ -30,8 +30,8 @@ from tree import beamtree
 #    Ux = [0., -1., 0.], Uy = None, Name = None, OptDist = 0.*m,
 #    Length = 0.*m, StrayOrder = 0):
 
-mirror1 = mir.Mirror(thickness = 1*cm, diameter = 5*cm, HRCenter = [1*m,0, 0],
-            HRNorm = [-1, .10, .2], HRK = 0.90, ARK = 0, Wedge = 0, HRr = 0.90,
+mirror1 = mir.Mirror(thickness = 1*cm, diameter = 30*m, HRCenter = [1*m,0, 0],
+            HRNorm = [-1, .0, 0.], HRK = 0.0, ARK = 0, Wedge = 0, HRr = 0.90,
             HRt = 0.10, ARr = 0.10, ARt = .90, Name = 'Mirror1', Ref = 'M1')
 
 mirror2 = mir.Mirror(thickness = 1* cm, diameter = 5*cm,
@@ -47,12 +47,12 @@ beam2 = gbeam.GaussianBeam(Wx = .5*mm, Wy = .5*mm, Dir = [1, -.1, 0],
 			WDistx = -1*cm, WDisty = 1*cm,
 			ortho = True, Pos = [10*cm ,10*cm, 0], Ref = 'OTHER')
 
-inBeams = [beam1, beam2]
-optList = [mirror1, mirror2]
+inBeams = [beam1]
+optList = [mirror1]
 
 # parameters
-threshold = 0.5*mW
-order = 0
+threshold = -0.5*mW
+order = 20
 
 # Create simulation object:
 simu = sim.Simulation(FName = 'test', LName = 'Test')
@@ -74,9 +74,5 @@ loader()
 
 # run simulation
 runner()
-
-
-
-print simu.BeamTreeList[0].beamList()
-print simu.BeamTreeList[1].beamList()
-print(simu)
+print(simu.BeamTreeList[0])
+#print(simu.BeamTreeList[0].beamList())
