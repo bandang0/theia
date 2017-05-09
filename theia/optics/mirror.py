@@ -299,7 +299,7 @@ class Mirror(OpticalComponent):
         Lx, Ly = helpers.basis(localNorm)
 
         # Calculate daughter curv tensors
-        C = np.array([[self.HRK, 0.], [0, self.HRK]])
+        C = -np.array([[self.HRK, 0.], [0, self.HRK]])
         Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
                         [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
         Qi = beam.Q(d)
@@ -410,7 +410,7 @@ class Mirror(OpticalComponent):
         Lx, Ly = helpers.basis(localNorm)
 
         # Calculate daughter curv tensors
-        C = np.array([[self.ARK, 0.], [0, self.ARK]])
+        C = -np.array([[self.ARK, 0.], [0, self.ARK]])
         Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
                         [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
         Qi = beam.Q(d)

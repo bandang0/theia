@@ -5,6 +5,7 @@ import sys
 THEIAPATH = '/home/dev0/theia/theia'    # path to access modules of theia
 sys.path.append(THEIAPATH)
 
+from guppy import hpy
 import simulation
 import optics
 import tree
@@ -64,7 +65,7 @@ def loader():
     simu.load(inBeams, optList)
 
 @timer
-def runner():
+def runner(order):
     simu.run(threshold, order)
 
 
@@ -73,6 +74,9 @@ def runner():
 loader()
 
 # run simulation
-runner()
-print(simu.BeamTreeList[0])
+for k in range(0,1000,50):
+    order = 20 + k
+    runner(order)
+    print(simu.BeamTreeList[0])
+    simu.BeamTreeList = []
 #print(simu.BeamTreeList[0].beamList())
