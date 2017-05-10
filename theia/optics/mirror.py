@@ -70,7 +70,7 @@ class Mirror(OpticalComponent):
 
         '''
 
-        super(Mirror, self).__init__(Name, Ref)
+        super(Mirror, self).__init__(Name = Name, Ref = Ref)
         self.Thick = float(thickness)
         self.Dia = float(diameter)
         self.Wedge = float(Wedge)
