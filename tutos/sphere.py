@@ -26,11 +26,11 @@ mirror1 = mir.Mirror(thickness = 2*m, diameter = 2*m, HRCenter = [0,0, 0],
 beams = []
 for i in range(-3, 3):
 	for j in range(-3, 3):
-		beams.append(gbeam.GaussianBeam(Wx = .5*cm, Wy = .5*cm, 
+		beams.append(gbeam.GaussianBeam(Wx = .5*cm, Wy = .5*cm,
 					ortho = True, Dir = [1., i/4., j/4.],
 					Pos = [0.5, 0., 0.]))
 # Create simulation object:
-simu = sim.Simulation(FName = 'sphere', 
+simu = sim.Simulation(FName = 'sphere',
 		LName = 'An Important Property of Spherical Mirrors')
 
 # Load the initial data of the simulation
@@ -39,9 +39,8 @@ simu.load(beams, [mirror1])
 # run the simulation
 simu.run(threshold = 5.*mW, order = 2)
 
-# observe that all the reflected beams are parallel! 
-
-for k in range(len(simu.BeamTreeList)):
-	print(simu.BeamTreeList[k].R.Root.Dir)
-
-
+# observe that all the reflected beams point to infinity
+if __name__ == "__main__":
+    print "Direction of reflected beams:"
+    for k in range(len(simu.BeamTreeList)):
+        print(simu.BeamTreeList[k].R.Root.Dir)

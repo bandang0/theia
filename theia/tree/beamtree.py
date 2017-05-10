@@ -6,7 +6,6 @@
 import numpy as np
 from units import *
 from helpers import formatter
-from node import Node
 
 
 class BeamTree(object):

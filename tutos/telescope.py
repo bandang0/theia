@@ -48,6 +48,6 @@ simu = sim.Simulation(FName = 'telescope', LName = 'Telescope')
 # to the output of the telescope.f90 optocad simulation
 simu.load(inBeams, optList)
 simu.run(threshold, order)
-
-print(simu)
-print(simu.BeamTreeList[0].beamList())
+if __name__ == "__main__":
+    print(simu)
+    print(simu.BeamTreeList[0].beamList())

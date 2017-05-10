@@ -18,40 +18,54 @@
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Background on astigmatic Gaussian beams}
-\begin{columns}
-\begin{column}{width=0.45\textwidth}
-\begin{itemize}
-\item Solutions of the 3D paraxial Helmholtz equation?
-\item $ A(\vec x, t) = u(\vec x) e^{ikz} e^{-i\omega t} $
 
-and 
-
-\item $ \nabla_{\bot}^2 u +2ik\frac{\partial u}{\partial z} = 0$$
-
-\end{itemize}
-\end{column}
-
-\begin{column}{width=0.45\textwidth}
-\begin{itemize}
-\item Specify a orthonormal basis $(e_z, e_1, e_2)$: $e_1$ and $e_2$ are principal directions, in which
-
-$$ u(\vec x) =  \mathrm{exp}( i \eta(z) -i\frac{k}{2} (\frac{x^2}{q_x(z)} + \frac{y^2}{q_y(z)}))$$
-
-\item $\Rightarrow$ Orthogonal (simple astigmatic) beam. Ellipsoidal iso-phase surfaces which are \textbf{the same as} the iso-intensity surfaces.
-\item Params: $q_x, q_y \in \mathbb{C}$, $(e_1, e_2)$
-\end{itemize}
-\end{column}
-
-\end{columns}
-
-\end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
+\frametitle{Modeling Gaussian beams}
+\begin{itemize}
+\item General astigmatic Gaussian beam in an orthogonal basis $(k, e_1, e_2)$:
+
+$$ E(\vec r, t) = \mathrm{exp}[ i \eta(z) -i\frac{k}{2} {}^t (x,y) Q(z) (x,y)] e^{i(\omega t - kz)} $$
+
+\item $(x,y)$ is the transversal coordinate in the $(e_1, e_2)$ basis, $Q$ is a symmetrical tensor:
+
+\[ \left( \begin{array}{cc}
+\frac{\cos^2 \theta}{q_x(z)} + \frac{\sin^2 \theta}{q_y(z)} & \frac{1}{2} \sin2\theta \left(\frac{1}{q_x(z)}  - \frac{1}{q_y(z)}\right)\\
+\frac{1}{2} \sin2\theta \left(\frac{1}{q_x(z)}  - \frac{1}{q_y(z)} \right) & \frac{\sin^2 \theta}{q_x(z)} + \frac{\cos^2 \theta}{q_y(z)} \end{array} \right)\] 
+
+\item Specification parameters: $\theta, q_{x,y} \in \mathbb{C}$, $(e_1, e_2)$ basis.
+
+\item \textbf{Approximations:} ROC(beam) $ \gg $ ROC(surface) (+ paraxial)
+
+\item Geometric optics: no approximation
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{What can it do?}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{p{3.5cm} | p{3.5cm}| p{3.5cm}}
+\textbf{Yes} & \textbf{No} & \textbf{Not yet} \\ \hline
+Non-sequential propagation & Higher order modes & Cavities \\
+Sequential propagation & Beam saving & Interferences \\
+General astigmatic beams & Surface action specification & Export to CAD software\\
+ & Grating surfaces &  \\
+ & (Polarization) & \\
+\end{tabular}
+\end{center}
+\end{table}
+\end{frame}
+
+
+\begin{frame}
 \frametitle{Data structures/algorithm/approximations}
+\begin{center}
+\includegraphics[scale=0.35]{flow}
+\end{center}
 
 \end{frame}
 
@@ -95,7 +109,12 @@ $$ u(\vec x) =  \mathrm{exp}( i \eta(z) -i\frac{k}{2} (\frac{x^2}{q_x(z)} + \fra
 
 \begin{frame}
 \frametitle{Next steps}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.36]{newfeatures}
 
+\end{center}
+\end{figure}
 \end{frame}
 
 

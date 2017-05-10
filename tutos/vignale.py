@@ -54,5 +54,6 @@ simu.load([beam1], [mirror1, bd1, bd2])
 # run the simulation
 simu.run(threshold = 5.*mW, order = 2)
 
-print(simu)
-print(simu.BeamTreeList[0].beamList())
+if __name__ == "__main__":
+    print(simu)
+    print(simu.BeamTreeList[0].beamList())
