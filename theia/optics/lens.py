@@ -1,7 +1,7 @@
-'''Defines the BeamDump class for theia.'''
+'''Defines the Lens class for theia.'''
 
 # Provides:
-#   class BeamDump
+#   class Lens
 
 import numpy as np
 #from units import *
@@ -11,12 +11,12 @@ from optics import beam as gbeam
 import helpers
 from helpers import formatter
 
-class BeamDump(OpticalComponent):
+class Lens(OpticalComponent):
     '''
 
-    BeamDump class.
+    Lens class.
 
-    This class represents components on which rays stop.
+    This class represents lenses.
 
     *=== Attributes ===*
     OptCount (inherited): class attribute, counts all optics created. [integer]
@@ -24,11 +24,11 @@ class BeamDump(OpticalComponent):
 
     def __init__(self, Diameter, Center = [0., 0., 0.], Norm = [1., 0., 0.],
                 Name = None, Ref = None):
-        '''BeamDump constructor.
+        '''Lens constructor.
 
         Parameters are the attributes.
 
-        Returns a BeamDump.
+        Returns a Lens.
 
         '''
         super(Mirror, self).__init__(Name, Ref)
