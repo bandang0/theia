@@ -1,10 +1,11 @@
 '''Geometry module for theia.'''
 
 # Provides:
-#   refrAngle(theta, n1, n2)
-#   linePlaneInter(pos, dirV, planeC, normV, diameter)
-#   lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5)
-#   lineCylInter(pos, dirV, faceC, normV, thickness, diameter)
+#   refrAngle
+#   linePlaneInter
+#   lineSurfInter
+#   lineCylInter
+#   newDir
 
 import numpy as np
 np.seterr(divide = 'raise', invalid = 'raise')  # np raises FloatingPointError
@@ -39,16 +40,6 @@ def linePlaneInter(pos, dirV, planeC, normV, diameter):
 
 
     '''
-
-    # Convert to np arrays and normalize
-    #pos = np.array(pos, dtype=np.float64)
-    #planeC = np.array(planeC, dtype=np.float64)
-    #dirV = np.array(dirV, dtype=np.float64)
-    #dirV = dirV/np.linalg.norm(dirV)
-    #normV = np.array(normV, dtype=np.float64)
-    #normV = normV/np.linalg.norm(normV)
-    #diameter = float(diameter)
-
     noInterDict = {'isHit': False,  # return this if no intersect
             'distance': 0.,
             'intersection point': np.array([0., 0., 0.], dtype=np.float64)
@@ -103,17 +94,6 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
         'intersection point': position of intersection point. [3D vector]
 
     '''
-
-    # Convert to np.array and normalize
-    #pos = np.array(pos, dtype=np.float64)
-    #chordC = np.array(chordC, dtype=np.float64)
-    #dirV = np.array(dirV, dtype=np.float64)
-    #dirV = dirV/np.linalg.norm(dirV)
-    #chordNorm = np.array(chordNorm, dtype=np.float64)
-    #chordNorm = chordNorm/np.linalg.norm(chordNorm)
-    #diameter = float(diameter)
-    #kurv = float(kurv)
-
     noInterDict = {'isHit': False,  # return this if no intersect
             'distance': 0.,
             'intersection point': np.array([0., 0., 0.], dtype=np.float64)}
@@ -218,14 +198,6 @@ def lineCylInter(pos, dirV, faceC, normV, thickness, diameter):
         'intersection point': point of intersection. [3D vector]
 
     '''
-
-    # Convert to np.array and normalize
-    #pos = np.array(pos, dtype=np.float64)
-    #faceC = np.array(faceC, dtype=np.float64)
-    #dirV = np.array(dirV, dtype=np.float64)
-    #dirV = dirV/np.linalg.norm(dirV)
-    #normV = np.array(normV, dtype=np.float64)
-    #normV = normV/np.linalg.norm(normV)
     diameter = float(diameter)
     thickness = float(thickness)
 
@@ -311,12 +283,6 @@ def newDir(inc, nor, n1, n2):
     Note: if total reflection then refr is None.
 
     '''
-    #inc = np.array(inc, dtype=np.float64)
-    #inc = inc/np.linalg.norm(inc)
-    #nor = np.array(nor, dtype=np.float64)
-    #nor = nor/np.linalg.norm(nor)
-
-
     # normal incidence case:
     if np.abs(np.dot(inc,nor)) == 1.:
         return {'r': nor,

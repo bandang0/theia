@@ -2,17 +2,17 @@
 
 # Provides:
 #   class GaussianBeam
-#       __init__(self, Qx, Qy, Pos = np.array([0., 0., 0.]),
-#           Dir = np.array([1., 0., 0.]), Alpha = 0.,
-#           Name = 'Beam', N = 1., Wl = 1064.*nm, P = 1*W,
-#           OptDist = 0.*m, Length = 0.*m,
-#           Gouyx = 0., Gouyy = 0., StrayOrder = 0):
-#       propDeltas(self,d)
-#       width(self, dist = 0.)
-#       waistPos(self)
-#       waistSize(self)
-#       Rayleigh(self)
-#       ROC(self, dist = 0.)
+#       __init__
+#       __str__
+#       lineList
+#       Q
+#       QParam
+#       ROC
+#       waistPos
+#       rayleigh
+#       width
+#       waistSize
+#       gouy
 
 
 import numpy as np
@@ -32,14 +32,8 @@ class GaussianBeam(object):
 
     *=== Attributes ===*
     BeamCount: class attribute, counts beams. [integer]
-    QTens: gerenal strigmatic complex curvature tensor at the origin.
+    QTens: general astigmatic complex curvature tensor at the origin.
         [np. array of complex]
-    #Wx: Beam width in the x direction at waist. [float]
-    #Wy: Beam width in the y direction at waist. [float]
-    #WDistx: Geometrical position of the waist in the x direction counted from
-        the origin of the beam and along Dir. [float]
-    #WDisty: Geometrical position of the waist in the y direction counted from
-        the origin of the beam and along Dir. [float]
     N: Refraction index of the medium in which the beam is placed. [float]
     Wl: Wave-length in vacuum of the beam (frequency never changes). [float]
     P: Power of the beam. [float]
@@ -48,15 +42,13 @@ class GaussianBeam(object):
     U: A tuple of unitary vectors which along with Dir form a direct orthonormal
         basis in which the Q tensor is expressed. [tuple of 3D vectors]
     Name: Name of the beam if any. [string]
+    Ref: Reference to the beam. [string]
     OptDist: Optical length. [float]
     Length: Geometrical length of the beam. [float]
     StrayOrder: Number representing the *strayness* of the beam. If the beams
         results from a transmission on a HR surface or a reflection on a AR
         surface, then its StrayOrder is the StrayOrder of the parent beam + 1.
         [integer]
-
-    *=== Methods ===*
-
 
     '''
     BeamCount = 0   # counts beams
@@ -71,8 +63,8 @@ class GaussianBeam(object):
         This constructor allows to construct *orthogonal* Gaussian beams if the
         ortho parameter is True, or a general astigmatic beam if it is False.
         If ortho is True, a pair of waists and waist distances has to be given
-        and the corresponding orthogonal beam is returned
-        if it is False a general tensor attribute can directly be given.
+        and the corresponding orthogonal beam is returned.
+        If it is False a general tensor attribute can directly be given.
 
         The Ux vector which is input is the second of the orthonormal basis.
 
@@ -150,8 +142,7 @@ class GaussianBeam(object):
 
         '''
         ans = []
-        ans.append("Beam: " + self.Name + " {")
-        ans.append("Ref: " + self.Ref)
+        ans.append("Beam: " + self.Name + " (" + self.Ref") " + "{")
         ans.append("Power: " + str(self.P) + "W")
         ans.append("Index: " + str(self.N))
         ans.append("Wavelength: " + str(self.Wl) + "m")
@@ -185,9 +176,9 @@ class GaussianBeam(object):
         '''Compute the complex parameters q1 and q2 and theta of beam.
 
             Returns a disctionnary with keys:
-            '1': q1
-            '2': q2
-            'theta': theta
+            '1': q1 [complex]
+            '2': q2 [complex]
+            'theta': theta [float]
         '''
         d = float(d)
 

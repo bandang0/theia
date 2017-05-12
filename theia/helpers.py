@@ -1,6 +1,14 @@
 '''Defines some generic functions for theia.'''
 
 # Provides:
+#   hitTrue
+#   rotMatrix
+#   basis
+#   class TotalReflectionError
+#       __init__
+#       __str__
+#   timer
+#   formatter
 
 
 import numpy as np

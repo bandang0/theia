@@ -2,16 +2,20 @@
 
 # Provides:
 #   class Mirror
+#       __init__
+#       lineList
+#       hit
+#       hitHR
+#       hitAR
 
 import numpy as np
-#from units import *
-from component import OpticalComponent
+from units import *
+from optic import Optic
 from optics import geometry as geo
 from optics import beam as gbeam
 import helpers
-from helpers import formatter
 
-class Mirror(OpticalComponent):
+class Mirror(Optic):
     '''
 
     Mirror class.
@@ -22,25 +26,31 @@ class Mirror(OpticalComponent):
     on the geometric construction of these mirrors.
 
     *=== Attributes ===*
-    OptCount (inherited): class attribute, counts all optics created. [integer]
-    Thick: thickness of the mirror. [float]
-    Dia: diameter of the mirror. [float]
-    HRCenter: center of the 'chord' of the HR surface. [3D vector]
-    HRNorm: unitary normal to the 'chord' of the HR (always pointing towards the
-        outside of the component). [3D vector]
-    HRK: curvature of the HR surface. [float]
-    ARK: idem.
-    Wedge: wedge angle (see doc). [float]
-    Alpha: rotation angle during construction (see doc). [float]
-    RotMatrix: rotation matrix to take [1,0,0] to HRNorm and [-cosW,0,sinW]
-        to ARNorm during construction (see doc). [3D np.array matrix]
-    HRr, HRt, ARr, ARt: power reflectance and transmission coefficients of
-        the HR and AR surfaces.
-    N: refraction index of the material. [float]
-    Name (inherited): name of mirror. [string]
-    Ref (inherited): reference of mirror. [string]
-    KeepI: whether of not to keep data of rays for interference calculations
-        on the HR. [boolean]
+    SetupCount (inherited): class attribute, counts all setup components.
+        [integer]
+    OptCount (inherited): class attribute, counts optical components. [string]
+    HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
+    HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
+     towards the outside of the component). [3D vector]
+    Thick (inherited): thickness of the optic, counted in opposite direction to
+        HRNorm. [float]
+    Dia (inherited): diameter of the component. [float]
+    Name (inherited): name of the component. [string]
+    Ref (inherited): reference string (for keeping track with the lab). [string]
+    ARCenter (inherited): center of the 'chord' of the AR surface. [3D vector]
+    ARNorm (inherited): unitary normal to the 'chord' of the AR (always pointing
+        towards the outside of the component). [3D vector]
+    N (inherited): refraction index of the material. [float]
+    HRK, ARK (inherited): curvature of the HR, AR surfaces. [float]
+    HRr, HRt, ARr, ARt (inherited): power reflectance and transmission
+    coefficients of the HR and AR surfaces. [float]
+    KeepI (inherited): whether of not to keep data of rays for interference
+    calculations on the HR. [boolean]
+    Wedge: wedge angle of the mirror, please refer to the documentation for
+        detaild on the geometry of mirrors and their implementation here.
+        [float]
+    Alpha: rotation alngle used in the geometrical construction of the mirror
+        (see doc). [float]
 
     **Note**: the curvature of any surface is positive for a concave surface
     (coating inside the sphere).
@@ -54,14 +64,12 @@ class Mirror(OpticalComponent):
      *****                               ********
     *******                             *******
 
-    *=== Methods ===*
-
     '''
 
-    def __init__(self, thickness, diameter, HRCenter =  [0., 0., 0.],
-                ARNorm = None, HRNorm = [1., 0., 0.], HRK = 0., ARK = 0.,
-                Wedge = 0., Alpha = 0., HRr = 1., HRt = 0., ARr = 0., ARt = 1.,
-                N = 1.4585, Name = None, Ref = None, KeepI = True):
+    def __init__(self, Wedge = 0., Alpha = 0., HRCenter = None, HRNorm = None,
+                HRr = None, HRt = None, ARr = None, ARt = None,
+                HRK = None, ARK = None, Thickness = None,
+                N = None, KeepI = None, Name = None, Ref = None):
         '''Mirror constructor.
 
         Parameters are the attributes.
@@ -70,42 +78,19 @@ class Mirror(OpticalComponent):
 
         '''
 
-        super(Mirror, self).__init__(Name = Name, Ref = Ref)
-        self.Thick = float(thickness)
-        self.Dia = float(diameter)
+        super(Mirror, self).__init__(ARCenter = None, ARNorm = None, N = N,
+            HRK = HRK, ARK = ARK, ARr = ARr, ARt = ARt, HRr = HRr, HRt = HRt,
+        KeepI = KeepI, HRCenter = HRCenter, HRNorm = HRNorm,
+        Thickness = Thickness, Diameter = Diameter, Name = Name, Ref = Ref)
+
+        #Calculate ARCenter and ARNorm with wedge and alpha and thickness:
+        self.ARCenter = ...
+        self.ARNorm = ...
+
+        # Keep the constructor data for outputting
         self.Wedge = float(Wedge)
-        self.HRCenter = np.array(HRCenter, dtype=np.float64)
-        self.HRNorm = np.array(HRNorm, dtype=np.float64)
-        self.HRNorm = self.HRNorm/np.linalg.norm(self.HRNorm)
-
-        # determine ARCenter and ARNorm
-        self.ARCenter = self.HRCenter - self.Thick*self.HRNorm \
-                            - self.Dia*np.tan(self.Wedge)*self.HRNorm/2.
-
-        if ARNorm is not None:
-            self.ARNorm = np.array(ARNorm, dtype=np.float64)
-            self.ARNorm = self.ARNorm/np.linalg.norm(self.ARNorm)
-        else:
-            self.ARNorm = - self.HRNorm
-
-        self.ARNorm = self.ARNorm/np.linalg.norm(self.ARNorm)
-        self.HRK = float(HRK)
-        self.ARK = float(ARK)
         self.Alpha = float(Alpha)
-        self.RotMatrix = helpers.rotMatrix(np.array([1., 0., 0.]), HRNorm)
-        self.HRr = float(HRr)
-        self.HRt = float(HRt)
-        self.ARr = float(ARr)
-        self.ARt = float(ARt)
-        self.N = float(N)
-        self.KeepI = KeepI
 
-    def __str__(self):
-        '''String representation of the mirror, when calling print(beam).
-
-        '''
-
-        return formatter(self.lineList())
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.
@@ -114,8 +99,9 @@ class Mirror(OpticalComponent):
         ans.append("Mirror: " + self.Name + " (" + str(self.Ref) + ") {")
         ans.append("Thick: " + str(self.Thick) + "m")
         ans.append("Diameter: " + str(self.Dia) + "m")
-        ans.append("Wedge: " + str(self.Wedge) + "rad")
-        ans.append("Origin: " + str(self.HRCenter))
+        ans.append("Wedge: " + str(self.Wedge/deg) + "deg")
+        ans.append("Alpha: " + str(self.Alpha/deg) + "deg")
+        ans.append("HRCenter: " + str(self.HRCenter))
         ans.append("HRNorm: " + str(self.HRNorm))
         ans.append("Index: " + str(self.N))
         ans.append("HRKurv, ARKurv: " + str(self.HRK) + ", " + str(self.ARK))
@@ -125,79 +111,6 @@ class Mirror(OpticalComponent):
 
         return ans
 
-    def isHit(self, beam):
-        '''Determine if a beam hits the mirror.
-
-        This uses the line***Inter functions from the geometry module to find
-        characteristics of impact of beams on mirrors.
-
-        beam: incoming beam. [GaussianBeam]
-
-        Returns a dictionnary with keys:
-            'isHit': whether the beam hits the mirror. [boolean]
-            'intersection point': point in space where it is first hit. [3D vector]
-            'face': to indicate which face is first hit, can be 'HR', 'AR' or
-                'side'. [string]
-            'distance': geometrical distance from beam origin to impact. [float]
-
-        '''
-
-        noInterDict = {'isHit': False,
-                        'intersection point': np.array([0., 0., 0.],
-                                                    dtype=np.float64),
-                        'face': None,
-                        'distance': 0.}
-
-        # get impact parameters on HR, AR and side:
-        if np.abs(self.HRK) > 0.:
-            HRDict = geo.lineSurfInter(beam.Pos,
-                                        beam.Dir, self.HRCenter,
-                                        self.HRK*self.HRNorm/np.abs(self.HRK),
-                                        np.abs(self.HRK),
-                                        self.Dia)
-        else:
-            HRDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
-                                        self.HRNorm, self.Dia)
-
-        if np.abs(self.ARK) > 0.:
-            ARDict = geo.lineSurfInter(beam.Pos,
-                                        beam.Dir, self.ARCenter,
-                                        self.ARK*self.ARNorm/np.abs(self.ARK),
-                                        np.abs(self.ARK),
-                                        self.Dia/np.cos(self.Wedge))
-        else:
-            ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.ARCenter,
-                                        self.ARNorm, self.Dia)
-
-        SideDict = geo.lineCylInter(beam.Pos, beam.Dir,
-                                    self.HRCenter, self.HRNorm,
-                                    self.Thick, self.Dia)
-
-        # face tags
-        HRDict['face'] = 'HR'
-        ARDict['face'] = 'AR'
-        SideDict['face'] = 'Side'
-
-
-        # determine first hit
-        hitFaces = filter(helpers.hitTrue, [HRDict, ARDict, SideDict])
-
-        if len(hitFaces) == 0:
-            return noInterDict
-
-        dist = hitFaces[0]['distance']
-        j=0
-
-        for i in range(len(hitFaces)):
-            if hitFaces[i]['distance'] < dist:
-                dist = hitFaces[i]['distance']
-                j=i
-
-        return {'isHit': True,
-                'intersection point': hitFaces[j]['intersection point'],
-                'face': hitFaces[j]['face'],
-                'distance': hitFaces[j]['distance']
-                }
 
     def hit(self, beam, order, threshold):
         '''Compute the refracted and reflected beams after interaction.
@@ -226,6 +139,7 @@ class Mirror(OpticalComponent):
             return self.hitAR(beam, dic['intersection point'], order, threshold)
         else:
             return self.hitSide(beam)
+
 
     def hitHR(self, beam, point, order, threshold):
         '''Compute the daughter beams after interaction on HR at point.
@@ -448,15 +362,4 @@ class Mirror(OpticalComponent):
                 P = beam.P * self.ARt, StrayOrder = beam.StrayOrder,
                 Ref = beam.Ref + 't')
 
-
         return ans
-
-    def hitSide(self, beam):
-        '''Compute the daughter beams after interaction on Side at point.
-
-        beam: incident beam. [GaussianBeam]
-
-        Returns {'t': None, 'r': None}
-
-        '''
-        return {'t': None, 'r': None}

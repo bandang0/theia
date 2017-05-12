@@ -2,11 +2,15 @@
 
 # Provides:
 #   class OpticalComponent
+#       __init__
+#       __str__
+#       lineList
+#       beamList
+#       beamLineList
+#       numberOfBeams
+#   treeOfBeam
 
-import numpy as np
-from units import *
 from helpers import formatter
-
 
 class BeamTree(object):
     '''
@@ -27,7 +31,6 @@ class BeamTree(object):
         [OpticalBeam]
     Face: face where the interaction occured. ['HR', 'AR', or 'Side']
     ImpactPoint: 3D point in space where the interaction occured. [3D vector]
-    *=== Methods ===*
 
     '''
 
@@ -102,7 +105,7 @@ def treeOfBeam(srcBeam, optList, order, threshold):
     '''Function to calculate the tree of daughter beams of srcBeam.
 
     srcBeam: Input beam. [GaussianBeam]
-    optList: List of optical components of the setup. [List of OpticalComponent]
+    optList: List of optical components of the setup. [list of OpticalComponent]
     order: order of simulation. [integer]
     threshold: power threshold for daughter beams. [float]
 

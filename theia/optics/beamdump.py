@@ -2,28 +2,42 @@
 
 # Provides:
 #   class BeamDump
+#       __init__
+#       lineList
+#       isHit
+#       hit
 
 import numpy as np
-#from units import *
-from component import OpticalComponent
+from component import SetupComponent
 from optics import geometry as geo
-from optics import beam as gbeam
-import helpers
 from helpers import formatter
 
-class BeamDump(OpticalComponent):
+class BeamDump(SetupComponent):
     '''
 
     BeamDump class.
 
-    This class represents components on which rays stop.
+    This class represents components on which rays stop. They have cylindrical
+    symmetry and stop beams on all their faces. They can represent baffles
+    for example.
 
     *=== Attributes ===*
-    OptCount (inherited): class attribute, counts all optics created. [integer]
+    SetupCount (inherited): class attribute, counts all setup components.
+        [integer]
+    HRCenter (inherited): center of the principal face of the BeamDump in space.
+        [3D vector]
+    HRnorm (inherited): normal unitary vector the this principal face,
+        supposed to point outside the media. [3D vector]
+    Thick (inherited): thickness of the dump, counted in opposite direction to
+        HRNorm. [float]
+    Dia (inherited): diameter of the component. [float]
+    Name (inherited): name of the component. [string]
+    Ref (inherited): reference string (for keeping track with the lab). [string]
+
     '''
 
-    def __init__(self, Diameter, Center = [0., 0., 0.], Norm = [1., 0., 0.],
-                Name = None, Ref = None):
+    def __init__(self, Center = None, Norm = None,
+                Name = None, Ref = None, Thickness = None, Diameter = None):
         '''BeamDump constructor.
 
         Parameters are the attributes.
@@ -31,8 +45,102 @@ class BeamDump(OpticalComponent):
         Returns a BeamDump.
 
         '''
-        super(Mirror, self).__init__(Name, Ref)
-        self.Dia = float(Diameter)
-        self.Norm = np.array(Norm, dtype = float64)
-        self.Norm = self.Norm/np.linalg.norm(self.Norm)
-        self.Center = np.array(Center, dtype = float64)
+        # initialize from base constructor
+        super(BeamDump, self).__init__(Name = Name, Ref = Ref,
+                HRCentre = Center, HRNorm = Norm, Thickness = Thickness)
+
+    def lineList(self):
+        '''Return the list of lines needed to print the object.
+        '''
+        ans = []
+        ans.append("BeamDump: " + self.Name + " (" + self.Ref + ") {")
+        ans.append("Thick: " + str(self.Thick) + "m")
+        ans.append("Diameter: " + str(self.Dia) + "m")
+        ans.append("Center: " + str(self.HRCenter))
+        ans.append("Norm: " + str(self.HRNorm))
+        ans.append("}")
+
+    def isHit(self, beam):
+        '''Determine if a beam hits the BeamDump.
+
+        This uses the line***Inter functions from the geometry module to find
+        characteristics of impact of beams on beamdumps.
+
+        beam: incoming beam. [GaussianBeam]
+
+        Returns a dictionnary with keys:
+            'isHit': whether the beam hits the dump. [boolean]
+            'intersection point': point in space where it is first hit.
+                [3D vector]
+            'face': to indicate which face is first hit, can be 'HR', 'AR' or
+                'side'. [string]
+            'distance': geometrical distance from beam origin to impact. [float]
+
+        '''
+
+        noInterDict = {'isHit': False,
+                        'intersection point': np.array([0., 0., 0.],
+                                                    dtype=np.float64),
+                        'face': None,
+                        'distance': 0.}
+
+        # Get impact parameters
+        HRDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
+                                    self.HRNorm, self.Dia)
+
+        SideDict = geo.lineCylInter(beam.Pos, beam.Dir,
+                                    self.HRCenter, self.HRNorm,
+                                    self.Thick, self.Dia)
+
+        ARCenter = self.HRCente - self.Thick*self.HRNorm
+
+        ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, ARCenter,
+                                    - self.HRNorm, self.Dia)
+
+        # face tags
+        HRDict['face'] = 'HR'
+        ARDict['face'] = 'AR'
+        SideDict['face'] = 'Side'
+
+
+        # determine first hit
+        hitFaces = filter(helpers.hitTrue, [HRDict, ARDict, SideDict])
+
+        if len(hitFaces) == 0:
+            return noInterDict
+
+        dist = hitFaces[0]['distance']
+        j=0
+
+        for i in range(len(hitFaces)):
+            if hitFaces[i]['distance'] < dist:
+                dist = hitFaces[i]['distance']
+                j=i
+
+        return {'isHit': True,
+                'intersection point': hitFaces[j]['intersection point'],
+                'face': hitFaces[j]['face'],
+                'distance': hitFaces[j]['distance']
+                }
+
+    def hit(self, beam, order, threshold):
+        '''Compute the refracted and reflected beams after interaction.
+
+        BeamDumps always stop beams.
+
+        beam: incident beam. [GaussianBeam]
+        order: maximum strayness of daughter beams, which are not returned if
+            their strayness is over this order. [integer]
+        threshold: idem for the power of the daughter beams. [float]
+
+        Returns a dictionnary of beams with keys:
+            't': None
+            'r': None
+
+        '''
+        # get impact parameters and update beam
+        dic = self.isHit(beam)
+        beam.Length = dic['distance']
+        beam.OptDist = beam.N * beam.Length
+
+        return {'r': None, 't': None}
