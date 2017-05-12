@@ -7,7 +7,6 @@
 #       hitSide
 
 import numpy as np
-from units import *
 from component import SetupComponent
 
 class Optic(SetupComponent):
@@ -69,7 +68,7 @@ class Optic(SetupComponent):
 
         '''
         # initialize data from base constructor
-        super(Optic, self).__init__(HRCenter = HRCenter, HRNorm = HRnorm
+        super(Optic, self).__init__(HRCenter = HRCenter, HRNorm = HRNorm,
                 Name = Name, Ref = Ref, Thickness = Thickness,
                 Diameter = Diameter)
 

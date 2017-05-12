@@ -83,22 +83,21 @@ class Mirror(Optic):
         KeepI = KeepI, HRCenter = HRCenter, HRNorm = HRNorm,
         Thickness = Thickness, Diameter = Diameter, Name = Name, Ref = Ref)
 
-        #Calculate ARCenter and ARNorm with wedge and alpha and thickness:
-        self.ARCenter = ...
-        self.ARNorm = ...
-
         # Keep the constructor data for outputting
         self.Wedge = float(Wedge)
         self.Alpha = float(Alpha)
 
+        #Calculate ARCenter and ARNorm with wedge and alpha and thickness:
+        self.ARCenter = ...
+        self.ARNorm = ...
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.
         '''
         ans = []
         ans.append("Mirror: " + self.Name + " (" + str(self.Ref) + ") {")
-        ans.append("Thick: " + str(self.Thick) + "m")
-        ans.append("Diameter: " + str(self.Dia) + "m")
+        ans.append("Thick: " + str(self.Thick/cm) + "cm")
+        ans.append("Diameter: " + str(self.Dia/cm) + "cm")
         ans.append("Wedge: " + str(self.Wedge/deg) + "deg")
         ans.append("Alpha: " + str(self.Alpha/deg) + "deg")
         ans.append("HRCenter: " + str(self.HRCenter))

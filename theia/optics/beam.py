@@ -142,7 +142,7 @@ class GaussianBeam(object):
 
         '''
         ans = []
-        ans.append("Beam: " + self.Name + " (" + self.Ref") " + "{")
+        ans.append("Beam: " + self.Name + " (" + self.Ref + ") " + "{")
         ans.append("Power: " + str(self.P) + "W")
         ans.append("Index: " + str(self.N))
         ans.append("Wavelength: " + str(self.Wl) + "m")

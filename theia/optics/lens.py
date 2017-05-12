@@ -2,16 +2,13 @@
 
 # Provides:
 #   class Lens
-#       __init__
-#       lineList
 #       hit
 #       hitActive
 
 import numpy as np
-from units import *
-from optic import Optic
+from optics.optic import Optic
 from optics import geometry as geo
-from optics import beam as gbeam
+from optics.beam import GaussianBeam as gbeam
 import helpers
 
 class Lens(Optic):
@@ -19,7 +16,8 @@ class Lens(Optic):
 
     Lens class.
 
-    This class represents lenses.
+    This class is a base class for lenses. It implements the hit and hitActive
+    methods for all lenses.
 
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
@@ -27,7 +25,7 @@ class Lens(Optic):
     OptCount (inherited): class attribute, counts optical components. [string]
     HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
     HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
-     towards the outside of the component). [3D vector]
+        towards the outside of the component). [3D vector]
     Thick (inherited): thickness of the optic, counted in opposite direction to
         HRNorm. [float]
     Dia (inherited): diameter of the component. [float]
@@ -35,14 +33,13 @@ class Lens(Optic):
     Ref (inherited): reference string (for keeping track with the lab). [string]
     ARCenter (inherited): center of the 'chord' of the AR surface. [3D vector]
     ARNorm (inherited): unitary normal to the 'chord' of the AR (always pointing
-     towards the outside of the component). [3D vector]
+        towards the outside of the component). [3D vector]
     N (inherited): refraction index of the material. [float]
     HRK, ARK (inherited): curvature of the HR, AR surfaces. [float]
     HRr, HRt, ARr, ARt (inherited): power reflectance and transmission
-    coefficients of the HR and AR surfaces. [float]
+        coefficients of the HR and AR surfaces. [float]
     KeepI (inherited): whether of not to keep data of rays for interference
-    calculations on the HR. [boolean]
-    Focal: Focal length of the lens. [float]
+        calculations on the HR. [boolean]
 
     **Note**: the curvature of any surface is positive for a concave surface
     (coating inside the sphere).
@@ -58,51 +55,10 @@ class Lens(Optic):
 
     '''
 
-    def __init__(self, Focal = 10*cm, N = None, KeepI = None,
-                Diameter = None, Thickness = None, HRr = None, HRt = None,
-                HRNorm = None, HRCenter = None, Name = None, Ref = None):
-        '''Lens constructor.
-
-        Parameters are the attributes.
-
-        Returns a Lens.
-
-        '''
-        # initalize with base constructor
-        super(Lens, self).__init__(ARCenter = None, ARNorm = None, N = N,
-                HRK = None, ARK = None,
-                ARr = HRr, ARt = HRt, HRr = HRr, HRt = HRt, KeepI = KeepI,
-                HRCenter = HRCenter, HRNorm = HRNorm, Thickness = Thickness,
-                Diameter = Diameter, Name = Name, Ref = Ref)
-
-        # Calculate ARCenter, ARNorm, HRK, ARK with thickness, Focale, etc...
-        self.ARCenter = ...
-        self.ARNorm = ...
-        self.HRK = ...
-        self.ARK = ...
-
-        # Keep all the constructor data for outputting
-        self.Focal = float(Focal)
-
-    def lineList(self):
-        '''Returns the list of lines necessary to print the object.
-        '''
-        ans = []
-        ans.append("Lens: " + self.Name + " (" + str(self.Ref) + ") {")
-        ans.append("Thick: " + str(self.Thick) + "m")
-        ans.append("Diameter: " + str(self.Dia) + "m")
-        ans.append("Focale: " + str(self.Wedge) + "rad")
-        ans.append("HRCenter: " + str(self.HRCenter))
-        ans.append("HRNorm: " + str(self.HRNorm))
-        ans.append("Index: " + str(self.N))
-        ans.append("R, T: " + str(self.HRr) + ", " + str(self.HRt) )
-        ans.append("}")
-
-        return ans
-
     def hit(self, beam, order, threshold):
         '''Compute the refracted and reflected beams after interaction.
 
+        This function is valid for all types of lenses.
         The beams returned are those selected after the order and threshold
         criterion.
 
@@ -132,6 +88,7 @@ class Lens(Optic):
         '''Compute the daughter beams after interaction on HR or AR at point.
 
         AR andHr are the 'active' surfaces of the lens.
+        This function is valid for all types of lenses.
 
         beam: incident beam. [GaussianBeam]
         point: point in space of interaction. [3D vector]
@@ -237,13 +194,13 @@ class Lens(Optic):
 
         # Create new beams
         if not 'r' in ans:
-            ans['r'] = gbeam.GaussianBeam(ortho = False, Q = Qr,
+            ans['r'] = gbeam(ortho = False, Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
                     StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r')
 
         if not 't' in ans:
-            ans['t'] = gbeam.GaussianBeam(ortho = False, Q = Qt, Pos = point,
+            ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.HRt, StrayOrder = beam.StrayOrder,
                 Ref = beam.Ref + 't')
