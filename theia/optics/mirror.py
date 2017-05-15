@@ -12,7 +12,7 @@ import numpy as np
 from units import *
 from optic import Optic
 from optics import geometry as geo
-from optics import beam as gbeam
+from optics.beam import GaussianBeam as gbeam
 import helpers
 
 class Mirror(Optic):
@@ -66,21 +66,34 @@ class Mirror(Optic):
 
     '''
 
-    def __init__(self, Wedge = 0., Alpha = 0., HRCenter = None, HRNorm = None,
+    def __init__(self, Wedge = 0., Alpha = 0., HRCenter = None,
+                Theta = 0., Phi = 0., HRNorm = None, Diameter = None,
                 HRr = None, HRt = None, ARr = None, ARt = None,
                 HRK = None, ARK = None, Thickness = None,
                 N = None, KeepI = None, Name = None, Ref = None):
         '''Mirror constructor.
 
-        Parameters are the attributes.
+        Parameters are the attributes and the angles theta and phi are spherical
+        coordinates of HRNorm.
 
         Returns a mirror.
 
         '''
+        if Wedge is None:
+            Wedge = 0.
+        if Alpha is None:
+            Alpha = 0.
+        if Theta is None:
+            Theta = 0.
+        if Phi is None:
+            Phi = 0.
+
+        Norm = np.array([np.sin(Theta)*np.cos(Phi), np.sin(Theta) * np.sin(Phi),
+                        np.cos(Theta)], dtype = np.float64)
 
         super(Mirror, self).__init__(ARCenter = None, ARNorm = None, N = N,
             HRK = HRK, ARK = ARK, ARr = ARr, ARt = ARt, HRr = HRr, HRt = HRt,
-        KeepI = KeepI, HRCenter = HRCenter, HRNorm = HRNorm,
+        KeepI = KeepI, HRCenter = HRCenter, HRNorm = Norm,
         Thickness = Thickness, Diameter = Diameter, Name = Name, Ref = Ref)
 
         # Keep the constructor data for outputting
@@ -88,8 +101,13 @@ class Mirror(Optic):
         self.Alpha = float(Alpha)
 
         #Calculate ARCenter and ARNorm with wedge and alpha and thickness:
-        self.ARCenter = ...
-        self.ARNorm = ...
+        self.ARCenter = self.HRCenter\
+            - (self.Thick + .5*np.tan(self.Wedge)*self.Dia)*self.HRNorm
+
+        a,b = helpers.basis(self.HRNorm)
+        self.ARNorm = -np.cos(self.Wedge) * self.HRNorm\
+                        + np.sin(self.Wedge)*(- np.sin(self.Alpha) * a\
+                                            + np.cos(self.Alpha) * b)\
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.
@@ -104,12 +122,86 @@ class Mirror(Optic):
         ans.append("HRNorm: " + str(self.HRNorm))
         ans.append("Index: " + str(self.N))
         ans.append("HRKurv, ARKurv: " + str(self.HRK) + ", " + str(self.ARK))
-        ans.append("HRr, HRt, ARr, ARt: " + str(self.HRr) + ", " + str(self.HRt) \
+        ans.append("HRr, HRt, ARr, ARt: " +str(self.HRr) + ", " + str(self.HRt)\
             + ", " + str(self.ARr) + ", " + str(self.ARt) )
         ans.append("}")
 
         return ans
 
+    def isHit(self, beam):
+        '''Determine if a beam hits the Optic.
+
+        This is a function for mirrors, using their geometrical
+        attributes. This uses the line***Inter functions from the geometry
+        module to find characteristics of impact of beams on mirrors.
+
+        beam: incoming beam. [GaussianBeam]
+
+        Returns a dictionnary with keys:
+            'isHit': whether the beam hits the optic. [boolean]
+            'intersection point': point in space where it is first hit.
+                    [3D vector]
+            'face': to indicate which face is first hit, can be 'HR', 'AR' or
+                'side'. [string]
+            'distance': geometrical distance from beam origin to impact. [float]
+
+        '''
+        noInterDict = {'isHit': False,
+                        'intersection point': np.array([0., 0., 0.],
+                                                    dtype=np.float64),
+                        'face': None,
+                        'distance': 0.}
+
+        # get impact parameters on HR, AR and side:
+        if np.abs(self.HRK) > 0.:
+            HRDict = geo.lineSurfInter(beam.Pos,
+                                        beam.Dir, self.HRCenter,
+                                        self.HRK*self.HRNorm/np.abs(self.HRK),
+                                        np.abs(self.HRK),
+                                        self.Dia)
+        else:
+            HRDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
+                                        self.HRNorm, self.Dia)
+
+        if np.abs(self.ARK) > 0.:
+            ARDict = geo.lineSurfInter(beam.Pos,
+                                        beam.Dir, self.ARCenter,
+                                        self.ARK*self.ARNorm/np.abs(self.ARK),
+                                        np.abs(self.ARK),
+                                        self.Dia/np.cos(self.Wedge))
+        else:
+            ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.ARCenter,
+                                        self.ARNorm, self.Dia)
+
+        SideDict = geo.lineCylInter(beam.Pos, beam.Dir,
+                                    self.HRCenter, self.HRNorm,
+                                    self.Thick, self.Dia)
+
+        # face tags
+        HRDict['face'] = 'HR'
+        ARDict['face'] = 'AR'
+        SideDict['face'] = 'Side'
+
+
+        # determine first hit
+        hitFaces = filter(helpers.hitTrue, [HRDict, ARDict, SideDict])
+
+        if len(hitFaces) == 0:
+            return noInterDict
+
+        dist = hitFaces[0]['distance']
+        j=0
+
+        for i in range(len(hitFaces)):
+            if hitFaces[i]['distance'] < dist:
+                dist = hitFaces[i]['distance']
+                j=i
+
+        return {'isHit': True,
+                'intersection point': hitFaces[j]['intersection point'],
+                'face': hitFaces[j]['face'],
+                'distance': hitFaces[j]['distance']
+                }
 
     def hit(self, beam, order, threshold):
         '''Compute the refracted and reflected beams after interaction.
@@ -188,7 +280,7 @@ class Mirror(Optic):
         dir2 = geo.newDir(beam.Dir, localNorm, n1, n2)
 
         # if there is no refracted
-        if beam.P * self.HRt < threshold or beam.StrayOrder + 1 > order \
+        if beam.P * self.HRt < threshold or beam.StrayOrder + 1 > order\
                                         or dir2['t'] is None:
             ans['t'] = None
 
@@ -239,13 +331,13 @@ class Mirror(Optic):
 
         # Create new beams
         if not 'r' in ans:
-            ans['r'] = gbeam.GaussianBeam(ortho = False, Q = Qr,
+            ans['r'] = gbeam(ortho = False, Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
                     StrayOrder = beam.StrayOrder, Ref = beam.Ref + 'r')
 
         if not 't' in ans:
-            ans['t'] = gbeam.GaussianBeam(ortho = False, Q = Qt, Pos = point,
+            ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.HRt, StrayOrder = beam.StrayOrder + 1,
                 Ref = beam.Ref + 't')
@@ -350,13 +442,13 @@ class Mirror(Optic):
 
         # Create new beams
         if not 'r' in ans:
-            ans['r'] = gbeam.GaussianBeam(ortho = False, Q = Qr,
+            ans['r'] = gbeam(ortho = False, Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
                     StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r')
 
         if not 't' in ans:
-            ans['t'] = gbeam.GaussianBeam(ortho = False, Q = Qt, Pos = point,
+            ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.ARt, StrayOrder = beam.StrayOrder,
                 Ref = beam.Ref + 't')

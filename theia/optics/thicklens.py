@@ -7,7 +7,7 @@
 
 import numpy as np
 from units import *
-from optic.lens import Lens
+from optics.lens import Lens
 
 class ThickLens(Lens):
     '''
@@ -82,24 +82,24 @@ class ThickLens(Lens):
         self.ARnorm = - self.HRNorm
 
         # half angles
-        theta1 = np.abs(np.arsin(self.Dia * self. HRK/2. ))
-        theta2 = np.abs(np.arsin(self.Dia * self. ARK/2. ))
+        theta1 = np.abs(np.arcsin(self.Dia * self. HRK/2. ))
+        theta2 = np.abs(np.arcsin(self.Dia * self. ARK/2. ))
         apex2 = self.HRCenter + self.Thick * self.ARNorm    #thickness on axis
 
         # real HR andAR centers
         if np.abs(self.HRK) > 0.:
-            self.HRCenter = self.HRCenter \
+            self.HRCenter = self.HRCenter\
                         + (1. - np.cos(theta1))*self.HRNorm/self.HRK
 
         if np.abs(self.ARK) > 0.:
-            self.ARCenter = apex2 \
+            self.ARCenter = apex2\
                         + (1. - np.cos(theta2))*self.ARNorm/self.ARK
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.
         '''
         ans = []
-        ans.append("Lens: " + self.Name + " (" + str(self.Ref) + ") {")
+        ans.append("ThickLens: " + self.Name + " (" + str(self.Ref) + ") {")
         ans.append("Thick: " + str(self.Thick/cm) + "cm")
         ans.append("Diameter: " + str(self.Dia/cm) + "cm")
         ans.append("Center: " + str(self.HRCenter))

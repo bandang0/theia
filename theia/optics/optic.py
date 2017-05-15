@@ -8,6 +8,7 @@
 
 import numpy as np
 from component import SetupComponent
+from optics import geometry as geo
 
 class Optic(SetupComponent):
     '''
@@ -67,6 +68,28 @@ class Optic(SetupComponent):
         Returns an Optic.
 
         '''
+        # allow empty constructor
+        if ARCenter is None:
+            ARCenter = [0.02, 0., 0.]
+        if ARNorm is None:
+            ARNorm = [1., 0., 0.]
+        if N is None:
+            N = 1.4585
+        if HRK is None:
+            HRK = 0.
+        if ARK is None:
+            ARK = 0.
+        if ARr is None:
+            ARr = 0.1
+        if ARt is None:
+            ARt = 0.9
+        if HRr is None:
+            HRr = 0.9
+        if HRt is None:
+            HRt = 0.1
+        if KeepI is None:
+            KeepI = False
+
         # initialize data from base constructor
         super(Optic, self).__init__(HRCenter = HRCenter, HRNorm = HRNorm,
                 Name = Name, Ref = Ref, Thickness = Thickness,
@@ -86,92 +109,19 @@ class Optic(SetupComponent):
         self.KeepI = KeepI
 
         # override base names and refs
-        if Name is not None:
+        if Name is None:
+            self.Name = "Optic"
+        else:
             self.Name = Name
-        else:
-            self.Name = "Optics"
 
-        if Ref is not None:
+        if Ref is None:
+            self.Ref = "Opt" + str(Optic.OptCount)
+        else:
             self.Ref = Ref
-        else:
-            self.Ref = "Opt" + str(self.__class__.OptCount)
 
-        self.__class__.OptCount = self.__class__.OptCount + 1
+        Optic.OptCount = Optic.OptCount + 1
 
-    def isHit(self, beam):
-        '''Determine if a beam hits the Optic.
-
-        This is a generic function for all optics, using their geometrical
-        attributes. This uses the line***Inter functions from the geometry
-        module to find characteristics of impact of beams on optics.
-
-        beam: incoming beam. [GaussianBeam]
-
-        Returns a dictionnary with keys:
-            'isHit': whether the beam hits the optic. [boolean]
-            'intersection point': point in space where it is first hit.
-                    [3D vector]
-            'face': to indicate which face is first hit, can be 'HR', 'AR' or
-                'side'. [string]
-            'distance': geometrical distance from beam origin to impact. [float]
-
-        '''
-        noInterDict = {'isHit': False,
-                        'intersection point': np.array([0., 0., 0.],
-                                                    dtype=np.float64),
-                        'face': None,
-                        'distance': 0.}
-
-        # get impact parameters on HR, AR and side:
-        if np.abs(self.HRK) > 0.:
-            HRDict = geo.lineSurfInter(beam.Pos,
-                                        beam.Dir, self.HRCenter,
-                                        self.HRK*self.HRNorm/np.abs(self.HRK),
-                                        np.abs(self.HRK),
-                                        self.Dia)
-        else:
-            HRDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
-                                        self.HRNorm, self.Dia)
-
-        if np.abs(self.ARK) > 0.:
-            ARDict = geo.lineSurfInter(beam.Pos,
-                                        beam.Dir, self.ARCenter,
-                                        self.ARK*self.ARNorm/np.abs(self.ARK),
-                                        np.abs(self.ARK),
-                                        self.Dia/np.cos(self.Wedge))
-        else:
-            ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.ARCenter,
-                                        self.ARNorm, self.Dia)
-
-        SideDict = geo.lineCylInter(beam.Pos, beam.Dir,
-                                    self.HRCenter, self.HRNorm,
-                                    self.Thick, self.Dia)
-
-        # face tags
-        HRDict['face'] = 'HR'
-        ARDict['face'] = 'AR'
-        SideDict['face'] = 'Side'
-
-
-        # determine first hit
-        hitFaces = filter(helpers.hitTrue, [HRDict, ARDict, SideDict])
-
-        if len(hitFaces) == 0:
-            return noInterDict
-
-        dist = hitFaces[0]['distance']
-        j=0
-
-        for i in range(len(hitFaces)):
-            if hitFaces[i]['distance'] < dist:
-                dist = hitFaces[i]['distance']
-                j=i
-
-        return {'isHit': True,
-                'intersection point': hitFaces[j]['intersection point'],
-                'face': hitFaces[j]['face'],
-                'distance': hitFaces[j]['distance']
-                }
+    
 
     def hitSide(self, beam):
         '''Compute the daughter beams after interaction on Side at point.

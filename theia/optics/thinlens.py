@@ -65,6 +65,13 @@ class ThinLens(Lens):
         Returns a ThinLens.
 
         '''
+        # empty constructor
+        if Focal is None:
+            Focal = 10*cm
+        if R is None:
+            R = .1
+        if T is None:
+            T = .9
         # initialize with lens mother constructor
         super(Lens, self).__init__(ARCenter = None, ARNorm = None, N = None,
                 HRK = None, ARK = None,
@@ -93,7 +100,7 @@ class ThinLens(Lens):
         '''Returns the list of lines necessary to print the object.
         '''
         ans = []
-        ans.append("Lens: " + self.Name + " (" + str(self.Ref) + ") {")
+        ans.append("ThinLens: " + self.Name + " (" + str(self.Ref) + ") {")
         ans.append("Diameter: " + str(self.Dia/cm) + "cm")
         ans.append("Focal: " + str(self.Focal/mm) + "mm")
         ans.append("Center: " + str(self.HRCenter))

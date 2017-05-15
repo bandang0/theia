@@ -10,7 +10,7 @@
 import numpy as np
 from component import SetupComponent
 from optics import geometry as geo
-from helpers import formatter
+from helpers import formatter, hitTrue
 
 class BeamDump(SetupComponent):
     '''
@@ -47,7 +47,7 @@ class BeamDump(SetupComponent):
         '''
         # initialize from base constructor
         super(BeamDump, self).__init__(Name = Name, Ref = Ref,
-                HRCentre = Center, HRNorm = Norm, Thickness = Thickness)
+                HRCenter = Center, HRNorm = Norm, Thickness = Thickness)
 
     def lineList(self):
         '''Return the list of lines needed to print the object.
@@ -59,6 +59,8 @@ class BeamDump(SetupComponent):
         ans.append("Center: " + str(self.HRCenter))
         ans.append("Norm: " + str(self.HRNorm))
         ans.append("}")
+
+        return ans
 
     def isHit(self, beam):
         '''Determine if a beam hits the BeamDump.
@@ -92,7 +94,7 @@ class BeamDump(SetupComponent):
                                     self.HRCenter, self.HRNorm,
                                     self.Thick, self.Dia)
 
-        ARCenter = self.HRCente - self.Thick*self.HRNorm
+        ARCenter = self.HRCenter - self.Thick*self.HRNorm
 
         ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, ARCenter,
                                     - self.HRNorm, self.Dia)
@@ -104,7 +106,7 @@ class BeamDump(SetupComponent):
 
 
         # determine first hit
-        hitFaces = filter(helpers.hitTrue, [HRDict, ARDict, SideDict])
+        hitFaces = filter(hitTrue, [HRDict, ARDict, SideDict])
 
         if len(hitFaces) == 0:
             return noInterDict

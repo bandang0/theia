@@ -1,8 +1,5 @@
 '''Various units for theia.'''
 
-import numpy as np
-pi = np.pi
-
 # Length units
 km = 1.e3
 m = 1.0
@@ -31,11 +28,3 @@ uHz = 1.e-6
 ppm = 1.e-6
 rad = 1.0
 deg = 1.7453292519943295e-2
-
-# Conversion Functions
-
-def rad2deg(rad):
-    return rad * 180.0 / pi
-
-def deg2rad(deg):
-    return deg * pi /180.0

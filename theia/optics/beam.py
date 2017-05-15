@@ -152,9 +152,9 @@ class GaussianBeam(object):
         ans.append("Order: " + str(self.StrayOrder))
         ans.append("Ux: " + str(self.U[0]))
         ans.append("Uy: " + str(self.U[1]))
-        ans.append("Tens: [" +str(self.QTens[0][0]) + ", " \
+        ans.append("Tens: [" +str(self.QTens[0][0]) + ", "\
                             + str(self.QTens[0][1]) + "]")
-        ans.append("      [" +str(self.QTens[1][0]) + ", " \
+        ans.append("      [" +str(self.QTens[1][0]) + ", "\
                             + str(self.QTens[1][1]) + "]")
         ans.append("Waist Pos: " + str(self.waistPos()) + 'm')
         ans.append("Waist Size: " + str(self.waistSize()) + "m")

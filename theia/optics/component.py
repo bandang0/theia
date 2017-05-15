@@ -39,7 +39,7 @@ class SetupComponent(object):
     SetupCount = 0   #counts the setup components
 
     def __init__(self, HRCenter = [0., 0., 0.], HRNorm = [-1., 0., 0.],
-                Name = None, Ref = None, Thickness = 2.*cm, Diameter = 10*cm):
+                Name = None, Ref = None, Thickness = 2.*cm, Diameter = 10.*cm):
         '''SetupComponent constructor.
 
         Parameters are the attributes of the object to construct.
@@ -47,6 +47,16 @@ class SetupComponent(object):
         Returns a setupComponent.
 
         '''
+        # this is to simulate empy constructor
+        if HRCenter is None:
+            HRCenter = [0., 0., 0.]
+        if HRNorm is None:
+            HRNorm = [-1., 0., 0.]
+        if Thickness is None:
+            Thickness = 2.*cm
+        if Diameter is None:
+            Diameter = 10.*cm
+
         # initialize data
         self.HRCenter = np.array(HRCenter, dtype = np.float64)
         self.HRNorm = np.array(HRNorm, dtype = np.float64)
@@ -63,9 +73,9 @@ class SetupComponent(object):
         if Ref is not None:
             self.Ref = Ref
         else:
-            self.Ref = "Set" + str(self.__class__.SetupCount)
+            self.Ref = "Set" + str(SetupComponent.SetupCount)
 
-        self.__class__.SetupCount = self.__class__.SetupCount + 1
+        SetupComponent.SetupCount = SetupComponent.SetupCount + 1
 
     def __str__(self):
         '''String representation of the component, when calling print(object).

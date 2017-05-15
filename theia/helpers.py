@@ -92,7 +92,7 @@ def timer(func):
         func(*args, **kw)
         t2 = tm.time()
         dt = t2 -t1
-        st = str(func.__name__) + " exec with '" + str(*args) + "' in " \
+        st = str(func.__name__) + " exec with '" + str(*args) + "' in "\
                         + str(dt*1000.) + "ms."
         print st
 

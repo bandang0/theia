@@ -54,7 +54,80 @@ class Lens(Optic):
     *******                             *******
 
     '''
+    def isHit(self, beam):
+        '''Determine if a beam hits the Optic.
 
+        This is a generic function for all lenses, using their geometrical
+        attributes. This uses the line***Inter functions from the geometry
+        module to find characteristics of impact of beams on lenses.
+
+        beam: incoming beam. [GaussianBeam]
+
+        Returns a dictionnary with keys:
+            'isHit': whether the beam hits the optic. [boolean]
+            'intersection point': point in space where it is first hit.
+                    [3D vector]
+            'face': to indicate which face is first hit, can be 'HR', 'AR' or
+                'side'. [string]
+            'distance': geometrical distance from beam origin to impact. [float]
+
+        '''
+        noInterDict = {'isHit': False,
+                        'intersection point': np.array([0., 0., 0.],
+                                                    dtype=np.float64),
+                        'face': None,
+                        'distance': 0.}
+
+        # get impact parameters on HR, AR and side:
+        if np.abs(self.HRK) > 0.:
+            HRDict = geo.lineSurfInter(beam.Pos,
+                                        beam.Dir, self.HRCenter,
+                                        self.HRK*self.HRNorm/np.abs(self.HRK),
+                                        np.abs(self.HRK),
+                                        self.Dia)
+        else:
+            HRDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
+                                        self.HRNorm, self.Dia)
+
+        if np.abs(self.ARK) > 0.:
+            ARDict = geo.lineSurfInter(beam.Pos,
+                                        beam.Dir, self.ARCenter,
+                                        self.ARK*self.ARNorm/np.abs(self.ARK),
+                                        np.abs(self.ARK),
+                                        self.Dia)
+        else:
+            ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.ARCenter,
+                                        self.ARNorm, self.Dia)
+
+        SideDict = geo.lineCylInter(beam.Pos, beam.Dir,
+                                    self.HRCenter, self.HRNorm,
+                                    self.Thick, self.Dia)
+
+        # face tags
+        HRDict['face'] = 'HR'
+        ARDict['face'] = 'AR'
+        SideDict['face'] = 'Side'
+
+
+        # determine first hit
+        hitFaces = filter(helpers.hitTrue, [HRDict, ARDict, SideDict])
+
+        if len(hitFaces) == 0:
+            return noInterDict
+
+        dist = hitFaces[0]['distance']
+        j=0
+
+        for i in range(len(hitFaces)):
+            if hitFaces[i]['distance'] < dist:
+                dist = hitFaces[i]['distance']
+                j=i
+
+        return {'isHit': True,
+                'intersection point': hitFaces[j]['intersection point'],
+                'face': hitFaces[j]['face'],
+                'distance': hitFaces[j]['distance']
+                }
     def hit(self, beam, order, threshold):
         '''Compute the refracted and reflected beams after interaction.
 

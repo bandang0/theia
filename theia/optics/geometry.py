@@ -154,7 +154,7 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
         localNorm = localNorm/np.linalg.norm(localNorm)
 
         if np.dot(localNorm, chordNorm) > 0. :
-            if np.linalg.norm(np.cross(localNorm, chordNorm)) \
+            if np.linalg.norm(np.cross(localNorm, chordNorm))\
                             < diameter * kurv/2.:
                             # the first is on the surface
                 return {'isHit': True,
@@ -167,7 +167,7 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
         localNorm = localNorm/np.linalg.norm(localNorm)
 
         if np.dot(localNorm, chordNorm) > 0. :
-            if np.linalg.norm(np.cross(localNorm, chordNorm)) \
+            if np.linalg.norm(np.cross(localNorm, chordNorm))\
                             < diameter * kurv/2. :
                 # the second is on the surface
                 return {'isHit': True,
