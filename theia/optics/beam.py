@@ -163,6 +163,7 @@ class GaussianBeam(object):
         ans.append("}")
 
         return ans
+        
 
     def Q(self, d = 0.):
         '''Return the Q tensor at a distance d of origin.

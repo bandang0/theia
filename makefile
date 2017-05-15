@@ -21,6 +21,12 @@ clean-tutos:
 	find tutos/ -name "*.opt" -exec rm --force {} +
 	find tutos/ -name "*.opt.ps" -exec rm --force {} +
 
+# remove build data
+clean-build:
+	rm -rf build
+	rm -rf dist
+	rm -rf theia.egg-info
+
 # clean all
 clean-all:
 	make clean-pyc

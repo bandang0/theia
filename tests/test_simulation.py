@@ -6,16 +6,13 @@ THEIAPATH = '/home/dev0/theia/theia'    # path to access modules of theia
 sys.path.append(THEIAPATH)
 
 from guppy import hpy
-import simulation
-import optics
-import tree
 from units import *
 
 from simulation import simulation as sim
 from optics import beam as gbeam
 from optics import mirror as mir
 from helpers import timer
-from tree import beamtree
+
 
 
 # Create optical objects

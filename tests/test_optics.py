@@ -5,7 +5,6 @@ import sys
 THEIAPATH = '/home/dev0/theia/theia'    # path to access modules of theia
 sys.path.append(THEIAPATH)
 
-
 from optics import beam, beamdump, thinlens, thicklens, mirror
 from units import *
 
