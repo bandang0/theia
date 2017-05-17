@@ -3,12 +3,13 @@
 # Provides:
 #   class Optic
 #       __init__
-#       isHit
 #       hitSide
+#       collision
+#       geoCheck
 
 import numpy as np
+from helpers import settings
 from component import SetupComponent
-from optics import geometry as geo
 
 class Optic(SetupComponent):
     '''
@@ -121,7 +122,6 @@ class Optic(SetupComponent):
 
         Optic.OptCount = Optic.OptCount + 1
 
-    
 
     def hitSide(self, beam):
         '''Compute the daughter beams after interaction on Side at point.
@@ -133,4 +133,79 @@ class Optic(SetupComponent):
         Returns {'t': None, 'r': None}
 
         '''
+        if settings.info:
+            print "theia: Info: reached end node of tree by interaction on "\
+            + "Side of " + self.Name + " (" + self.Ref + ") of beam "\
+            + beam.Name + "."
         return {'t': None, 'r': None}
+
+    def collision(self):
+        '''Determine whether the HR and AR surfaces intersect.
+
+        Returns True if there is an intersection, False if not.
+
+        '''
+
+        if self.ARK <= 0. and self.HRK <= 0.:
+            # no collision if negative curvatures
+            return False
+
+        try:    # the arcsin may fail because dia/2. > ROC
+            theta1 = np.arcsin(self.Dia * self.HRK/2.)  #semi angles
+
+            if self.HRK == 0.:
+                apex1 = self.HRcenter
+            else:
+                apex1 = self.HRCenter - (1-np.cos(theta1))*self.HRNorm/self.HRK
+
+        except FloatingPointError:
+            #if it fails then the whole semisphere is in the mirror and apex
+            # is a radius away from Center.
+            apex1 = self.HRCenter - self.HRNorm/self.HRK
+
+        try:    #same
+            theta2 = np.arcsin(self.Dia * self.ARK/2.)
+
+            if self.ARK == 0.:
+                apex2 = self.ARCenter
+            else:
+                apex2 = self.ARCenter - (1-np.cos(theta2))*self.ARNorm/self.ARK
+
+        except FloatingPointError:
+            apex2 = self.ARCenter - self.ARNorm/self.ARK
+        #vector from apex1 to apex2
+        vec = apex2 - apex1
+
+        return np.dot(vec, self.HRNorm) > 0.
+
+
+    def geoCheck(self, word):
+        '''Makes geometrical checks on surfaces and warns when necessary.
+
+        '''
+        if self.HRt + self.HRr > 1.:
+            print "theia: Warning: in " + word + " %s (%s) on HR, R + T > 1."\
+                    %(self.Name, self.Ref)
+
+        if self.ARt + self.ARr > 1.:
+            print "theia: Warning: in " + word + " %s (%s) on AR, R + T > 1."\
+                    %(self.Name, self.Ref)
+
+        if self.N < 1.:
+            print "theia: Warning: in " + word + " %s (%s), optical index < 1."\
+                    %(self.Name, self.Ref)
+
+        if self.HRK != 0. and np.abs(1./self.HRK) < self.Dia/2.:
+            print "theia: Warning: in " + word + " %s (%s), the diameter of " \
+                %(self.Name, self.Ref)\
+                +"the "+word+" exceeds the diameter of the HR surface."\
+
+        if self.ARK != 0. and np.abs(1./self.ARK) < self.Dia/2.:
+            print "theia: Warning: in " + word + " %s (%s), the diameter of " \
+                %(self.Name, self.Ref)\
+                +"the "+word+" exceeds the diameter of the AR surface."\
+
+        if self.collision():
+            print "theia: Warning: in " + word + " %s (%s), HR and AR surfaces"\
+                %(self.Name, self.Ref)\
+                +" intersect."

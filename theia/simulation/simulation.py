@@ -7,8 +7,10 @@
 #       load
 #       run
 
-import helpers
-from helpers import formatter
+import numpy as np
+from helpers import settings
+from helpers.units import *
+from helpers.tools import formatter
 from tree import beamtree
 
 
@@ -80,17 +82,23 @@ class Simulation(object):
         self.OptList = OptList
 
 
-    def run(self, threshold = -1*mW, order = np.Inf, write3D = True):
+    def run(self, threshold = -1*mW, order = np.inf):
         '''Run simulation with input as read by load.
 
         threshold: power of beam below which the simulation stops tracing child
                     beams. [float]
         order: maximum order to keep daughter beams. [integer]
-        write3D: whether or not to write to the .fcstd file for FreeCAD
-                    rendering. [boolean]
 
         No return value.
         '''
+        #warn if threshold is negative or order is inf
+        if settings.warning and threshold < 0.:
+            print "theia: Warning: running simulation with negative threshold,"\
+            + " termination not guaranteed."
+
+        if settings.warning and order is np.inf:
+            print "theia: Warning: running simulation with infinite order,"\
+            + " termination not guaranteed."
         BeamTreeList = []
 
         for k in range(len(self.InBeams)):

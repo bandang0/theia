@@ -2,8 +2,6 @@
 
 # Provides:
 #   hitTrue
-#   rotMatrix
-#   basis
 #   class TotalReflectionError
 #       __init__
 #       __str__
@@ -17,47 +15,12 @@ import time as tm
 def hitTrue(dic):
     '''To filter dicts according to their 'isHit' key.
 
-    dic: dictionnary with 'isHit' key. [dict]
+    dic: dictionary with 'isHit' key. [dict]
 
     Returns dic['isHit']
 
     '''
     return dic['isHit']
-
-def rotMatrix(a,b):
-    '''Provides the rotation matrix which maps a (unit) to b (unit).
-
-    a,b: unit 3D vectors. [3D np.arrays]
-
-    Returns an np.array such that np.matmul(M,a) == b.
-
-    '''
-
-    if np.abs(np.dot(a,b)) == 1.:
-        return np.dot(a,b) *np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
-                                    dtype=np.float64)
-
-    v = np.cross(a,b)
-    vx = np.array([0., -v[2], v[1]], [v[2], 0., -v[0]], [-v[1], v[0], 0.],
-                    dtype=np.float64)
-
-    return np.array([1., 0., 0.], [0., 1., 0.], [0., 0., 1.], dtype=np.float64)\
-            + vx + (1.0/(1.0 + np.dot(a,b)))*np.matmul(vx,vx)
-
-def basis(a):
-    '''Returns two vectors u and v such that (a, u, v) is an orthonormal basis.
-
-    '''
-    if np.abs(np.dot(a, np.array([1., 0., 0.]))) == 1.:
-        u = np.cross(a, np.array([0., -1., 0.], dtype=np.float64))
-    else:
-        u = np.cross(a, np.array([1., 0., 0. ], dtype=np.float64))
-
-    u = u/np.linalg.norm(u)
-    v = np.cross(a, u)
-    v = v/np.linalg.norm(v)
-
-    return u, v
 
 class TotalReflectionError(Exception):
     '''TotalReflectionError class.

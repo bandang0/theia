@@ -85,3 +85,30 @@ print geo.linePlaneInter(pos2, dirV2, planeC2, normV3, diameter1)
 print geo.lineSurfInter(pos1, dirV3, chordC, chordNorm1, kurv2, diameter1)
 print geo.lineSurfInter(pos1, dirV3, chordC, chordNorm2, kurv2, diameter1)
 print geo.lineSurfInter(pos1, dirV3, chordC, chordNorm1, kurv1, diameter1)
+
+
+if len(sys.argv) == 1 or '-h' in sys.argv or '--help' in sys.argv:
+	usage()
+	sys.exit(0)
+
+runArgs = 	{'info': True,
+			'warning': True,
+			'text': True,
+			'CAD': True,
+			'fname': None}
+
+if '-i' in sys.argv or '--no-info' in sys.argv:
+	runArgs['info'] = False
+if '-w' in sys.argv or '--no-warn' in sys.argv:
+	runArgs['warning'] = False
+if '-t' in sys.argv or '--no-text' in sys.argv:
+	runArgs['text'] = False
+if '-c' in sys.argv or '--no-cad' in sys.argv:
+	runArgs['CAD'] = False
+
+runArgs['fname'] = sys.argv[len(sys.argv) - 1]
+
+
+beam2 = beam.GaussianBeam(Wx = .5*mm, Wy = .5*mm, Dir = [1, -.1, 0],
+			WDistx = -1*cm, WDisty = 1*cm,
+			ortho = True, Pos = [10*cm ,10*cm, 0], Ref = 'OTHER')

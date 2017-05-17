@@ -6,7 +6,8 @@
 #       lineList
 
 import numpy as np
-from units import *
+from helpers import settings
+from helpers.units import *
 from optics.lens import Lens
 
 class ThickLens(Lens):
@@ -71,6 +72,9 @@ class ThickLens(Lens):
         Returns a ThickLens.
 
         '''
+        if Name is None:
+            Name = "ThickLens"
+
         # initialize with base constructor
         super(Lens, self).__init__(ARCenter = None, ARNorm = None, N = None,
                 HRK = K1, ARK = K2,
@@ -82,8 +86,15 @@ class ThickLens(Lens):
         self.ARnorm = - self.HRNorm
 
         # half angles
-        theta1 = np.abs(np.arcsin(self.Dia * self. HRK/2. ))
-        theta2 = np.abs(np.arcsin(self.Dia * self. ARK/2. ))
+        try:
+            theta1 = np.abs(np.arcsin(self.Dia * self. HRK/2. ))
+        except FloatingPointError:
+            theta1 = np.pi/2.
+        try:
+            theta2 = np.abs(np.arcsin(self.Dia * self. ARK/2. ))
+        except FloatingPointError:
+            theta2 = np.pi/2.
+
         apex2 = self.HRCenter + self.Thick * self.ARNorm    #thickness on axis
 
         # real HR andAR centers
@@ -94,6 +105,11 @@ class ThickLens(Lens):
         if np.abs(self.ARK) > 0.:
             self.ARCenter = apex2\
                         + (1. - np.cos(theta2))*self.ARNorm/self.ARK
+
+        #Warnings for console output
+        if settings.warning:
+            self.geoCheck("thicklens")
+
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.

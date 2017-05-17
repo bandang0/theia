@@ -6,7 +6,8 @@
 #       lineList
 
 import numpy as np
-from units import *
+from helpers import settings
+from helpers.units import *
 from optics.lens import Lens
 
 class ThinLens(Lens):
@@ -72,6 +73,9 @@ class ThinLens(Lens):
             R = .1
         if T is None:
             T = .9
+        if Name is None:
+            Name = "ThinLens"
+
         # initialize with lens mother constructor
         super(Lens, self).__init__(ARCenter = None, ARNorm = None, N = None,
                 HRK = None, ARK = None,
@@ -87,14 +91,22 @@ class ThinLens(Lens):
 
         # calculate  ARCenter, ARNorm  and HRCenter with focal
         if self.Focal >= 0.:
-            self.Thick = 1.e-10
-            self.ARCenter = self.HRCenter + 1.e-10 * self.ARNorm #separate AR/HR
+            self.Thick = settings.zero
+            #separate AR/HR
+            self.ARCenter = self.HRCenter + settings.zero * self.ARNorm
         else:
-            theta = np.arcsin(self.Dia * self.HRK/2.)   # half angle
-            self.Thick = 1.e-10 + 2.*(1.-np.cos(theta))*self.HRK
+            try:    #arcsin might fails, if it does the semi angle is pi/2
+                theta = np.arcsin(self.Dia * self.HRK/2.)   # half angle
+            except FloatingPointError:
+                theta = np.pi/2.
+            self.Thick = settings.zero + 2.*(1.-np.cos(theta))/self.HRK
             cen = self.HRCenter
             self.HRCenter = cen + self.Thick*self.HRNorm/2.
             self.ARCenter = cen - self.Thick*self.HRNorm/2.
+
+        #warns on geometry
+        if settings.warning:
+            self.geoCheck("thinlens")
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.

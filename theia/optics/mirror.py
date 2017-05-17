@@ -9,11 +9,12 @@
 #       hitAR
 
 import numpy as np
-from units import *
+from helpers import geometry, settings
+from helpers.units import *
+from helpers.tools import hitTrue
 from optic import Optic
-from optics import geometry as geo
 from optics.beam import GaussianBeam as gbeam
-import helpers
+
 
 class Mirror(Optic):
     '''
@@ -67,7 +68,7 @@ class Mirror(Optic):
     '''
 
     def __init__(self, Wedge = 0., Alpha = 0., HRCenter = None,
-                Theta = 0., Phi = 0., HRNorm = None, Diameter = None,
+                Theta = 0., Phi = 0., Diameter = None,
                 HRr = None, HRt = None, ARr = None, ARt = None,
                 HRK = None, ARK = None, Thickness = None,
                 N = None, KeepI = None, Name = None, Ref = None):
@@ -79,6 +80,7 @@ class Mirror(Optic):
         Returns a mirror.
 
         '''
+
         if Wedge is None:
             Wedge = 0.
         if Alpha is None:
@@ -87,6 +89,8 @@ class Mirror(Optic):
             Theta = 0.
         if Phi is None:
             Phi = 0.
+        if Name is None:
+            Name = "Mirror"
 
         Norm = np.array([np.sin(Theta)*np.cos(Phi), np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
@@ -104,10 +108,14 @@ class Mirror(Optic):
         self.ARCenter = self.HRCenter\
             - (self.Thick + .5*np.tan(self.Wedge)*self.Dia)*self.HRNorm
 
-        a,b = helpers.basis(self.HRNorm)
+        a,b = geometry.basis(self.HRNorm)
         self.ARNorm = -np.cos(self.Wedge) * self.HRNorm\
                         + np.sin(self.Wedge)*(- np.sin(self.Alpha) * a\
                                             + np.cos(self.Alpha) * b)\
+
+        #Warnings for console output
+        if settings.warning:
+            self.geoCheck("mirror")
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.
@@ -137,7 +145,7 @@ class Mirror(Optic):
 
         beam: incoming beam. [GaussianBeam]
 
-        Returns a dictionnary with keys:
+        Returns a dictionary with keys:
             'isHit': whether the beam hits the optic. [boolean]
             'intersection point': point in space where it is first hit.
                     [3D vector]
@@ -154,26 +162,26 @@ class Mirror(Optic):
 
         # get impact parameters on HR, AR and side:
         if np.abs(self.HRK) > 0.:
-            HRDict = geo.lineSurfInter(beam.Pos,
+            HRDict = geometry.lineSurfInter(beam.Pos,
                                         beam.Dir, self.HRCenter,
                                         self.HRK*self.HRNorm/np.abs(self.HRK),
                                         np.abs(self.HRK),
                                         self.Dia)
         else:
-            HRDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
+            HRDict = geometry.linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
                                         self.HRNorm, self.Dia)
 
         if np.abs(self.ARK) > 0.:
-            ARDict = geo.lineSurfInter(beam.Pos,
+            ARDict = geometry.lineSurfInter(beam.Pos,
                                         beam.Dir, self.ARCenter,
                                         self.ARK*self.ARNorm/np.abs(self.ARK),
                                         np.abs(self.ARK),
                                         self.Dia/np.cos(self.Wedge))
         else:
-            ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.ARCenter,
+            ARDict = geometry.linePlaneInter(beam.Pos, beam.Dir, self.ARCenter,
                                         self.ARNorm, self.Dia)
 
-        SideDict = geo.lineCylInter(beam.Pos, beam.Dir,
+        SideDict = geometry.lineCylInter(beam.Pos, beam.Dir,
                                     self.HRCenter, self.HRNorm,
                                     self.Thick, self.Dia)
 
@@ -184,7 +192,7 @@ class Mirror(Optic):
 
 
         # determine first hit
-        hitFaces = filter(helpers.hitTrue, [HRDict, ARDict, SideDict])
+        hitFaces = filter(hitTrue, [HRDict, ARDict, SideDict])
 
         if len(hitFaces) == 0:
             return noInterDict
@@ -214,7 +222,7 @@ class Mirror(Optic):
             their strayness is over this order. [integer]
         threshold: idem for the power of the daughter beams. [float]
 
-        Returns a dictionnary of beams with keys:
+        Returns a dictionary of beams with keys:
             't': refracted beam. [GaussianBeam]
             'r': reflected beam. [GaussianBeam]
 
@@ -241,7 +249,7 @@ class Mirror(Optic):
             their strayness is over this order. [integer]
         threshold: idem for the power of the daughter beams. [float]
 
-        Returns a dictionnary of beams with keys:
+        Returns a dictionary of beams with keys:
             't': refracted beam. [GaussianBeam]
             'r': reflected beam. [GaussianBeam]
 
@@ -258,7 +266,10 @@ class Mirror(Optic):
             nor = self.HRK * self.HRNorm/np.abs(self.HRK)
 
             # center of sphere:
-            theta = np.arcsin(self.Dia * self.HRK/2.)   #undertending angle
+            try:
+                theta = np.arcsin(self.Dia * self.HRK/2.)   #undertending angle
+            except FloatingPointError:
+                theta = np.pi/2.
             sphereC = self.HRCenter + np.cos(theta)*nor/self.HRK
             localNorm = sphereC - point
             localNorm = localNorm/np.linalg.norm(localNorm)
@@ -277,7 +288,14 @@ class Mirror(Optic):
             n2 = 1.
 
         # daughter directions
-        dir2 = geo.newDir(beam.Dir, localNorm, n1, n2)
+        dir2 = geometry.newDir(beam.Dir, localNorm, n1, n2)
+
+        #warn on total reflection
+        if dir2['TR'] and settings.info:
+            print "theia: Info: total reflection occured on "\
+            + "HR face of " + self.Name + " (" + self.Ref + ") by beam "\
+            + beam.Name + "."
+
 
         # if there is no refracted
         if beam.P * self.HRt < threshold or beam.StrayOrder + 1 > order\
@@ -290,18 +308,22 @@ class Mirror(Optic):
 
         # we're done if there are two Nones
         if len(ans) == 2:
+            if settings.info:
+                print "theia: Info: reached end node of tree by interaction"\
+                + " on HR face of " +self.Name + " (" + self.Ref + ") of beam "\
+                + beam.Name + "."
             return ans
 
         # Calculate new basis
         if not 'r' in ans:   # for reflected
-            Uxr, Uyr = helpers.basis(dir2['r'])
+            Uxr, Uyr = geometry.basis(dir2['r'])
             Uzr = dir2['r']
 
         if not 't' in ans:   # for refracted
-            Uxt, Uyt = helpers.basis(dir2['t'])
+            Uxt, Uyt = geometry.basis(dir2['t'])
             Uzt = dir2['t']
 
-        Lx, Ly = helpers.basis(localNorm)
+        Lx, Ly = geometry.basis(localNorm)
 
         # Calculate daughter curv tensors
         C = -np.array([[self.HRK, 0.], [0, self.HRK]])
@@ -353,7 +375,7 @@ class Mirror(Optic):
             their strayness is over this order. [integer]
         threshold: idem for the power of the daughter beams. [float]
 
-        Returns a dictionnary of beams with keys:
+        Returns a dictionary of beams with keys:
             't': refracted beam. [GaussianBeam]
             'r': reflected beam. [GaussianBeam]
 
@@ -370,7 +392,10 @@ class Mirror(Optic):
             nor = self.ARK * self.ARNorm/np.abs(self.ARK)
 
             # center of sphere:
-            theta = np.arcsin(self.Dia * self.ARK/2.)   #undertending angle
+            try:
+                theta = np.arcsin(self.Dia * self.ARK/2.)   #undertending angle
+            except FloatingPointError:
+                theta = np.pi/2.
             sphereC = self.ARCenter + np.cos(theta)*nor/self.ARK
             localNorm = sphereC - point
             localNorm = localNorm/np.linalg.norm(localNorm)
@@ -389,7 +414,14 @@ class Mirror(Optic):
             n2 = 1.
 
         # daughter directions
-        dir2 = geo.newDir(beam.Dir, localNorm, n1, n2)
+        dir2 = geometry.newDir(beam.Dir, localNorm, n1, n2)
+
+        #warn on total reflection
+        if dir2['TR']:
+            if settings.info:
+                print "theia: Info: total reflection occured on "\
+                + "AR face of " + self.Name + " (" + self.Ref + ") by beam "\
+                + beam.Name + "."
 
         # if there is no refracted
         if beam.P * self.ARt < threshold or dir2['t'] is None:
@@ -401,18 +433,22 @@ class Mirror(Optic):
 
         # we're done if there are two Nones
         if len(ans) == 2:
+            if settings.info:
+                print "theia: Info: reached end node of tree by interaction "\
+                + "on AR face of " + self.Name + " (" + self.Ref + ") of beam "\
+                + beam.Name + "."
             return ans
 
         # Calculate new basis
         if not 'r' in ans:   # for reflected
-            Uxr, Uyr = helpers.basis(dir2['r'])
+            Uxr, Uyr = geometry.basis(dir2['r'])
             Uzr = dir2['r']
 
         if not 't' in ans:   # for refracted
-            Uxt, Uyt = helpers.basis(dir2['t'])
+            Uxt, Uyt = geometry.basis(dir2['t'])
             Uzt = dir2['t']
 
-        Lx, Ly = helpers.basis(localNorm)
+        Lx, Ly = geometry.basis(localNorm)
 
         # Calculate daughter curv tensors
         C = -np.array([[self.ARK, 0.], [0, self.ARK]])

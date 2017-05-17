@@ -16,9 +16,9 @@
 
 
 import numpy as np
-from units import *
-import helpers
-from helpers import formatter
+from helpers.units import *
+from helpers import geometry
+from helpers.tools import formatter
 
 class GaussianBeam(object):
     '''
@@ -97,7 +97,7 @@ class GaussianBeam(object):
         self.Dir = self.Dir/np.linalg.norm(self.Dir)
 
         if Ux is None and Uy is None:
-            (u,v) = helpers.basis(self.Dir)
+            (u,v) = geometry.basis(self.Dir)
         elif Ux is not None and Uy is None:
             u = np.array(Ux, dtype = np.float64)
             u = u/np.linalg.norm(Ux)
@@ -145,7 +145,7 @@ class GaussianBeam(object):
         ans.append("Beam: " + self.Name + " (" + self.Ref + ") " + "{")
         ans.append("Power: " + str(self.P) + "W")
         ans.append("Index: " + str(self.N))
-        ans.append("Wavelength: " + str(self.Wl) + "m")
+        ans.append("Wavelength: " + str(self.Wl/nm) + "nm")
         ans.append("Origin: " + str(self.Pos))
         ans.append("Direction: " + str(self.Dir))
         ans.append("Length: " + str(self.Length) + "m")
@@ -163,7 +163,7 @@ class GaussianBeam(object):
         ans.append("}")
 
         return ans
-        
+
 
     def Q(self, d = 0.):
         '''Return the Q tensor at a distance d of origin.
@@ -176,7 +176,7 @@ class GaussianBeam(object):
     def QParam(self, d = 0.):
         '''Compute the complex parameters q1 and q2 and theta of beam.
 
-            Returns a disctionnary with keys:
+            Returns a dictionary with keys:
             '1': q1 [complex]
             '2': q2 [complex]
             'theta': theta [float]

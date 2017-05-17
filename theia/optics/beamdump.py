@@ -8,9 +8,10 @@
 #       hit
 
 import numpy as np
+from helpers import settings
+from helpers import geometry as geo
+from helpers.tools import formatter, hitTrue
 from component import SetupComponent
-from optics import geometry as geo
-from helpers import formatter, hitTrue
 
 class BeamDump(SetupComponent):
     '''
@@ -45,9 +46,13 @@ class BeamDump(SetupComponent):
         Returns a BeamDump.
 
         '''
+        if Name is None:
+            Name = "BeamDump"
         # initialize from base constructor
         super(BeamDump, self).__init__(Name = Name, Ref = Ref,
                 HRCenter = Center, HRNorm = Norm, Thickness = Thickness)
+
+
 
     def lineList(self):
         '''Return the list of lines needed to print the object.
@@ -70,7 +75,7 @@ class BeamDump(SetupComponent):
 
         beam: incoming beam. [GaussianBeam]
 
-        Returns a dictionnary with keys:
+        Returns a dictionary with keys:
             'isHit': whether the beam hits the dump. [boolean]
             'intersection point': point in space where it is first hit.
                 [3D vector]
@@ -135,7 +140,7 @@ class BeamDump(SetupComponent):
             their strayness is over this order. [integer]
         threshold: idem for the power of the daughter beams. [float]
 
-        Returns a dictionnary of beams with keys:
+        Returns a dictionary of beams with keys:
             't': None
             'r': None
 
@@ -144,5 +149,9 @@ class BeamDump(SetupComponent):
         dic = self.isHit(beam)
         beam.Length = dic['distance']
         beam.OptDist = beam.N * beam.Length
+        if settings.info:
+            print "theia: Info: reached end node of tree by interaction on "\
+            + self.Name + " (" + self.Ref + ") of beam "\
+            + beam.Name + "."
 
         return {'r': None, 't': None}

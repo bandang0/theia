@@ -10,7 +10,8 @@
 import numpy as np
 np.seterr(divide = 'raise', invalid = 'raise')  # np raises FloatingPointError
 
-from helpers import TotalReflectionError
+from tools import TotalReflectionError
+from . import settings
 
 def refrAngle(theta, n1, n2):
     '''Returns the refraction angle at n1/n2 interface for incoming theta.
@@ -32,7 +33,7 @@ def linePlaneInter(pos, dirV, planeC, normV, diameter):
     normV: vector normal to the plane. [3D vector]
     diameter: diameter of the plane.
 
-    Returns a dictionnary with keys:
+    Returns a dictionary with keys:
         'isHit': whether of not the plane is hit. [boolean]
         'distance': geometrical distance from line origin to intersection point.
             [float]
@@ -52,8 +53,8 @@ def linePlaneInter(pos, dirV, planeC, normV, diameter):
     # If not then there is a solution to pos + lam*dirV in plane, it is:
     lam = np.dot(normV, planeC - pos)/np.dot(normV, dirV)
 
-    # If lam is negative no intersection
-    if lam <= 0.:
+    # If lam is *negative* no intersection
+    if lam <= settings.zero:
         return noInterDict
 
     # find intersection point:
@@ -69,7 +70,7 @@ def linePlaneInter(pos, dirV, planeC, normV, diameter):
             'intersection point': intersect}
 
 
-def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
+def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter):
     '''Computes the intersection between a line and a spherical surface.
 
     The spherical surface is supposed to have a cylindrical symmetry around
@@ -77,7 +78,7 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
         the surface.
 
     Note: the normal vector always looks to the center of the sphere and the
-        surface is supposed to ocupy less than a semi-sphere
+        surface is supposed to occupy less than a semi-sphere
 
     pos: position of the begingin of the line. [3D vector]
     dirV: direction of the line. [3D vector]
@@ -85,10 +86,8 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
     chordNorm: normal vector the the chord in its center. [3D vector]
     kurv: curvature (1/ROC) of the surface. [float]
     diameter: diameter of the surface. [float]
-    minK = curvature under which spherical surfaces are considered planes.
-        [float]
 
-    Returns a dictionnary with keys:
+    Returns a dictionary with keys:
         'is Hit': whether the surface is hit or not. [boolean]
         'distance': distance to the intersection point from pos. [float]
         'intersection point': position of intersection point. [3D vector]
@@ -99,12 +98,15 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
             'intersection point': np.array([0., 0., 0.], dtype=np.float64)}
 
     # if surface is too plane, it is a plane
-    if np.abs(kurv) < minK:
+    if np.abs(kurv) < settings.flatK:
         return linePlaneInter(pos, dirV, chordC, chordNorm, diameter)
 
 
     # find center of curvature of surface:
-    theta = np.arcsin(diameter*kurv/2.)  # this is half undertending angle
+    try:
+        theta = np.arcsin(diameter*kurv/2.)  # this is half undertending angle
+    except FloatingPointError:
+        theta = np.pi/2.
     sphereC = chordC + np.cos(theta)*chordNorm/kurv
     R = 1/kurv  # radius
     PC = sphereC - pos  # vector from pos to center of curvature
@@ -124,11 +126,11 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
     lam1 = ( 2.*np.dot(dirV, PC) - np.sqrt(delta))/2.  # < lam2
     lam2 = ( 2.*np.dot(dirV, PC) + np.sqrt(delta))/2.
 
-    if lam1 < 0. and lam2 < 0.:
+    if lam1 < settings.zero and lam2 < settings.zero:
         # sphere is behind
         return noInterDict
 
-    if lam1 < 0. and lam2 > 0.:
+    if lam1 < settings.zero and lam2 > settings.zero:
         # we found a point and have to verify that its on the surface (we
         # already know its on the sphere)
         intersect = pos + lam2 * dirV
@@ -147,8 +149,8 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter, minK = 1.0e-5):
                     'distance': lam2,
                     'intersection point': intersect}
 
-    if lam1 > 0. and lam2 > 0.:
-        # we got to points, take the closest which is on the surface
+    if lam1 > settings.zero and lam2 > settings.zero:
+        # we got two points, take the closest which is on the surface
         intersect = pos + lam1 * dirV
         localNorm = sphereC - intersect
         localNorm = localNorm/np.linalg.norm(localNorm)
@@ -191,7 +193,7 @@ def lineCylInter(pos, dirV, faceC, normV, thickness, diameter):
         [float]
     diameter: of the cylinder. [float]
 
-    Returns a dictionnary with keys:
+    Returns a dictionary with keys:
         'isHit': whether of not. [boolean]
         'distance': geometrical distance of the intersection point from pos.
             [float]
@@ -231,11 +233,11 @@ def lineCylInter(pos, dirV, faceC, normV, thickness, diameter):
     lam1 = (2.*(PCdir - dirn*PCn) - np.sqrt(delta))/(2.*(1. - dirn**2.))# < lam2
     lam2 = (2.*(PCdir - dirn*PCn) + np.sqrt(delta))/(2.*(1. - dirn**2.))
 
-    if lam1 < 0. and lam2 < 0.:
+    if lam1 < settings.zero and lam2 < settings.zero:
         # cylinder is behind
         return noInterDict
 
-    if lam1 < 0. and lam2 > 0.:
+    if lam1 < settings.zero and lam2 > settings.zero:
         # we found a point and have to verify that its on the physical surface
         intersect = pos + lam2 * dirV
 
@@ -246,7 +248,7 @@ def lineCylInter(pos, dirV, faceC, normV, thickness, diameter):
                     'distance': lam2,
                     'intersection point': intersect}
 
-    if lam1 > 0. and lam2 > 0.:
+    if lam1 > settings.zero and lam2 > settings.zero:
         # we got two points, take the closest which is on the surface
         intersect = pos + lam1 * dirV
 
@@ -276,9 +278,10 @@ def newDir(inc, nor, n1, n2):
     n1: refractive index of the first medium. [float]
     n2: idem.
 
-    Returns a dictionnary with keys:
+    Returns a dictionary with keys:
         'r': normalized direction of reflected beam. [3D vector]
         't': normalized direction of refracted beam. [3D vector]
+        'TR': was there total reflection?. [boolean]
 
     Note: if total reflection then refr is None.
 
@@ -286,7 +289,8 @@ def newDir(inc, nor, n1, n2):
     # normal incidence case:
     if np.abs(np.dot(inc,nor)) == 1.:
         return {'r': nor,
-                't': inc}
+                't': inc,
+                'TR': False}
 
     # reflected (see documentation):
     refl = inc - 2.*np.dot(inc,nor)*nor
@@ -298,7 +302,8 @@ def newDir(inc, nor, n1, n2):
         theta2 = refrAngle(theta1, n1, n2)
     except TotalReflectionError :
         return {'r': refl,
-                't': None}
+                't': None,
+                'TR': True}
 
     # sines and cosines
     c1 = np.cos(theta1)
@@ -313,4 +318,40 @@ def newDir(inc, nor, n1, n2):
     refr = refr/np.linalg.norm(refr)
 
     return {'r': refl,
-            't': refr}
+            't': refr,
+            'TR': False}
+
+def rotMatrix(a,b):
+    '''Provides the rotation matrix which maps a (unit) to b (unit).
+
+    a,b: unit 3D vectors. [3D np.arrays]
+
+    Returns an np.array such that np.matmul(M,a) == b.
+
+    '''
+
+    if np.abs(np.dot(a,b)) == 1.:
+        return np.dot(a,b) *np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+                                    dtype=np.float64)
+
+    v = np.cross(a,b)
+    vx = np.array([0., -v[2], v[1]], [v[2], 0., -v[0]], [-v[1], v[0], 0.],
+                    dtype=np.float64)
+
+    return np.array([1., 0., 0.], [0., 1., 0.], [0., 0., 1.], dtype=np.float64)\
+            + vx + (1.0/(1.0 + np.dot(a,b)))*np.matmul(vx,vx)
+
+def basis(a):
+    '''Returns two vectors u and v such that (a, u, v) is an orthonormal basis.
+
+    '''
+    if np.abs(np.dot(a, np.array([1., 0., 0.]))) == 1.:
+        u = np.cross(a, np.array([0., -1., 0.], dtype=np.float64))
+    else:
+        u = np.cross(a, np.array([1., 0., 0. ], dtype=np.float64))
+
+    u = u/np.linalg.norm(u)
+    v = np.cross(a, u)
+    v = v/np.linalg.norm(v)
+
+    return u, v

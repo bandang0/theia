@@ -5,26 +5,20 @@ import sys
 THEIAPATH = '/home/dev0/theia/theia'    # path to access modules of theia
 sys.path.append(THEIAPATH)
 
+from helpers import settings
+from helpers.units import *
 from optics import beam, beamdump, thinlens, thicklens, mirror
-from units import *
+
+# initialize globals
+dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
+		'fname': 'test_optics'}
+
+settings.init(dic)
 
 # input data
-bm = beam.GaussianBeam(Wx = 1*cm, Wy = 1*cm, WDistx = 0, WDisty = 0)
-bd = beamdump.BeamDump()
-thin = thinlens.ThinLens()
-thick = thicklens.ThickLens()
-mr = mirror.Mirror()
+mr = mirror.Mirror(HRr = .8, HRt = .3, HRK = 1./0.6, ARK = 1./.6,
+					Thickness = 1., Diameter = 1.2, N = .9)
 
-bd2 = beamdump.BeamDump(Center = [0., 10*cm, 0.], Norm = [0, -1, 0],\
-			Name = 'BeamDumpX', Diameter = 5.*cm, Thickness = 1.*cm)
-thin2 = thinlens.ThinLens(Focal = -25.*cm, KeepI = True, Diameter = 10.*cm,\
-			Center = [20.*cm, 0.,0.])
-thick2 = thicklens.ThickLens(K1 = -0.01, K2 = -0.01, Apex = [30.*cm , 0., 0.])
-
-print bd2.isHit(bm)
-print thin2.isHit(bm)
-print thick2.isHit(bm)
-
-print thin2.hit(bm, order = 2, threshold = -1.)
-print thick2.hit(bm, order = 2, threshold = -1.)
-
+mr2 = mirror.Mirror(Diameter = 3., HRK = 1., ARK = 1., Thickness = 5.)
+lens = thinlens.ThinLens(Focal = -.5*cm)
+lens2 = thicklens.ThickLens()

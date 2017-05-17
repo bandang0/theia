@@ -10,7 +10,8 @@
 #       numberOfBeams
 #   treeOfBeam
 
-from helpers import formatter
+from helpers import settings
+from helpers.tools import formatter
 
 class BeamTree(object):
     '''
@@ -85,7 +86,6 @@ class BeamTree(object):
 
         return ans
 
-
     def numberOfBeams(self):
         '''Return the total number of beams.'''
         if self.Root is None:
@@ -121,9 +121,8 @@ def treeOfBeam(srcBeam, optList, order, threshold):
         # leaf of the tree
         return BeamTree()
 
-    # initialize next beam dictionnaries
-    dist = 1.e15
-    mini = 1.e-12
+    # initialize next beam dictionary
+    dist = settings.inf
     finalHit = {}
     fianlisHit = {}
     finalOpt = optList[0]
@@ -132,14 +131,16 @@ def treeOfBeam(srcBeam, optList, order, threshold):
     # look for closest impact
     for opt in optList:
         dicoisHit = opt.isHit(srcBeam)
-        if dicoisHit['isHit'] and dicoisHit['distance'] < dist\
-                                and dicoisHit['distance'] > mini:
+        if dicoisHit['isHit'] and dicoisHit['distance'] < dist:
             hitAtLeastOnce = True
             dist = dicoisHit['distance']
             finalOpt = opt
 
     if not hitAtLeastOnce:
         # no interaction
+        if settings.info:
+            print "theia: Info: reached end node of tree with open beam "\
+            + srcBeam.Ref + "."
         return BeamTree(Root = srcBeam)
 
     # get parametrs of this closest impact
