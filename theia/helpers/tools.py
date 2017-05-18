@@ -30,8 +30,6 @@ class TotalReflectionError(Exception):
     *=== Attributes ===*
     Message: exception message. [string]
 
-    *=== Methods ===*
-    __init__(self, message)
 
     '''
 
@@ -47,6 +45,30 @@ class TotalReflectionError(Exception):
         '''
         return repr(self.Message)
 
+class InputError(Exception):
+    '''InputError class.
+
+    Is raised when the input .tia file parsing to input data failed.
+
+    *=== Attributes ===*
+    Message: exception message. [string]
+
+    '''
+
+    def __init__(self, message):
+        '''InputError exception constuctor.
+
+        '''
+        self.Message = message
+
+    def __str__(self):
+        '''Printing error function
+
+        '''
+        return repr(self.Message)
+
+
+
 def timer(func):
     '''Decorator function to log execution time of other functions.'''
 
@@ -55,8 +77,8 @@ def timer(func):
         func(*args, **kw)
         t2 = tm.time()
         dt = t2 -t1
-        st = str(func.__name__) + " exec with '" + str(*args) + "' in "\
-                        + str(dt*1000.) + "ms."
+        st = "theia: Debug: " + str(func.__name__) + " exec with '" \
+                + str(*args) + "' in " + str(dt*1000.) + "ms."
         print st
 
     return wrapped

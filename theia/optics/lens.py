@@ -221,7 +221,7 @@ class Lens(Optic):
 
         #warn on total reflection
         if dir2['TR'] and settngs.info:
-            print "theia: Info: total reflection occured on "\
+            print "theia: Info: Total reflection occured on "\
             + self.Name + " (" + self.Ref + ") of beam "\
             + beam.Name + "."
 
@@ -236,7 +236,7 @@ class Lens(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: reached end node of tree by interaction"\
+                print "theia: Info: Reached end node of tree by interaction"\
                 + " on " + self.Name + " (" + self.Ref + ") of beam "\
                 + beam.Name + "."
             return ans

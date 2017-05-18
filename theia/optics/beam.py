@@ -54,8 +54,9 @@ class GaussianBeam(object):
     BeamCount = 0   # counts beams
 
     def __init__(self, Wx = None, Wy = None, WDistx = 0., WDisty = 0.,
-        Q = None, ortho = True, N = 1.,
-        Wl = 1064.*nm, P = 1*W, Pos = [0., 0., 0.], Dir = [1., 0., 0.],
+        Pos = [0., 0., 0.],
+        Q = None, ortho = True, N = 1., Theta = None, Phi = None, Alpha = 0.,
+        Wl = 1064.*nm, P = 1*W, X = 0., Y = 0., Z = 0., Dir = [1., 0., 0.],
         Ux = None, Uy = None, Name = None, Ref = None, OptDist = 0.*m,
         Length = 0.*m, StrayOrder = 0):
         '''Beam constructor.
@@ -91,13 +92,26 @@ class GaussianBeam(object):
         else:
             self.Ref = 'Beam' + str(self.__class__.BeamCount)
 
-        # orthonormal basis in which Q is expressed
-        self.Pos = np.array(Pos, dtype=np.float64)
-        self.Dir = np.array(Dir, dtype=np.float64)
-        self.Dir = self.Dir/np.linalg.norm(self.Dir)
+        if X is not None and Y is not None and Z is not None:
+            self.Pos = np.array([X, Y, Z], dtype=np.float64)
+        else:
+            self.Pos = np.array(Pos, dtype = float64)
 
-        if Ux is None and Uy is None:
-            (u,v) = geometry.basis(self.Dir)
+        if Theta is not None and Phi is not None:
+            self.Dir = np.array([np.sin(Theta) * np.cos(Phi),
+                            np.sin(Theta) * np.sin(Phi),
+                            np.cos(Theta)], dtype = np.float64)
+        else:
+            self.Dir = np.array(Dir, dtype=np.float64)
+            self.Dir = self.Dir/np.linalg.norm(self.Dir)
+
+        # orthonormal basis in which Q is expressed
+        if Ux is None and Uy is None and Alpha is not None:
+            #ths happens when alpha is given, user input
+            Alpha = float(Alpha)
+            (u1,v1) = geometry.basis(self.Dir)
+            v = np.cos(Alpha)*v1 - np.sin(Alpha)*u1
+            u = np.cos(Alpha)*u1 + np.sin(Alpha)*v1
         elif Ux is not None and Uy is None:
             u = np.array(Ux, dtype = np.float64)
             u = u/np.linalg.norm(Ux)
@@ -106,7 +120,8 @@ class GaussianBeam(object):
             v = np.array(Uy, dtype = np.float64)
             v = v/np.linalg.norm(v)
             u = np.cross(v, self.Dir)
-        else:
+        elif Ux is not None and Uy is not None:
+            # this happens when we know u and v, only internal use basically
             u = np.array(Ux, dtype = np.float64)
             v = np.array(Uy, dtype = np.float64)
             u = u/np.linalg.norm(u)
@@ -125,7 +140,6 @@ class GaussianBeam(object):
             # Q tensor for orthogonal beam
             self.QTens = np.array([[1./qx, 0.],[0., 1./qy]],
                         dtype = np.complex64)
-
         elif not ortho:
             self.QTens = Q
 

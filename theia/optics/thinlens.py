@@ -56,9 +56,9 @@ class ThinLens(Lens):
 
     '''
 
-    def __init__(self, Focal = 10*cm, KeepI = None,
+    def __init__(self, Focal = 10*cm, KeepI = None, Theta = None, Phi = None,
                 Diameter = None, R = None, T = None,
-                Norm = None, Center = None, Name = None, Ref = None):
+                X = 0., Y = 0., Z = 0., Name = None, Ref = None):
         '''ThinLens constructor.
 
         Parameters are the attributes.
@@ -67,6 +67,10 @@ class ThinLens(Lens):
 
         '''
         # empty constructor
+        if Theta is None:
+            Theta = 0.
+        if Phi is None:
+            Phi = 0.
         if Focal is None:
             Focal = 10*cm
         if R is None:
@@ -76,11 +80,15 @@ class ThinLens(Lens):
         if Name is None:
             Name = "ThinLens"
 
+        Norm = np.array([np.sin(Theta)*np.cos(Phi),
+                        np.sin(Theta) * np.sin(Phi),
+                        np.cos(Theta)], dtype = np.float64)
+
         # initialize with lens mother constructor
         super(Lens, self).__init__(ARCenter = None, ARNorm = None, N = None,
                 HRK = None, ARK = None,
                 ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
-                HRCenter = Center, HRNorm = Norm, Thickness = None,
+                HRCenter = [X, Y, Z], HRNorm = Norm, Thickness = None,
                 Diameter = Diameter, Name = Name, Ref = Ref)
 
         # initialize focal and curvatures for thin lenses

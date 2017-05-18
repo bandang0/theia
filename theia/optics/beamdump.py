@@ -37,7 +37,7 @@ class BeamDump(SetupComponent):
 
     '''
 
-    def __init__(self, Center = None, Norm = None,
+    def __init__(self, X = 0., Y = 0., Z = 0., Theta = None, Phi = None,
                 Name = None, Ref = None, Thickness = None, Diameter = None):
         '''BeamDump constructor.
 
@@ -46,11 +46,20 @@ class BeamDump(SetupComponent):
         Returns a BeamDump.
 
         '''
+        if Theta is None:
+            Theta = 0.
+        if Phi is None:
+            Phi = 0.
         if Name is None:
             Name = "BeamDump"
+
+        Norm = np.array([np.sin(Theta)*np.cos(Phi),
+                        np.sin(Theta) * np.sin(Phi),
+                        np.cos(Theta)], dtype = np.float64)
+
         # initialize from base constructor
         super(BeamDump, self).__init__(Name = Name, Ref = Ref,
-                HRCenter = Center, HRNorm = Norm, Thickness = Thickness)
+                HRCenter = [X, Y, Z], HRNorm = Norm, Thickness = Thickness)
 
 
 
@@ -150,7 +159,7 @@ class BeamDump(SetupComponent):
         beam.Length = dic['distance']
         beam.OptDist = beam.N * beam.Length
         if settings.info:
-            print "theia: Info: reached end node of tree by interaction on "\
+            print "theia: Info: Reached end node of tree by interaction on "\
             + self.Name + " (" + self.Ref + ") of beam "\
             + beam.Name + "."
 

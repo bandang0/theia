@@ -28,19 +28,21 @@ clean-build:
 	rm -rf theia.egg-info
 
 # clean all
-clean-all:
-	make clean-pyc
-	make clean-doc
-	make clean-tutos
+clean-all: clean-pyc clean-doc clean-tutos
+
 # tests
 test-optics:
-	python tests/test_optics.py
+	@python tests/test_optics.py
 
 test-rendering:
-	python tests/test_rendering.py
+	@python tests/test_rendering.py
 
 test-tree:
-	python tests/test_tree.py
+	@python tests/test_tree.py
 
-test-simulation:
-	python tests/test_simulation.py
+test-running:
+	@cd tests ; python test_simulation.py
+
+#build theia
+go:
+	@python setup.py install --user

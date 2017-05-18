@@ -1,0 +1,30 @@
+# This is a test file for development testing
+# Here, first line without a comment, has the longname
+Development Test
+
+#Threshold and order each on their own line
+order = 4
+threshold = -1.
+
+# input beam
+#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
+bm 0.5, 1, 0.,	2.,	1064*nm,	1*W, Y = 2*m, Z = -1., Phi = 0, Theta = 12*deg, Name = 'TestBeam', Ref = 'TB'
+		
+# mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
+#mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
+mr Y = 1., Z = -0.1*m, HRK = 1e-2, ARK = 0, Wedge = 5*deg, Alpha = 90*deg/2., N= 1.1, Name = 'Mir', Ref = 'mir'
+
+# thin lens (X,Y,Z is the center of the thin lens)
+#th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Name	Ref
+th 0, 0, 1, 12 * deg, 13 *deg, 10*cm, 5*cm, 0.1, 0.9, True, 'Len', 'len'
+	
+# thick lens (X,Y,Z is the apex of the HR face)
+#tk	X	Y	Z	Theta	Phi	K1	K2	Diameter	Thickness	N	R	T	KeepI	Name	Ref
+tk 1, 1, 1, 0, 360*deg/3, K1 = -0.01, K2 = -0.02, Diameter = 10*cm, KeepI = False, Ref = 'TH'
+
+#beamdump (X,Y,Z is the center of the principal face)
+#bd	X	Y	Z	Theta	Phi	Dia	Thickness
+bd 0., 0., 0., 45*deg, -23*deg, 2*cm, Thickness = 2*mm
+
+
+

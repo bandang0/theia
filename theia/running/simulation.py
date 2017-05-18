@@ -11,7 +11,13 @@ import numpy as np
 from helpers import settings
 from helpers.units import *
 from helpers.tools import formatter
+from optics.beam import GaussianBeam
+from optics.beamdump import BeamDump
+from optics.thinlens import ThinLens
+from optics.thicklens import ThickLens
+from optics.mirror import Mirror
 from tree import beamtree
+from . import parser
 
 
 class Simulation(object):
@@ -31,7 +37,7 @@ class Simulation(object):
 
     '''
 
-    def __init__(self, LName, FName):
+    def __init__(self, FName):
         '''Simulation constructor.
 
         LName: simulation name. [string]
@@ -42,11 +48,13 @@ class Simulation(object):
             [list of BeamTrees]
         '''
 
-        self.LName = LName
+        self.LName = " Dev Simulation"
         self.FName = FName
         self.OptList = []
         self.InBeams = []
         self.BeamTreeList = []
+        self.Order = np.inf
+        self.Threshold = -1.*mW
 
 
     def __str__(self):
@@ -72,17 +80,37 @@ class Simulation(object):
         return formatter(sList)
 
 
-    def load(self, InBeams, OptList):
+    def load(self):
         '''Initialize simulation attributes by input from .tia file.
+
+        See documantation for the format of the input file.
 
         No return value.
 
         '''
-        self.InBeams = InBeams
-        self.OptList = OptList
+        finalList = parser.readIn(self.FName + '.tia')
+
+        # populate simulation attributes with objects from input
+        for uple in finalList:
+            if uple[0] == 'LName':
+                self.LName = uple[1]
+            elif uple[0] == 'order':
+                self.Order = uple[1]
+            elif uple[0] == 'threshold':
+                self.Threshold = uple[1]
+            elif uple[0] ==  'bm':
+                self.InBeams.append(GaussianBeam(**uple[1]))
+            elif uple[0] == 'mr':
+                self.OptList.append(Mirror(**uple[1]))
+            elif uple[0] == 'th':
+                self.OptList.append(ThinLens(**uple[1]))
+            elif uple[0] == 'tk':
+                self.OptList.append(ThickLens(**uple[1]))
+            elif uple[0] == 'bd':
+                self.OptList.append(BeamDump(**uple[1]))
 
 
-    def run(self, threshold = -1*mW, order = np.inf):
+    def run(self):
         '''Run simulation with input as read by load.
 
         threshold: power of beam below which the simulation stops tracing child
@@ -92,18 +120,23 @@ class Simulation(object):
         No return value.
         '''
         #warn if threshold is negative or order is inf
-        if settings.warning and threshold < 0.:
-            print "theia: Warning: running simulation with negative threshold,"\
+        if settings.warning and self.Threshold < 0.:
+            print "theia: Warning: Running simulation with negative threshold,"\
             + " termination not guaranteed."
 
-        if settings.warning and order is np.inf:
-            print "theia: Warning: running simulation with infinite order,"\
+        if settings.warning and self.Order is np.inf:
+            print "theia: Warning: Running simulation with infinite order,"\
             + " termination not guaranteed."
-        BeamTreeList = []
+
+        # reinitialize treeList
+        self.BeamTreeList = []
 
         for k in range(len(self.InBeams)):
-            BeamTreeList.append(beamtree.treeOfBeam(self.InBeams[k],
-            self.OptList, order, threshold ))
+            self.BeamTreeList.append(beamtree.treeOfBeam(self.InBeams[k],
+            self.OptList, self.Order, self.Threshold ))
 
+    def writeOut(self):
+        pass
 
-        self.BeamTreeList = BeamTreeList
+    def writeCAD(self):
+        pass

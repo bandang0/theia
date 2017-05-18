@@ -67,7 +67,7 @@ class Mirror(Optic):
 
     '''
 
-    def __init__(self, Wedge = 0., Alpha = 0., HRCenter = None,
+    def __init__(self, Wedge = 0., Alpha = 0., X = 0. ,Y = 0., Z = 0.,
                 Theta = 0., Phi = 0., Diameter = None,
                 HRr = None, HRt = None, ARr = None, ARt = None,
                 HRK = None, ARK = None, Thickness = None,
@@ -92,12 +92,13 @@ class Mirror(Optic):
         if Name is None:
             Name = "Mirror"
 
-        Norm = np.array([np.sin(Theta)*np.cos(Phi), np.sin(Theta) * np.sin(Phi),
+        Norm = np.array([np.sin(Theta)*np.cos(Phi),
+                        np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
 
         super(Mirror, self).__init__(ARCenter = None, ARNorm = None, N = N,
             HRK = HRK, ARK = ARK, ARr = ARr, ARt = ARt, HRr = HRr, HRt = HRt,
-        KeepI = KeepI, HRCenter = HRCenter, HRNorm = Norm,
+        KeepI = KeepI, HRCenter = [X, Y, Z], HRNorm = Norm,
         Thickness = Thickness, Diameter = Diameter, Name = Name, Ref = Ref)
 
         # Keep the constructor data for outputting
@@ -292,7 +293,7 @@ class Mirror(Optic):
 
         #warn on total reflection
         if dir2['TR'] and settings.info:
-            print "theia: Info: total reflection occured on "\
+            print "theia: Info: Total reflection occured on "\
             + "HR face of " + self.Name + " (" + self.Ref + ") by beam "\
             + beam.Name + "."
 
@@ -309,7 +310,7 @@ class Mirror(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: reached end node of tree by interaction"\
+                print "theia: Info: Reached end node of tree by interaction"\
                 + " on HR face of " +self.Name + " (" + self.Ref + ") of beam "\
                 + beam.Name + "."
             return ans
@@ -419,7 +420,7 @@ class Mirror(Optic):
         #warn on total reflection
         if dir2['TR']:
             if settings.info:
-                print "theia: Info: total reflection occured on "\
+                print "theia: Info: Total reflection occured on "\
                 + "AR face of " + self.Name + " (" + self.Ref + ") by beam "\
                 + beam.Name + "."
 
@@ -434,7 +435,7 @@ class Mirror(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: reached end node of tree by interaction "\
+                print "theia: Info: Reached end node of tree by interaction "\
                 + "on AR face of " + self.Name + " (" + self.Ref + ") of beam "\
                 + beam.Name + "."
             return ans

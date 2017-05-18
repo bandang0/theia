@@ -61,7 +61,8 @@ class ThickLens(Lens):
 
     '''
 
-    def __init__(self, K1 = None, K2 = None, Apex = None, Norm = None,
+    def __init__(self, K1 = None, K2 = None, X = 0., Y = 0., Z = 0.,
+                Theta = None, Phi = None,
                 Thickness = None, N = None, KeepI = None,
                 Diameter = None, R = None, T = None,
                 Name = None, Ref = None):
@@ -72,14 +73,25 @@ class ThickLens(Lens):
         Returns a ThickLens.
 
         '''
+        if Theta is None:
+            Theta = 0.
+        if Phi is None:
+            Phi = 0.
+        if R is None:
+            R = .1
+        if T is None:
+            T = .9
         if Name is None:
             Name = "ThickLens"
+
+        Norm = np.array([np.sin(Theta)*np.cos(Phi), np.sin(Theta) * np.sin(Phi),
+                        np.cos(Theta)], dtype = np.float64)
 
         # initialize with base constructor
         super(Lens, self).__init__(ARCenter = None, ARNorm = None, N = None,
                 HRK = K1, ARK = K2,
                 ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
-                HRCenter = Apex, HRNorm = Norm, Thickness = None,
+                HRCenter = [X, Y, Z], HRNorm = Norm, Thickness = None,
                 Diameter = Diameter, Name = Name, Ref = Ref)
 
         # Normals are always opposite

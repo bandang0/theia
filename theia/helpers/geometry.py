@@ -342,16 +342,16 @@ def rotMatrix(a,b):
             + vx + (1.0/(1.0 + np.dot(a,b)))*np.matmul(vx,vx)
 
 def basis(a):
-    '''Returns two vectors u and v such that (a, u, v) is an orthonormal basis.
+    '''Returns two vectors u and v such that (a, u, v) is a direct ON basis.
 
     '''
     if np.abs(np.dot(a, np.array([1., 0., 0.]))) == 1.:
-        u = np.cross(a, np.array([0., -1., 0.], dtype=np.float64))
+        u = np.cross(np.array([0., 0., 1.], dtype=np.float64), a)
     else:
-        u = np.cross(a, np.array([1., 0., 0. ], dtype=np.float64))
+        u = - np.cross(a, np.array([1., 0., 0. ], dtype=np.float64))
+    v = np.cross(a, u)
 
     u = u/np.linalg.norm(u)
-    v = np.cross(a, u)
     v = v/np.linalg.norm(v)
 
     return u, v

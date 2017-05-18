@@ -139,7 +139,7 @@ def treeOfBeam(srcBeam, optList, order, threshold):
     if not hitAtLeastOnce:
         # no interaction
         if settings.info:
-            print "theia: Info: reached end node of tree with open beam "\
+            print "theia: Info: Reached end node of tree with open beam "\
             + srcBeam.Ref + "."
         return BeamTree(Root = srcBeam)
 
