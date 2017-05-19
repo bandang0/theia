@@ -54,8 +54,8 @@ class GaussianBeam(object):
     BeamCount = 0   # counts beams
 
     def __init__(self, Wx = None, Wy = None, WDistx = 0., WDisty = 0.,
-        Pos = [0., 0., 0.],
-        Q = None, ortho = True, N = 1., Theta = None, Phi = None, Alpha = 0.,
+        Pos = None,
+        Q = None, ortho = True, N = 1., Theta = np.pi/2., Phi = None, Alpha = 0.,
         Wl = 1064.*nm, P = 1*W, X = 0., Y = 0., Z = 0., Dir = [1., 0., 0.],
         Ux = None, Uy = None, Name = None, Ref = None, OptDist = 0.*m,
         Length = 0.*m, StrayOrder = 0):
@@ -92,10 +92,11 @@ class GaussianBeam(object):
         else:
             self.Ref = 'Beam' + str(self.__class__.BeamCount)
 
-        if X is not None and Y is not None and Z is not None:
-            self.Pos = np.array([X, Y, Z], dtype=np.float64)
+        if Pos is not None:
+            self.Pos = np.array(Pos, dtype = np.float64)
         else:
-            self.Pos = np.array(Pos, dtype = float64)
+            self.Pos = np.array([X, Y, Z], dtype=np.float64)
+
 
         if Theta is not None and Phi is not None:
             self.Dir = np.array([np.sin(Theta) * np.cos(Phi),
@@ -106,7 +107,7 @@ class GaussianBeam(object):
             self.Dir = self.Dir/np.linalg.norm(self.Dir)
 
         # orthonormal basis in which Q is expressed
-        if Ux is None and Uy is None and Alpha is not None:
+        if Ux is None and Uy is None:
             #ths happens when alpha is given, user input
             Alpha = float(Alpha)
             (u1,v1) = geometry.basis(self.Dir)
@@ -157,13 +158,12 @@ class GaussianBeam(object):
         '''
         ans = []
         ans.append("Beam: " + self.Name + " (" + self.Ref + ") " + "{")
-        ans.append("Power: " + str(self.P) + "W")
-        ans.append("Index: " + str(self.N))
-        ans.append("Wavelength: " + str(self.Wl/nm) + "nm")
+        ans.append("Power: " + str(self.P) + "W/"\
+        +"Index: " + str(self.N)\
+        +"/Wavelength: "+str(self.Wl/nm)+"nm/Length: " + str(self.Length) + "m")
+        ans.append("Order: " + str(self.StrayOrder))
         ans.append("Origin: " + str(self.Pos))
         ans.append("Direction: " + str(self.Dir))
-        ans.append("Length: " + str(self.Length) + "m")
-        ans.append("Order: " + str(self.StrayOrder))
         ans.append("Ux: " + str(self.U[0]))
         ans.append("Uy: " + str(self.U[1]))
         ans.append("Tens: [" +str(self.QTens[0][0]) + ", "\

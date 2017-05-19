@@ -47,13 +47,13 @@ def main(options, args):
     print "theia: Run: Done."
 
     #write results to .out file
-    if text:
+    if settings.text:
         print "theia: Run: Writing output file."
         simu.writeOut()
         print "theia: Run: Done."
 
     #write CAD file
-    if cad:
+    if settings.cad:
         print "theia: Run: Writing CAD file."
         simu.writeCAD()
         print "theia: Run: Done."

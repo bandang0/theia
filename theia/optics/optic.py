@@ -134,9 +134,9 @@ class Optic(SetupComponent):
 
         '''
         if settings.info:
-            print "theia: Info: reached end node of tree by interaction on "\
+            print "theia: Info: Reached end node of tree by interaction on "\
             + "Side of " + self.Name + " (" + self.Ref + ") of beam "\
-            + beam.Name + "."
+            + beam.Ref + "."
         return {'t': None, 'r': None}
 
     def collision(self):
@@ -184,28 +184,28 @@ class Optic(SetupComponent):
 
         '''
         if self.HRt + self.HRr > 1.:
-            print "theia: Warning: in " + word + " %s (%s) on HR, R + T > 1."\
+            print "theia: Warning: In " + word + " %s (%s) on HR, R + T > 1."\
                     %(self.Name, self.Ref)
 
         if self.ARt + self.ARr > 1.:
-            print "theia: Warning: in " + word + " %s (%s) on AR, R + T > 1."\
+            print "theia: Warning: In " + word + " %s (%s) on AR, R + T > 1."\
                     %(self.Name, self.Ref)
 
         if self.N < 1.:
-            print "theia: Warning: in " + word + " %s (%s), optical index < 1."\
+            print "theia: Warning: In " + word + " %s (%s), optical index < 1."\
                     %(self.Name, self.Ref)
 
         if self.HRK != 0. and np.abs(1./self.HRK) < self.Dia/2.:
-            print "theia: Warning: in " + word + " %s (%s), the diameter of " \
+            print "theia: Warning: In " + word + " %s (%s), the diameter of " \
                 %(self.Name, self.Ref)\
                 +"the "+word+" exceeds the diameter of the HR surface."\
 
         if self.ARK != 0. and np.abs(1./self.ARK) < self.Dia/2.:
-            print "theia: Warning: in " + word + " %s (%s), the diameter of " \
+            print "theia: Warning: In " + word + " %s (%s), the diameter of " \
                 %(self.Name, self.Ref)\
                 +"the "+word+" exceeds the diameter of the AR surface."\
 
         if self.collision():
-            print "theia: Warning: in " + word + " %s (%s), HR and AR surfaces"\
+            print "theia: Warning: In " + word + " %s (%s), HR and AR surfaces"\
                 %(self.Name, self.Ref)\
                 +" intersect."

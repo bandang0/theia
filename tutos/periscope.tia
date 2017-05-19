@@ -1,0 +1,38 @@
+# theia input file for a periscope type simulation
+
+# In this simulation, a periscope is formed with two lenses, two mirrors and a 
+#beam dump.
+
+Periscope Simulation
+
+#Threshold and order each on their own line
+order = 0
+threshold = .5*mW
+
+# input beam
+#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
+bm 5*m, 5*m, 0.,	0.,	1064*nm,	1*W, Y = 0*m, Z = 0*cm, Phi = 0,  Name = '', Ref = 'ORI'
+
+#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
+#bm 5*m, 5*m, 0.,	0.,	1064*nm,	1*W, Y = 0*m, Z = -.1*cm, Phi = 0,  Name = '', Ref = 'Bottom'
+
+# thin lens (X,Y,Z is the center of the thin lens)
+#th	X		Y	Z	Theta	Phi		Focal	Diameter	R	T		KeepI	Name	Ref
+th 20*cm, 0, 0, 90 * deg, 180 *deg, 10*cm, 5*cm, 		0.1, 0.9, False, 	'Lens', 'L1'
+
+# mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
+#mr	X	Y	Z	Theta		Phi	Wedge	Alpha				HRK			ARK		Diameter		Thickness		N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
+mr X = 30*cm, Theta = 45*deg, Phi = 180*deg, Wedge = 45*deg, HRK = 0, ARK = 0,  Diameter = 10*cm, Thickness = 0*cm, Alpha = 0*deg, N= 1.1, Ref = 'M1'
+
+# thin lens (X,Y,Z is the center of the thin lens)
+#th	X		Y	Z	Theta		Phi	Focal	Diameter	R	T	KeepI	Name	Ref
+th 30*cm, 0, 10*cm, 180 * deg,  0*deg, 10*cm, 5*cm, 		0.1, 0.9, True, 'Lens', 'L2'
+
+# mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
+#mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
+mr X = 30*cm, Z = 20*cm, Theta = 135*deg, Phi = 0., HRK = 0, ARK = 0, Wedge = 45*deg, Diameter = 10*cm, Thickness = 0*cm, Alpha = 0*deg, N= 1.1, Ref = 'M2'
+
+#beamdump (X,Y,Z is the center of the principal face)
+#bd	X	Y	Z	Theta	Phi	Dia	Thickness
+bd 80*cm, 0., 20.*cm, 90*deg, 180*deg, 20*cm, Thickness = 2*mm
+

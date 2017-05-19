@@ -41,7 +41,8 @@ def init(dic):
     inOrder['tk'] = ['X','Y','Z','Theta','Phi','K1','K2','Diameter',
             'Thickness','N','R','T','KeepI','Name','Ref']
 
-    inOrder['bd'] = ['X','Y','Z','Theta','Phi','Diameter','Thickness']
+    inOrder['bd'] = ['X','Y','Z','Theta','Phi','Diameter','Thickness',
+            'Name', 'Ref']
 
     #parsed from command line
     info = dic['info']

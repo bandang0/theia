@@ -1,8 +1,12 @@
 '''Module for the parsing on input data fro m.tia file.'''
 
+import numpy as np
 from helpers import settings
 from helpers.units import *
 from helpers.tools import InputError
+
+# these defs are for evaluation from input file
+pi = np.pi
 
 def readIn(name):
     '''Finds the input data in a file.
@@ -30,7 +34,7 @@ def readIn(name):
             line = line.translate(None, '\t')
             if line.find('#') > -1:
                 line = line[0:line.find('#')]   #no comments
-            if line == '':
+            if len(line) < 2:
                 continue
             elif line[0:5] == 'order':
                 word = line[6:line.find('\n')]
@@ -88,7 +92,6 @@ def dicOf(st, line, fileName, lineNumber):
 
     ans = {}
     words = line.split(',')
-
     i = 0
     while i < len(words):    #inputs without '='
         if '=' in words[i]:
@@ -103,6 +106,10 @@ def dicOf(st, line, fileName, lineNumber):
             raise InputError("Malformed input in "\
                     +fileName+", line " + str(lineNumber)+", entry "+ str(i+1)\
                     +". Did not recognize reference in '" +words[i]+"'.")
+        except IndexError:
+            raise InputError("Malformed input in "\
+                    +fileName+", line " + str(lineNumber)\
+                    +". To many arguments given.")
         i = i + 1
 
     while i < len(words):   #inputs with '='

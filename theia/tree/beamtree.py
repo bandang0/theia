@@ -79,10 +79,10 @@ class BeamTree(object):
         ans = []
         if self.Root is not None:
             ans = self.Root.lineList()
-            if self.T is not None:
-                ans = ans + self.T.beamLineList()
             if self.R is not None:
                 ans = ans + self.R.beamLineList()
+            if self.T is not None:
+                ans = ans + self.T.beamLineList()
 
         return ans
 

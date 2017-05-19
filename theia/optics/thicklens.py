@@ -74,7 +74,7 @@ class ThickLens(Lens):
 
         '''
         if Theta is None:
-            Theta = 0.
+            Theta = np.pi/2.
         if Phi is None:
             Phi = 0.
         if R is None:
@@ -122,6 +122,13 @@ class ThickLens(Lens):
         if settings.warning:
             self.geoCheck("thicklens")
 
+        print self.HRNorm
+        print self.ARNorm
+        print self.HRCenter
+        print self.ARCenter
+        print self.HRK
+        #print self.Focal
+        print self.Thick
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.

@@ -345,13 +345,19 @@ def basis(a):
     '''Returns two vectors u and v such that (a, u, v) is a direct ON basis.
 
     '''
-    if np.abs(np.dot(a, np.array([1., 0., 0.]))) == 1.:
-        u = np.cross(np.array([0., 0., 1.], dtype=np.float64), a)
+    ez = np.array([0., 0., 1.], dtype = np.float64)
+
+    if np.abs(np.dot(a, ez)) == 1.:
+        u = np.dot(a, ez) * np.array([1., 0., 0.], dtype = np.float64)
+        v = np.array([0., 1., 0.], dtype = np.float64)
+        return u,v
     else:
-        u = - np.cross(a, np.array([1., 0., 0. ], dtype=np.float64))
-    v = np.cross(a, u)
-
-    u = u/np.linalg.norm(u)
-    v = v/np.linalg.norm(v)
-
-    return u, v
+        theta = np.arccos(np.dot(a, ez))
+        try:
+            u = ez/np.sin(theta) - a/np.tan(theta)
+        except FloatingPointError:  #tan(pi/2) = inf
+            u = ez
+        v = np.cross(a, u)
+        u = u/np.linalg.norm(u)
+        v = v/np.linalg.norm(v)
+        return u, v

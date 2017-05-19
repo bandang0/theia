@@ -51,7 +51,9 @@ class Mirror(Optic):
         detaild on the geometry of mirrors and their implementation here.
         [float]
     Alpha: rotation alngle used in the geometrical construction of the mirror
-        (see doc). [float]
+        (see doc, it is the amgle between the projection of Ex on the AR plane
+        and the vector from ARCenter to the point where the cylinder and the AR
+        face meet). [float]
 
     **Note**: the curvature of any surface is positive for a concave surface
     (coating inside the sphere).
@@ -68,7 +70,7 @@ class Mirror(Optic):
     '''
 
     def __init__(self, Wedge = 0., Alpha = 0., X = 0. ,Y = 0., Z = 0.,
-                Theta = 0., Phi = 0., Diameter = None,
+                Theta = np.pi/2., Phi = 0., Diameter = None,
                 HRr = None, HRt = None, ARr = None, ARt = None,
                 HRK = None, ARK = None, Thickness = None,
                 N = None, KeepI = None, Name = None, Ref = None):
@@ -86,7 +88,7 @@ class Mirror(Optic):
         if Alpha is None:
             Alpha = 0.
         if Theta is None:
-            Theta = 0.
+            Theta = np.pi/2.
         if Phi is None:
             Phi = 0.
         if Name is None:
@@ -111,9 +113,8 @@ class Mirror(Optic):
 
         a,b = geometry.basis(self.HRNorm)
         self.ARNorm = -np.cos(self.Wedge) * self.HRNorm\
-                        + np.sin(self.Wedge)*(- np.sin(self.Alpha) * a\
-                                            + np.cos(self.Alpha) * b)\
-
+                        + np.sin(self.Wedge)*(np.cos(self.Alpha) * a\
+                                            + np.sin(self.Alpha) * b)
         #Warnings for console output
         if settings.warning:
             self.geoCheck("mirror")

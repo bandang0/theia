@@ -68,7 +68,7 @@ class ThinLens(Lens):
         '''
         # empty constructor
         if Theta is None:
-            Theta = 0.
+            Theta = np.pi/2.
         if Phi is None:
             Phi = 0.
         if Focal is None:
@@ -93,7 +93,8 @@ class ThinLens(Lens):
 
         # initialize focal and curvatures for thin lenses
         self.Focal = float(Focal)
-        self.HRK = - 0.5/self.Focal
+        # thin lens approximation of lensmaker's eauqtion
+        self.HRK = - 0.5/(self.Focal*(self.N - 1.))
         self.ARK = self.HRK
         self.ARNorm = - self.HRNorm
 
@@ -103,7 +104,7 @@ class ThinLens(Lens):
             #separate AR/HR
             self.ARCenter = self.HRCenter + settings.zero * self.ARNorm
         else:
-            try:    #arcsin might fails, if it does the semi angle is pi/2
+            try:    #arcsin might fail, if it does then the semi angle is pi/2
                 theta = np.arcsin(self.Dia * self.HRK/2.)   # half angle
             except FloatingPointError:
                 theta = np.pi/2.
@@ -115,6 +116,14 @@ class ThinLens(Lens):
         #warns on geometry
         if settings.warning:
             self.geoCheck("thinlens")
+
+        print self.HRNorm
+        print self.ARNorm
+        print self.HRCenter
+        print self.ARCenter
+        print self.HRK
+        print self.Focal
+        print self.Thick
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.

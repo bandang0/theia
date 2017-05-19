@@ -47,7 +47,7 @@ class BeamDump(SetupComponent):
 
         '''
         if Theta is None:
-            Theta = 0.
+            Theta = np.pi/2.
         if Phi is None:
             Phi = 0.
         if Name is None:
@@ -161,6 +161,6 @@ class BeamDump(SetupComponent):
         if settings.info:
             print "theia: Info: Reached end node of tree by interaction on "\
             + self.Name + " (" + self.Ref + ") of beam "\
-            + beam.Name + "."
+            + beam.Ref + "."
 
         return {'r': None, 't': None}

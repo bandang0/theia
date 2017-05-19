@@ -14,6 +14,7 @@ kW = 1.e3
 W = 1.0
 mW = 1.e-3
 uW = 1.e-6
+nW = 1.e-9
 
 # Frequencies
 THz = 1.e12
