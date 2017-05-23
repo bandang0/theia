@@ -178,6 +178,7 @@ class Simulation(object):
 
         for tree in self.BeamTreeList:
             outList = outList + tree.lineList()
+
         outList.append("}")
         outList.append("}\n")
         outList.append('#' * 10 + "BEAM LISTING" + "#" * 10)

@@ -1,4 +1,4 @@
-'''Test the simulation module.'''
+'''Test the running module.'''
 
 import sys
 
@@ -19,7 +19,7 @@ dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
 settings.init(dic)
 
 # Create simulation object:
-simu = simulation.Simulation(FName = 'devTest')
+simu = simulation.Simulation(FName = 'pecheur')
 
 # test functions
 @timer
@@ -42,4 +42,5 @@ runner()
 
 # write out
 writer()
+
 

@@ -171,7 +171,9 @@ class GaussianBeam(object):
         ans.append("      [" +str(self.QTens[1][0]) + ", "\
                             + str(self.QTens[1][1]) + "]")
         ans.append("Waist Pos: " + str(self.waistPos()) + 'm')
-        ans.append("Waist Size: " + str(self.waistSize()) + "m")
+        ans.append("Waist Size: (" \
+            + str(self.waistSize()[0]/mm) + ', ' + str(self.waistSize()[1]/mm)\
+            + ')mm')
         ans.append("Rayleigh: " + str(self.rayleigh()) + "m")
         ans.append("ROC: " + str(self.ROC()))
         ans.append("}")

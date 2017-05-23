@@ -259,25 +259,24 @@ class Mirror(Optic):
 
         ans = {}
         d = np.linalg.norm(point - beam.Pos)
-
         # Calculate the local normal in opposite direction
         if self.HRK == 0.:
             localNorm = self.HRNorm
         else:
-            # normal pointing to center of the sphere
-            nor = self.HRK * self.HRNorm/np.abs(self.HRK)
-
-            # center of sphere:
             try:
                 theta = np.arcsin(self.Dia * self.HRK/2.)   #undertending angle
             except FloatingPointError:
                 theta = np.pi/2.
-            sphereC = self.HRCenter + np.cos(theta)*nor/self.HRK
+
+            sphereC = self.HRCenter + np.cos(theta)*self.HRNorm/self.HRK
             localNorm = sphereC - point
             localNorm = localNorm/np.linalg.norm(localNorm)
 
         if np.dot(beam.Dir, localNorm) > 0.:
             localNorm = - localNorm
+            K = np.abs(self.HRK)
+        else:
+            K = -np.abs(self.HRK)
 
         # determine whether we're entering or exiting the substrate
         if np.dot(beam.Dir, self.HRNorm) < 0.:
@@ -320,15 +319,17 @@ class Mirror(Optic):
         if not 'r' in ans:   # for reflected
             Uxr, Uyr = geometry.basis(dir2['r'])
             Uzr = dir2['r']
+            print Uzr
 
         if not 't' in ans:   # for refracted
             Uxt, Uyt = geometry.basis(dir2['t'])
             Uzt = dir2['t']
+            print Uzt
 
         Lx, Ly = geometry.basis(localNorm)
 
         # Calculate daughter curv tensors
-        C = -np.array([[self.HRK, 0.], [0, self.HRK]])
+        C = np.array([[K, 0.], [0, K]])
         Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
                         [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
         Qi = beam.Q(d)
@@ -385,26 +386,23 @@ class Mirror(Optic):
 
         ans = {}
         d = np.linalg.norm(point - beam.Pos)
-
         # Calculate the local normal
         if self.ARK == 0.:
             localNorm = self.ARNorm
         else:
-            # normal pointing to center of the sphere
-            nor = self.ARK * self.ARNorm/np.abs(self.ARK)
-
-            # center of sphere:
             try:
                 theta = np.arcsin(self.Dia * self.ARK/2.)   #undertending angle
             except FloatingPointError:
                 theta = np.pi/2.
-            sphereC = self.ARCenter + np.cos(theta)*nor/self.ARK
+            sphereC = self.ARCenter + np.cos(theta)*self.ARNorm/self.ARK
             localNorm = sphereC - point
             localNorm = localNorm/np.linalg.norm(localNorm)
 
         if np.dot(beam.Dir, localNorm) > 0.:
             localNorm = - localNorm
-
+            K = np.abs(self.ARK)
+        else:
+            K = - np.abs(self.ARK)
         # determine whether we're entering or exiting the substrate
         if np.dot(beam.Dir, self.ARNorm) < 0.:
             #entering
@@ -453,7 +451,7 @@ class Mirror(Optic):
         Lx, Ly = geometry.basis(localNorm)
 
         # Calculate daughter curv tensors
-        C = -np.array([[self.ARK, 0.], [0, self.ARK]])
+        C = np.array([[K, 0.], [0, K]])
         Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
                         [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
         Qi = beam.Q(d)

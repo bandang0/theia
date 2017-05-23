@@ -55,7 +55,7 @@ class Lens(Optic):
 
     '''
     def isHit(self, beam):
-        '''Determine if a beam hits the Optic.
+        '''Determine if a beam hits the Lens.
 
         This is a generic function for all lenses, using their geometrical
         attributes. This uses the line***Inter functions from the geometry
@@ -123,11 +123,13 @@ class Lens(Optic):
                 dist = hitFaces[i]['distance']
                 j=i
 
+
         return {'isHit': True,
                 'intersection point': hitFaces[j]['intersection point'],
                 'face': hitFaces[j]['face'],
                 'distance': hitFaces[j]['distance']
                 }
+
     def hit(self, beam, order, threshold):
         '''Compute the refracted and reflected beams after interaction.
 
@@ -183,28 +185,29 @@ class Lens(Optic):
         if faceTag == 'AR':
             Norm = self.ARNorm
             Center = self.ARCenter
+            K = self.ARK
         else:
             Norm = self.HRNorm
             Center = self.HRCenter
+            K = self.HRK
 
         # Calculate the local normal in opposite direction
-        if self.HRK == 0.:
+        if K == 0.:
             localNorm = Norm
         else:
-            # normal pointing to center of the sphere
-            nor = self.HRK * Norm/np.abs(self.HRK)
-
-            # center of sphere:
             try:
-                theta = np.arcsin(self.Dia * self.HRK/2.)   #undertending angle
+                theta = np.arcsin(self.Dia * K/2.)   #undertending angle
             except FloatingPointError:
                 theta = np.pi/2.
-            sphereC = Center + np.cos(theta)*nor/self.HRK
+            sphereC = Center + np.cos(theta)*Norm/K
             localNorm = sphereC - point
             localNorm = localNorm/np.linalg.norm(localNorm)
 
         if np.dot(beam.Dir, localNorm) > 0.:
             localNorm = - localNorm
+            K = np.abs(K)
+        else:
+            K = - np.abs(K)
 
         # determine whether we're entering or exiting the substrate
         if np.dot(beam.Dir, Norm) < 0.:
@@ -253,7 +256,7 @@ class Lens(Optic):
         Lx, Ly = geometry.basis(localNorm)
 
         # Calculate daughter curv tensors
-        C = -np.array([[self.HRK, 0.], [0, self.HRK]])
+        C = np.array([[K, 0.], [0, K]])
         Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
                         [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
         Qi = beam.Q(d)

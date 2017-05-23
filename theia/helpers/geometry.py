@@ -316,7 +316,6 @@ def newDir(inc, nor, n1, n2):
     # refracted:
     refr = (alpha*inc + beta*nor)
     refr = refr/np.linalg.norm(refr)
-
     return {'r': refl,
             't': refr,
             'TR': False}

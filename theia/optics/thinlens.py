@@ -93,7 +93,7 @@ class ThinLens(Lens):
 
         # initialize focal and curvatures for thin lenses
         self.Focal = float(Focal)
-        # thin lens approximation of lensmaker's eauqtion
+        # thin lens approximation of lensmaker's equation
         self.HRK = - 0.5/(self.Focal*(self.N - 1.))
         self.ARK = self.HRK
         self.ARNorm = - self.HRNorm
@@ -117,13 +117,6 @@ class ThinLens(Lens):
         if settings.warning:
             self.geoCheck("thinlens")
 
-        print self.HRNorm
-        print self.ARNorm
-        print self.HRCenter
-        print self.ARCenter
-        print self.HRK
-        print self.Focal
-        print self.Thick
 
     def lineList(self):
         '''Returns the list of lines necessary to print the object.

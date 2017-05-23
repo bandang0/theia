@@ -20,6 +20,7 @@ clean-doc:
 clean-tutos:
 	find tutos/ -name "*.opt" -exec rm --force {} +
 	find tutos/ -name "*.opt.ps" -exec rm --force {} +
+	find tutos/ -name "*.out" -exec rm --force {} +
 
 # remove build data
 clean-build:
@@ -27,8 +28,14 @@ clean-build:
 	rm -rf dist
 	rm -rf theia.egg-info
 
+# clean tests results
+clean-tests:
+	find tests/ -name "*.opt" -exec rm --force {} +
+	find tests/ -name "*.opt.ps" -exec rm --force {} +
+	find tests/ -name "*.out" -exec rm --force {} +
+
 # clean all
-clean-all: clean-pyc clean-doc clean-tutos
+clean-all: clean-pyc clean-doc clean-tutos clean-tests
 
 # tests
 test-optics:
