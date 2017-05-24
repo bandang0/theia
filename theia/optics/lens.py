@@ -223,10 +223,10 @@ class Lens(Optic):
         dir2 = geometry.newDir(beam.Dir, localNorm, n1, n2)
 
         #warn on total reflection
-        if dir2['TR'] and settngs.info:
-            print "theia: Info: Total reflection occured on "\
-            + self.Name + " (" + self.Ref + ") of beam "\
-            + beam.Name + "."
+        if dir2['TR'] and settings.info:
+            print "theia: Info: Total reflection of "  + beam.Ref + ' on '\
+            + faceTag +' of '\
+            + self.Name + " (" + self.Ref + ")."
 
         # if there is no refracted
         if beam.P * self.HRt < threshold or dir2['t'] is None:
@@ -239,9 +239,8 @@ class Lens(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: Reached end node of tree by interaction"\
-                + " on " + self.Name + " (" + self.Ref + ") of beam "\
-                + beam.Name + "."
+                print "theia: Info: Reached leaf of tree by interaction ("\
+                + beam.Ref + " on " + self.Ref + ', ' + faceTag + ').'
             return ans
 
         # Calculate new basis
@@ -286,12 +285,13 @@ class Lens(Optic):
             ans['r'] = gbeam(ortho = False, Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
-                    StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r')
+                    StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r',
+                    Optic = self.Ref, Face = faceTag)
 
         if not 't' in ans:
             ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.HRt, StrayOrder = beam.StrayOrder,
-                Ref = beam.Ref + 't')
+                Ref = beam.Ref + 't', Optic = self.Ref, Face = faceTag)
 
         return ans

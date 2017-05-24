@@ -7,6 +7,7 @@
 #   lineCylInter
 #   newDir
 
+from math import atan2
 import numpy as np
 np.seterr(divide = 'raise', invalid = 'raise')  # np raises FloatingPointError
 
@@ -360,3 +361,16 @@ def basis(a):
         u = u/np.linalg.norm(u)
         v = v/np.linalg.norm(v)
         return u, v
+
+def rectToSph(array):
+    '''Returns the spherical coordinates of the unitary vector given by array.
+
+    array: 3D vector (unitary). [float]
+
+    Returns the theta and phi angles in radians with theta in [0, pi] and phi
+    in [-pi, pi]
+    '''
+    theta = np.arccos(array[2]) #arccos(z)
+    phi = atan2(array[1], array[0])
+
+    return theta, phi

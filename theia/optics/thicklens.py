@@ -7,6 +7,7 @@
 
 import numpy as np
 from helpers import settings
+from helpers.geometry import rectToSph
 from helpers.units import *
 from optics.lens import Lens
 
@@ -122,15 +123,7 @@ class ThickLens(Lens):
         if settings.warning:
             self.geoCheck("thicklens")
 
-        print self.HRNorm
-        print self.ARNorm
-        print self.HRCenter
-        print self.ARCenter
-        print self.HRK
-        #print self.Focal
-        print self.Thick
-
-    def lineList(self):
+    def lines(self):
         '''Returns the list of lines necessary to print the object.
         '''
         ans = []
@@ -138,7 +131,9 @@ class ThickLens(Lens):
         ans.append("Thick: " + str(self.Thick/cm) + "cm")
         ans.append("Diameter: " + str(self.Dia/cm) + "cm")
         ans.append("Center: " + str(self.HRCenter))
-        ans.append("Norm: " + str(self.HRNorm))
+        sph = rectToSph(self.HRNorm)
+        ans.append("Norm: (" + str(sph[0]/deg) + ', ' \
+                + str(sph[1]/deg) + ')deg')
         ans.append("Index: " + str(self.N))
         ans.append("HRKurv, ARKurv: " + str(self.HRK) + ", " + str(self.ARK))
         ans.append("R, T: " + str(self.HRr) + ", " + str(self.HRt) )

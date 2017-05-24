@@ -119,7 +119,7 @@ class Mirror(Optic):
         if settings.warning:
             self.geoCheck("mirror")
 
-    def lineList(self):
+    def lines(self):
         '''Returns the list of lines necessary to print the object.
         '''
         ans = []
@@ -129,7 +129,9 @@ class Mirror(Optic):
         ans.append("Wedge: " + str(self.Wedge/deg) + "deg")
         ans.append("Alpha: " + str(self.Alpha/deg) + "deg")
         ans.append("HRCenter: " + str(self.HRCenter))
-        ans.append("HRNorm: " + str(self.HRNorm))
+        sph = geometry.rectToSph(self.HRNorm)
+        ans.append("HRNorm: (" + str(sph[0]/deg) + ', ' \
+                + str(sph[1]/deg) + ')deg')
         ans.append("Index: " + str(self.N))
         ans.append("HRKurv, ARKurv: " + str(self.HRK) + ", " + str(self.ARK))
         ans.append("HRr, HRt, ARr, ARt: " +str(self.HRr) + ", " + str(self.HRt)\
@@ -293,9 +295,8 @@ class Mirror(Optic):
 
         #warn on total reflection
         if dir2['TR'] and settings.info:
-            print "theia: Info: Total reflection occured on "\
-            + "HR face of " + self.Name + " (" + self.Ref + ") by beam "\
-            + beam.Name + "."
+            print "theia: Info: Total reflection of "  + beam.Ref + ' on HR of'\
+            + self.Name + " (" + self.Ref + ")."
 
 
         # if there is no refracted
@@ -310,21 +311,18 @@ class Mirror(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: Reached end node of tree by interaction"\
-                + " on HR face of " +self.Name + " (" + self.Ref + ") of beam "\
-                + beam.Name + "."
+                print "theia: Info: Reached leaf of tree by interaction ("\
+                + beam.Ref + " on " + self.Ref + ', ' + 'HR).'
             return ans
 
         # Calculate new basis
         if not 'r' in ans:   # for reflected
             Uxr, Uyr = geometry.basis(dir2['r'])
             Uzr = dir2['r']
-            print Uzr
 
         if not 't' in ans:   # for refracted
             Uxt, Uyt = geometry.basis(dir2['t'])
             Uzt = dir2['t']
-            print Uzt
 
         Lx, Ly = geometry.basis(localNorm)
 
@@ -359,13 +357,14 @@ class Mirror(Optic):
             ans['r'] = gbeam(ortho = False, Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
-                    StrayOrder = beam.StrayOrder, Ref = beam.Ref + 'r')
+                    StrayOrder = beam.StrayOrder, Ref = beam.Ref + 'r',
+                    Optic = self.Ref, Face = 'HR')
 
         if not 't' in ans:
             ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.HRt, StrayOrder = beam.StrayOrder + 1,
-                Ref = beam.Ref + 't')
+                Ref = beam.Ref + 't', Optic = self.Ref, Face = 'HR')
 
         return ans
 
@@ -417,11 +416,9 @@ class Mirror(Optic):
         dir2 = geometry.newDir(beam.Dir, localNorm, n1, n2)
 
         #warn on total reflection
-        if dir2['TR']:
-            if settings.info:
-                print "theia: Info: Total reflection occured on "\
-                + "AR face of " + self.Name + " (" + self.Ref + ") by beam "\
-                + beam.Name + "."
+        if dir2['TR'] and settings.info:
+            print "theia: Info: Total reflection of "  + beam.Ref + ' on AR of'\
+                + self.Name + " (" + self.Ref + ")."
 
         # if there is no refracted
         if beam.P * self.ARt < threshold or dir2['t'] is None:
@@ -434,9 +431,8 @@ class Mirror(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: Reached end node of tree by interaction "\
-                + "on AR face of " + self.Name + " (" + self.Ref + ") of beam "\
-                + beam.Name + "."
+                print "theia: Info: Reached leaf of tree by interaction ("\
+                + beam.Ref + " on " + self.Ref + ', ' + 'AR).'
             return ans
 
         # Calculate new basis
@@ -481,12 +477,13 @@ class Mirror(Optic):
             ans['r'] = gbeam(ortho = False, Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
-                    StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r')
+                    StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r',
+                    Optic = self.Ref, Face = 'AR')
 
         if not 't' in ans:
             ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.ARt, StrayOrder = beam.StrayOrder,
-                Ref = beam.Ref + 't')
+                Ref = beam.Ref + 't', Optic = self.Ref, Face = 'AR')
 
         return ans

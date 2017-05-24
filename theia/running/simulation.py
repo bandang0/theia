@@ -70,15 +70,15 @@ class Simulation(object):
                  + ".*) {"]
         sList.append("OptList: {")
         for opt in self.OptList:
-            sList = sList + opt.lineList()
+            sList = sList + opt.lines()
         sList.append("}")
         sList.append("InBeams: {")
         for beam in self.InBeams:
-            sList = sList + beam.lineList()
+            sList = sList + beam.lines()
         sList.append("}")
         sList.append("BeamTrees: {")
         for tree in self.BeamTreeList:
-            sList = sList + tree.lineList()
+            sList = sList + tree.lines()
         sList.append("}")
         sList.append("}")
 
@@ -157,8 +157,8 @@ class Simulation(object):
         '''
         outList = []
         outList.append("########theia output file for simulation:########")
-        outList.append("\t\t\t" + self.LName + "\n\n")
-        outList.append("#"*10 + "META DATA" + "#"*10)
+        outList.append("\t\t\t" + self.LName + "\n")
+        outList.append('#'*10 + "META DATA" + '#'*10)
 
         outList.append("Generated at: " + strftime("%c"))
         outList.append("Input file: "+ self.FName + ".tia")
@@ -166,26 +166,26 @@ class Simulation(object):
         outList.append("Simulation Threshold: "+ str(self.Threshold/mW) +'mW')
         outList.append("Number of Components: " + str(len(self.OptList)))
         outList.append("Number of Optics: " + str(self.numberOfOptics()) + '\n')
-        outList.append('#' *10 + 'SIMULATION DATA' + "#" * 10)
+        outList.append('#' *10 + 'SIMULATION DATA' + '#' * 10)
         outList.append("Simulation: " + self.LName + " (" + self.FName\
                  + ".*) {")
-        outList.append("InBeams: {")
+        outList.append("Components: {")
 
-        for beam in self.InBeams:
-            outList = outList + beam.lineList()
+        for opt in self.OptList:
+            outList.append(opt.Name + ' (' + opt.Ref + ') ' + str(opt.HRCenter))
         outList.append("}")
         outList.append("BeamTrees: {")
 
         for tree in self.BeamTreeList:
-            outList = outList + tree.lineList()
+            outList = outList + tree.lines()
 
         outList.append("}")
         outList.append("}\n")
-        outList.append('#' * 10 + "BEAM LISTING" + "#" * 10)
+        outList.append('#' * 10 + "BEAM LISTING" + '#' * 10)
 
         for tree in self.BeamTreeList:
             outList.append("Tree: Root beam = " + str(tree.Root.Name) + " {")
-            outList = outList + tree.beamLineList()
+            outList = outList + tree.outputLines()
             outList.append("}")
 
         with open(self.FName + '.out', 'w') as outF:

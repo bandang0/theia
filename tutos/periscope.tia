@@ -13,9 +13,6 @@ threshold = .5*mW
 #bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
 bm 5*m, 5*m, 0.,	0.,	1064*nm,	1*W, Y = 0*m, Z = 0*cm, Phi = 0,  Name = '', Ref = 'ORI'
 
-#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
-#bm 5*m, 5*m, 0.,	0.,	1064*nm,	1*W, Y = 0*m, Z = -.1*cm, Phi = 0,  Name = '', Ref = 'Bottom'
-
 # thin lens (X,Y,Z is the center of the thin lens)
 #th	X		Y	Z	Theta	Phi		Focal	Diameter	R	T		KeepI	Name	Ref
 th 20*cm, 0, 0, 90 * deg, 180 *deg, 10*cm, 5*cm, 		0.1, 0.9, False, 	'Lens', 'L1'

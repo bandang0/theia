@@ -1,4 +1,4 @@
-'''This is a second example of use of theia.'''
+'''This is a second example of use of theia as a library.'''
 
 import sys
 
@@ -40,13 +40,13 @@ bd2 = mir.Mirror(thickness = 2*cm, diameter = 5*cm, HRCenter = [.3, .0, 0.],
             HRt = 1., ARr = 0., ARt = 1.0, Name = 'Ghost2', Ref = 'G2',
             N = 1.)
 
-#The beam
+# The beam
 beam1 = gbeam.GaussianBeam(Wx = .1*cm, Wy = .1*cm,
 					ortho = True, Dir = [1., 0., 0.], WDistx = 0., WDisty = 0.,
 					Pos = [0., 0., 0.])
+
 # Create simulation object:
-simu = sim.Simulation(FName = 'vignale',
-		LName = 'Beam at the center of curvature')
+simu = sim.Simulation(FName = 'vignale')
 
 # Load the initial data of the simulation
 simu.load([beam1], [mirror1, bd1, bd2])

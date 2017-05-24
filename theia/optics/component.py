@@ -81,10 +81,10 @@ class SetupComponent(object):
         '''String representation of the component, when calling print(object).
 
         '''
-        return formatter(self.lineList())
+        return formatter(self.lines())
 
     @abstractmethod
-    def lineList(self):
+    def lines(self):
         '''Method to return the list of strings to __str__.
 
         Abstract (pure virtual) method.

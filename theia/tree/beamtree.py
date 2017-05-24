@@ -11,7 +11,9 @@
 #   treeOfBeam
 
 from helpers import settings
+from helpers.units import *
 from helpers.tools import formatter
+from helpers.geometry import rectToSph
 
 class BeamTree(object):
     '''
@@ -27,32 +29,23 @@ class BeamTree(object):
     Root: beam of this node of the tree. [GaussianBeam]
     T: beam resulting from the transmission of the Root beam. [BeamTree]
     R: beam resulting from the reflection of the Root beam. [BeamTree]
-    Distance: distance from root beam origin to interaction. [float]
-    Optic: Optic where the Root beam gave rise to T's and R's root beams.
-        [OpticalBeam]
-    Face: face where the interaction occured. ['HR', 'AR', or 'Side']
-    ImpactPoint: 3D point in space where the interaction occured. [3D vector]
 
     '''
 
-    def __init__(self, Root = None, T = None, R = None, Distance = None,
-            Optic = None, Face = None, ImpactPoint = None):
+    def __init__(self, Root = None,
+                T = None, R = None):
         '''BeamTree constructor.'''
         self.Root = Root
         self.T = T
         self.R = R
-        self.Distance = Distance
-        self.Optic = Optic
-        self.Face = Face
-        self.ImpactPoint = ImpactPoint
 
     def __str__(self):
         '''String representation of a BeamTree, for print(tree).
 
         '''
-        return formatter(self.lineList())
+        return formatter(self.lines())
 
-    def lineList(self):
+    def lines(self):
         '''Returns the list of lines necessary to print the object.
 
         '''
@@ -70,19 +63,19 @@ class BeamTree(object):
         '''
         before = ["Tree: Root beam = " + str(self.Root.Name) + " {"]
         after = ["}"]
-        return formatter(before + self.beamLineList() + after)
+        return formatter(before + self.beamLines() + after)
 
-    def beamLineList(self):
+    def beamLines(self):
         '''Returns the list of lines necessary to print the list of beams.
 
         '''
         ans = []
         if self.Root is not None:
-            ans = self.Root.lineList()
+            ans = self.Root.lines()
             if self.R is not None:
-                ans = ans + self.R.beamLineList()
+                ans = ans + self.R.beamLines()
             if self.T is not None:
-                ans = ans + self.T.beamLineList()
+                ans = ans + self.T.beamLines()
 
         return ans
 
@@ -99,6 +92,62 @@ class BeamTree(object):
             return 1 + self.T.numberOfBeams()
         else:
             return 1 + self.T.numberOfBeams() + self.R.numberOfBeams()
+
+    def outputLines(self):
+        '''Return the list of lines necessary to write the output of simulation.
+
+        '''
+        sList = []
+        if self.Root is not None:
+            if self.Root.Optic is not None:
+                if self.Root.Length > 0.:
+                    if self.R is not None and self.R.Root is not None:
+                        sList = ['(' + self.Root.Optic + ', ' + self.Root.Face \
+                        + ') ' + str(self.Root.Length)\
+                        + 'm (' + self.R.Root.Optic + ', '\
+                        + self.R.Root.Face + ') ' + self.Root.Ref + ' {']
+                    elif self.T is not None and self.T.Root is not None:
+                        sList = ['(' + self.Root.Optic + ', '+ self.Root.Face \
+                        + ') ' + str(self.Root.Length) \
+                        + 'm (' + self.T.Root.Optic + ', '+ self.T.Root.Face \
+                        + ') ' + self.Root.Ref + ' {']
+                    else:
+                        sList = ['(' + self.Root.Optic \
+                        + ', ' +self.Root.Face + ') ' + str(self.Root.Length) \
+                        + 'm [End] ' + self.Root.Ref + ' {']
+                else:
+                    sList = ['(' + self.Root.Optic + ', ' +self.Root.Face \
+                    + ') [Open] ' + self.Root.Ref + ' {']
+            else:
+                if self.Root.Length > 0.:
+                    if self.R is not None and self.R.Root is not None:
+                        sList = ['[InBeam] ' + str(self.Root.Length) \
+                        + 'm (' + self.R.Root.Optic + ', '+ self.R.Root.Face \
+                        + ') ' + self.Root.Ref + ' {']
+                    elif self.T is not None and self.T.Root is not None:
+                        sList = ['[InBeam] ' + str(self.Root.Length) \
+                        + 'm (' + self.T.Root.Optic + ', '+ self.T.Root.Face \
+                        + ') ' + self.Root.Ref + ' {']
+                    else:
+                        sList = ['[InBeam] ' + str(self.Root.Length)\
+                        + 'm [End] ' + self.Root.Ref + ' {']
+                else:
+                    sList = ['[InBeam] [Open] ' + self.Root.Ref + ' {']
+            sList.append("Waist Pos: " + str(self.Root.waistPos()) + 'm')
+            sList.append("Waist Size: (" \
+                + str(self.Root.waistSize()[0]/mm) + ', ' \
+                + str(self.Root.waistSize()[1]/mm)\
+                + ')mm')
+            sph = rectToSph(self.Root.Dir)
+            sList.append("Direction: (" + str(sph[0]/deg) + ', ' \
+                    + str(sph[1]/deg) + ')deg')
+            sList.append('}')
+            if self.R is not None:
+                sList = sList + self.R.outputLines()
+            if self.T is not None:
+                sList = sList + self.T.outputLines()
+
+        return sList
 
 
 def treeOfBeam(srcBeam, optList, order, threshold):
@@ -139,7 +188,7 @@ def treeOfBeam(srcBeam, optList, order, threshold):
     if not hitAtLeastOnce:
         # no interaction
         if settings.info:
-            print "theia: Info: Reached end node of tree with open beam "\
+            print "theia: Info: Reached open beam "\
             + srcBeam.Ref + "."
         return BeamTree(Root = srcBeam)
 
@@ -148,8 +197,5 @@ def treeOfBeam(srcBeam, optList, order, threshold):
     finalHit = finalOpt.hit(srcBeam, order = order, threshold = threshold)
 
     return BeamTree(Root = srcBeam,
-        T = treeOfBeam(finalHit['t'], optList, order, threshold),
-        R = treeOfBeam(finalHit['r'], optList, order, threshold),
-        Distance = finalisHit['distance'], Optic = finalOpt,
-        Face = finalisHit['face'],
-        ImpactPoint = finalisHit['intersection point'])
+            T = treeOfBeam(finalHit['t'], optList, order, threshold),
+            R = treeOfBeam(finalHit['r'], optList, order, threshold))

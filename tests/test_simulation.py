@@ -19,7 +19,7 @@ dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
 settings.init(dic)
 
 # Create simulation object:
-simu = simulation.Simulation(FName = 'pecheur')
+simu = simulation.Simulation(FName = 'devTest')
 
 # test functions
 @timer

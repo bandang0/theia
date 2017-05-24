@@ -4,7 +4,6 @@
 clean-pyc:
 	find . -name "*.pyc" -exec rm --force {} +
 
-
 # remove compiled documentation
 clean-doc:
 	find doc/ -name "*.vrb" -exec rm --force {} +
@@ -53,3 +52,10 @@ test-running:
 #build theia
 go:
 	@python setup.py install --user
+
+#compile pdf
+go-pdf:
+	cd doc/ ; pdflatex -interaction=nonstopmode primer.tex
+	
+#build documentation
+go-doc:	go-pdf clean-doc

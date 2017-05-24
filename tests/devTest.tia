@@ -3,62 +3,25 @@
 Development Simulation
 
 #Threshold and order each on their own line
-order = 4
-threshold = -1.
+order = 1
+threshold = 1.*mW
 
 # input beam
 #bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
-bm 0.5, 1, 0.,	2.,	1064*nm,	1*W, Y = 0*m, Z = 0., Phi = 0,  Name = 'TestBeam', Ref = 'TB'
+bm 0.5, 1, 0.,	0,	1064*nm,	1*W, Y = 0*m, Z = 0., Phi = 0, Ref = 'TB'
 
 # mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
 #mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
-mr X = 2*m, Phi = 3.141592, HRK = 1e-2, ARK = 0, Wedge = 45*deg, Diameter = 10*cm, Thickness = 5*cm, Alpha = 90*deg, N= 1.1, Name = 'Mir', Ref = 'mir'
+mr X = 2*m, Phi = 3.141592, HRK = 1e-2, ARK = 0, Wedge = 0*deg, Diameter = 10*cm, Thickness = 5*cm, Alpha = 90*deg, N= 1.1,  Ref = 'M1'
 
 # thin lens (X,Y,Z is the center of the thin lens)
 #th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Name	Ref
-th 0, 0, 1, 12 * deg, 13 *deg, 10*cm, 5*cm, 0.1, 0.9, True, 'Len', 'len'
+th 3, 0, 0, 90 * deg, 180 *deg, 10*cm, 5*cm, 0.1, 0.9, True, Ref = 'L1'
 
 # thick lens (X,Y,Z is the apex of the HR face)
-#tk	X	Y	Z	Theta	Phi	K1	K2	Diameter	Thickness	N	R	T	KeepI	Name	Ref
-tk 1, 1, 1, 0, 360*deg/3, K1 = -0.01, K2 = -0.02, Diameter = 10*cm, KeepI = False, Ref = 'TH'
+#tk	X	Y	Z	Theta		Phi	K1	K2	Diameter	Thickness	N	R	T	KeepI	Name	Ref
+tk 4, 	0, 	0, 	360*deg/4., 0., K1 = -0.01, K2 = -0.02, Diameter = 10*cm, KeepI = False, Ref = 'L2'
 
 #beamdump (X,Y,Z is the center of the principal face)
-#bd	X	Y	Z	Theta	Phi	Dia	Thickness
-bd 3., 0., 0., 90*deg, -23*deg, 20*cm, Thickness = 2*mm
-# This is a simulation of the setup used by V. Pecheur in his characterization
-#of the SFP at Virgo.
-
-# Here, first line without a comment, has the longname
-Characterization of SFP
-
-#Threshold and order each on their own line
-order = 1
-threshold = .05*W
-
-# input beam
-#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
-bm 170*um, 188*um, 0.,	0.,	1064*nm,	1*W, X = -105*mm, Y = 0*m, Z = 0., Phi = 0,  Name = 'Laser', Ref = 'Las'
-
-#th	X	Y	Z	Theta	Phi	Focal		Diameter			R			T		KeepI		Name			Ref
-th 46*cm, 0, 0,  Phi = 0., Focal = 12.5*cm, Diameter = 5*cm, R = 0.1, T = 0.9, KeepI = True, Name = 'Len', Ref = 'L1'
-
-# thin lens (X,Y,Z is the center of the thin lens)
-#th	X	Y	Z	Theta	Phi	Focal			Diameter		R		T			KeepI		Name			Ref
-th 86*cm, 0, 0, Phi = 0., Focal = 17.5*cm, Diameter = 5*cm, R = 0.1, T = 0.9, KeepI = True, Name = 'Len', Ref = 'len'
-
-# mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
-#mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
-mr X = 101*cm, Phi = 135*deg, HRK = 2, ARK = 0, Wedge = 0*deg, Diameter = 10*cm, Thickness = 3*cm, HRr = 0.998, HRt = 0.002, Alpha = 0*deg, N= 1.1, Name = 'Mir', Ref = 'M1'
-
-#mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
-mr X = 101*cm, Y = -23*cm, Phi = -135*deg, HRK = 2, ARK = 0, Wedge = 0*deg, Diameter = 10*cm, Thickness = 3*cm, HRr = 0.998, HRt = 0.002, Alpha = 0*deg, N= 1.1, Name = 'Mir', Ref = 'M2'
-
-#beamdump (X,Y,Z is the center of the principal face)
-#bd	X		Y	Z		Theta	Phi		Dia		Thickness		Name	Ref
-bd 121*cm, -23.0, 0., 90*deg, 180*deg, 7*cm, 2*mm, 'BeamDump', 'PD1' 
-
-#bd	X		Y	Z		Theta	Phi		Dia		Thickness		Name	Ref
-bd 81*cm, -23.0, 0., 90*deg, 0*deg, 7*cm, 2*mm, 'BeamDump', 'PD2' 
-
-#bd	X		Y	Z		Theta	Phi		Dia		Thickness		Name	Ref
-bd 101*cm, -43.0, 0., 90*deg, 90*deg, 7*cm, 2*mm, 'BeamDump', 'BD' 
+#bd	X	Y	Z	Theta	Phi	Dia	Thickness Name Ref
+bd 8., 0., 0., 90*deg, -23*deg, 20*cm, Thickness = 2*mm, Ref = 'BD1'

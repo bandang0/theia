@@ -16,7 +16,6 @@ from optics import mirror as mir
 from helpers import timer
 from tree import beamtree
 
-
 # Mirrors of telescope
 mirror1 = mir.Mirror(thickness = 1*cm, diameter = 5*cm, HRCenter = [1*m,0, 0],
             HRNorm = [-1, .10, 0.], HRK = 0.90, ARK = 0, Wedge = 0, HRr = 0.90,
@@ -32,7 +31,6 @@ mirror2 = mir.Mirror(thickness = 1* cm, diameter = 10*cm,
 beam1 = gbeam.GaussianBeam(Wx = .5*cm, Wy = .5*cm, WDistx = 0, WDisty = 0,
             ortho = True, Pos = [0,0,0], Ref = 'ORI')
 
-
 inBeams = [beam1]
 optList = [mirror1, mirror2]
 
@@ -42,7 +40,6 @@ order = 1
 
 # Create simulation object:
 simu = sim.Simulation(FName = 'telescope', LName = 'Telescope')
-
 
 # load and run simulation. Output of this simulation is intended to be compared
 # to the output of the telescope.f90 optocad simulation

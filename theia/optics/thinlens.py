@@ -8,6 +8,7 @@
 import numpy as np
 from helpers import settings
 from helpers.units import *
+from helpers.geometry import rectToSph
 from optics.lens import Lens
 
 class ThinLens(Lens):
@@ -118,7 +119,7 @@ class ThinLens(Lens):
             self.geoCheck("thinlens")
 
 
-    def lineList(self):
+    def lines(self):
         '''Returns the list of lines necessary to print the object.
         '''
         ans = []
@@ -126,7 +127,9 @@ class ThinLens(Lens):
         ans.append("Diameter: " + str(self.Dia/cm) + "cm")
         ans.append("Focal: " + str(self.Focal/mm) + "mm")
         ans.append("Center: " + str(self.HRCenter))
-        ans.append("Norm: " + str(self.HRNorm))
+        sph = rectToSph(self.HRNorm)
+        ans.append("Norm: (" + str(sph[0]/deg) + ', ' \
+                + str(sph[1]/deg) + ')deg')
         ans.append("R, T: " + str(self.HRr) + ", " + str(self.HRt) )
         ans.append("}")
 

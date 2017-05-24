@@ -134,9 +134,8 @@ class Optic(SetupComponent):
 
         '''
         if settings.info:
-            print "theia: Info: Reached end node of tree by interaction on "\
-            + "Side of " + self.Name + " (" + self.Ref + ") of beam "\
-            + beam.Ref + "."
+            print "theia: Info: Reached leaf of tree by interaction ("\
+            + beam.Ref + " on " + self.Ref + ', ' + 'Side).'
         return {'t': None, 'r': None}
 
     def collision(self):

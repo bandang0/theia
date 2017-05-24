@@ -9,8 +9,9 @@
 
 import numpy as np
 from helpers import settings
-from helpers import geometry as geo
+from helpers.geometry import rectToSph, linePlaneInter, lineCylInter
 from helpers.tools import formatter, hitTrue
+from helpers.units import *
 from component import SetupComponent
 
 class BeamDump(SetupComponent):
@@ -63,7 +64,7 @@ class BeamDump(SetupComponent):
 
 
 
-    def lineList(self):
+    def lines(self):
         '''Return the list of lines needed to print the object.
         '''
         ans = []
@@ -71,7 +72,9 @@ class BeamDump(SetupComponent):
         ans.append("Thick: " + str(self.Thick) + "m")
         ans.append("Diameter: " + str(self.Dia) + "m")
         ans.append("Center: " + str(self.HRCenter))
-        ans.append("Norm: " + str(self.HRNorm))
+        sph = rectToSph(self.HRNorm)
+        ans.append("Norm: (" + str(sph[0]/deg) + ', ' \
+                + str(sph[1]/deg) + ')deg')
         ans.append("}")
 
         return ans
@@ -101,16 +104,16 @@ class BeamDump(SetupComponent):
                         'distance': 0.}
 
         # Get impact parameters
-        HRDict = geo.linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
+        HRDict = linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
                                     self.HRNorm, self.Dia)
 
-        SideDict = geo.lineCylInter(beam.Pos, beam.Dir,
+        SideDict =lineCylInter(beam.Pos, beam.Dir,
                                     self.HRCenter, self.HRNorm,
                                     self.Thick, self.Dia)
 
         ARCenter = self.HRCenter - self.Thick*self.HRNorm
 
-        ARDict = geo.linePlaneInter(beam.Pos, beam.Dir, ARCenter,
+        ARDict = linePlaneInter(beam.Pos, beam.Dir, ARCenter,
                                     - self.HRNorm, self.Dia)
 
         # face tags
@@ -159,8 +162,7 @@ class BeamDump(SetupComponent):
         beam.Length = dic['distance']
         beam.OptDist = beam.N * beam.Length
         if settings.info:
-            print "theia: Info: Reached end node of tree by interaction on "\
-            + self.Name + " (" + self.Ref + ") of beam "\
-            + beam.Ref + "."
+            print "theia: Info: Reached beam stop (" + beam.Ref + ' on '\
+            + self.Ref + ').'
 
         return {'r': None, 't': None}

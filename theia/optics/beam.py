@@ -49,6 +49,8 @@ class GaussianBeam(object):
         results from a transmission on a HR surface or a reflection on a AR
         surface, then its StrayOrder is the StrayOrder of the parent beam + 1.
         [integer]
+    Optic: Ref of optic where the beam departs from (None if laser). [string]
+    Face: face of the optic where the beam departs from. [string]
 
     '''
     BeamCount = 0   # counts beams
@@ -58,7 +60,7 @@ class GaussianBeam(object):
         Q = None, ortho = True, N = 1., Theta = np.pi/2., Phi = None, Alpha = 0.,
         Wl = 1064.*nm, P = 1*W, X = 0., Y = 0., Z = 0., Dir = [1., 0., 0.],
         Ux = None, Uy = None, Name = None, Ref = None, OptDist = 0.*m,
-        Length = 0.*m, StrayOrder = 0):
+        Length = 0.*m, StrayOrder = 0, Optic = None, Face = None):
         '''Beam constructor.
 
         This constructor allows to construct *orthogonal* Gaussian beams if the
@@ -144,15 +146,19 @@ class GaussianBeam(object):
         elif not ortho:
             self.QTens = Q
 
+        #origin optics
+        self.Optic = Optic
+        self.Face = Face
+
         self.__class__.BeamCount = self.__class__.BeamCount + 1
 
     def __str__(self):
         '''String representation of the beam, when calling print(beam).
 
         '''
-        return formatter(self.lineList())
+        return formatter(self.lines())
 
-    def lineList(self):
+    def lines(self):
         '''Returns the list of lines necessary to print the object.
 
         '''
@@ -163,13 +169,18 @@ class GaussianBeam(object):
         +"/Wavelength: "+str(self.Wl/nm)+"nm/Length: " + str(self.Length) + "m")
         ans.append("Order: " + str(self.StrayOrder))
         ans.append("Origin: " + str(self.Pos))
-        ans.append("Direction: " + str(self.Dir))
-        ans.append("Ux: " + str(self.U[0]))
-        ans.append("Uy: " + str(self.U[1]))
-        ans.append("Tens: [" +str(self.QTens[0][0]) + ", "\
-                            + str(self.QTens[0][1]) + "]")
-        ans.append("      [" +str(self.QTens[1][0]) + ", "\
-                            + str(self.QTens[1][1]) + "]")
+
+        sph = geometry.rectToSph(self.Dir)
+        ans.append("Direction: (" + str(sph[0]/deg) + ', ' \
+                + str(sph[1]/deg) + ')deg')
+
+        sphx = geometry.rectToSph(self.U[0])
+        ans.append("Ux: (" + str(sphx[0]/deg) + ', ' \
+                + str(sphx[1]/deg) + ')deg')
+
+        sphy = geometry.rectToSph(self.U[1])
+        ans.append("Uy: (" + str(sphy[0]/deg) + ', ' \
+                + str(sphy[1]/deg) + ')deg')
         ans.append("Waist Pos: " + str(self.waistPos()) + 'm')
         ans.append("Waist Size: (" \
             + str(self.waistSize()[0]/mm) + ', ' + str(self.waistSize()[1]/mm)\
@@ -211,7 +222,15 @@ class GaussianBeam(object):
         else:
             theta = .5*np.arcsin(2.*b/(q1inv - q2inv))
 
-        return {'1': 1/q1inv, '2': 1/q2inv, 'theta':theta}
+        try:
+            a = 1/q1inv
+        except ZeroDivisionError:
+            a = np.inf
+        try:
+            b = 1/q2inv
+        except ZeroDivisionError:
+            b = np.inf
+        return {'1': a, '2': b, 'theta':theta}
 
     def ROC(self, dist = 0.):
         '''Return the tuple of ROC of the beam.
@@ -220,10 +239,15 @@ class GaussianBeam(object):
         dist = float(dist)
         Q = self.QParam(dist)
         try:
-            return (1./np.real(1./Q['1']),
-                1./np.real(1./Q['2']) )
+            a = 1./np.real(1./Q['1'])
         except FloatingPointError:
-            return  np.Inf
+            a = np.inf
+        try:
+            b = 1./np.real(1./Q['2'])
+        except FloatingPointError:
+            b = np.inf
+
+        return  (a, b)
 
     def waistPos(self):
         '''Return the tuple of positions of the waists of the beam along Dir.
@@ -245,7 +269,6 @@ class GaussianBeam(object):
         '''
         d = float(d)
         lam = self.Wl/self.N
-        Q = self.QParam(d)
         zR = self.rayleigh()
         D = self.waistPos()
 
