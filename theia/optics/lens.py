@@ -2,14 +2,15 @@
 
 # Provides:
 #   class Lens
+#       isHit
 #       hit
 #       hitActive
 
 import numpy as np
-from helpers import geometry, settings
-from helpers.tools import hitTrue
-from optics.optic import Optic
-from optics.beam import GaussianBeam as gbeam
+from ..helpers import geometry, settings
+from ..helpers.tools import hitTrue
+from .optic import Optic
+from .beam import GaussianBeam as gbeam
 
 class Lens(Optic):
     '''

@@ -5,6 +5,9 @@
 #   class TotalReflectionError
 #       __init__
 #       __str__
+#   class InputError
+#       __init__
+#       __str___
 #   timer
 #   formatter
 

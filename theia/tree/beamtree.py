@@ -4,16 +4,17 @@
 #   class OpticalComponent
 #       __init__
 #       __str__
-#       lineList
+#       lines
 #       beamList
-#       beamLineList
+#       beamLines
 #       numberOfBeams
+#       outputLines
 #   treeOfBeam
 
-from helpers import settings
-from helpers.units import *
-from helpers.tools import formatter
-from helpers.geometry import rectToSph
+from ..helpers import settings
+from ..helpers.units import *
+from ..helpers.tools import formatter
+from ..helpers.geometry import rectToSph
 
 class BeamTree(object):
     '''

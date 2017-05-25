@@ -1,3 +1,5 @@
+'''Setup script for theia.'''
+
 from setuptools import setup, find_packages
 
 setup(
@@ -6,14 +8,13 @@ setup(
     version = "0.0.0",
     author = "R. Duque",
     description = "3D Gaussian beam tracing and visualization",
-	license = "GNU GPLv3",
+	license = "GNU GPLv3+",
 
 	#Requires and entries
     packages = find_packages(exclude='tests'),
-    install_requires = ['numpy>=1.5.0'],
+    install_requires = ['numpy>=1.12.0'],
 	scripts = ['bin/theia'],
-	
+
 	#Metadata
     author_email = "raphael.duque@polytechnique.edu"
 )
-

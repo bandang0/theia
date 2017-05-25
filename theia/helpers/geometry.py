@@ -6,6 +6,9 @@
 #   lineSurfInter
 #   lineCylInter
 #   newDir
+#   rotMatrix
+#   basis
+#   rectToSph
 
 from math import atan2
 import numpy as np

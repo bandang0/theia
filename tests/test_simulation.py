@@ -1,4 +1,4 @@
-'''Test the running module.'''
+'''Test the running module. This is not portable *at all*.'''
 
 import sys
 
@@ -42,5 +42,3 @@ runner()
 
 # write out
 writer()
-
-

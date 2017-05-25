@@ -1,20 +1,15 @@
 #!/usr/bin/env python
 
+# theia program entry point
 import sys
-
-THEIAPATH = '/home/dev0/theia/theia'    # path to access submodules of theia
-sys.path.append(THEIAPATH)
-
 from optparse import OptionParser
-from helpers.interaction import usage
-from main import main
-
+from theia.main import main
+from theia.helpers.interaction import usage
 
 # parse command line and store in options, args
-
 parser = OptionParser(usage = usage)
 
-parser.add_option('-i', '--no-info', 
+parser.add_option('-i', '--no-info',
 				help = 'do not output tracing information to stdout.',
 				action = 'store_false', dest = 'info', default = True)
 
@@ -22,11 +17,11 @@ parser.add_option('-w', '--no-warn',
 				help = 'do not output warnings to stdout.',
 				action = 'store_false', dest = 'warning', default = True)
 
-parser.add_option('-t', '--no-text', 
+parser.add_option('-t', '--no-text',
 				help = 'do not write .out output file.',
 				action = 'store_false', dest = 'text', default = True)
 
-parser.add_option('-c', '--no-CAD', 
+parser.add_option('-c', '--no-CAD',
 				help = 'do not generate .fcstd CAD file.',
 				action = 'store_false', dest = 'cad', default = True)
 

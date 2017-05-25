@@ -3,13 +3,13 @@
 # Provides:
 #   class ThickLens
 #       __init__
-#       lineList
+#       lines
 
 import numpy as np
-from helpers import settings
-from helpers.geometry import rectToSph
-from helpers.units import *
-from optics.lens import Lens
+from ..helpers import settings
+from ..helpers.geometry import rectToSph
+from ..helpers.units import *
+from .lens import Lens
 
 class ThickLens(Lens):
     '''
@@ -62,11 +62,11 @@ class ThickLens(Lens):
 
     '''
 
-    def __init__(self, K1 = None, K2 = None, X = 0., Y = 0., Z = 0.,
-                Theta = None, Phi = None,
-                Thickness = None, N = None, KeepI = None,
-                Diameter = None, R = None, T = None,
-                Name = None, Ref = None):
+    def __init__(self, K1 = 0.01, K2 = 0.01, X = 0., Y = 0., Z = 0.,
+                Theta = np.pi/2., Phi = 0.,
+                Thickness = 2.*cm, N = 1.4585, KeepI = False,
+                Diameter = 5.*cm, R = 0.1, T = .9,
+                Name = "Thicklens", Ref = None):
         '''ThickLens constructor.
 
         Parameters are the attributes.
@@ -74,50 +74,44 @@ class ThickLens(Lens):
         Returns a ThickLens.
 
         '''
-        if Theta is None:
-            Theta = np.pi/2.
-        if Phi is None:
-            Phi = 0.
-        if R is None:
-            R = .1
-        if T is None:
-            T = .9
-        if Name is None:
-            Name = "ThickLens"
-
-        Norm = np.array([np.sin(Theta)*np.cos(Phi), np.sin(Theta) * np.sin(Phi),
+        # prepare for mother constructor
+        HRNorm = np.array([np.sin(Theta)*np.cos(Phi), np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
-
-        # initialize with base constructor
-        super(Lens, self).__init__(ARCenter = None, ARNorm = None, N = None,
-                HRK = K1, ARK = K2,
-                ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
-                HRCenter = [X, Y, Z], HRNorm = Norm, Thickness = None,
-                Diameter = Diameter, Name = Name, Ref = Ref)
+        Apex1 = np.array([X, Y, Z], dtype = np.float64)
 
         # Normals are always opposite
-        self.ARnorm = - self.HRNorm
+        ARNorm = - HRNorm
+        Apex2 = Apex1 + Thickness * ARNorm    #thickness on axis
 
         # half angles
         try:
-            theta1 = np.abs(np.arcsin(self.Dia * self. HRK/2. ))
+            theta1 = np.abs(np.arcsin(Diameter * K1/2. ))
         except FloatingPointError:
             theta1 = np.pi/2.
         try:
-            theta2 = np.abs(np.arcsin(self.Dia * self. ARK/2. ))
+            theta2 = np.abs(np.arcsin(Diameter * K2/2. ))
         except FloatingPointError:
             theta2 = np.pi/2.
 
-        apex2 = self.HRCenter + self.Thick * self.ARNorm    #thickness on axis
+        # real HR and AR centers
+        if np.abs(K1) > 0.:
+            HRCenter = Apex1\
+                        + (1. - np.cos(theta1))*HRNorm/K1
+        else:
+            HRCenter = Apex1
 
-        # real HR andAR centers
-        if np.abs(self.HRK) > 0.:
-            self.HRCenter = self.HRCenter\
-                        + (1. - np.cos(theta1))*self.HRNorm/self.HRK
+        if np.abs(K2) > 0.:
+            ARCenter = Apex2\
+                        + (1. - np.cos(theta2))*ARNorm/K2
+        else:
+            ARCenter = Apex2
 
-        if np.abs(self.ARK) > 0.:
-            self.ARCenter = apex2\
-                        + (1. - np.cos(theta2))*self.ARNorm/self.ARK
+        # initialize with base constructor
+        super(Lens, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm, N = N,
+                HRK = K1, ARK = K2,
+                ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
+                HRCenter = HRCenter, HRNorm = HRNorm, Thickness = Thickness,
+                Diameter = Diameter, Name = Name, Ref = Ref)
 
         #Warnings for console output
         if settings.warning:

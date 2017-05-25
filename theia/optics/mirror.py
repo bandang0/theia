@@ -3,17 +3,18 @@
 # Provides:
 #   class Mirror
 #       __init__
-#       lineList
+#       lines
+#       isHit
 #       hit
 #       hitHR
 #       hitAR
 
 import numpy as np
-from helpers import geometry, settings
-from helpers.units import *
-from helpers.tools import hitTrue
-from optic import Optic
-from optics.beam import GaussianBeam as gbeam
+from ..helpers import geometry, settings
+from ..helpers.units import *
+from ..helpers.tools import hitTrue
+from .optic import Optic
+from .beam import GaussianBeam as gbeam
 
 
 class Mirror(Optic):
@@ -70,10 +71,10 @@ class Mirror(Optic):
     '''
 
     def __init__(self, Wedge = 0., Alpha = 0., X = 0. ,Y = 0., Z = 0.,
-                Theta = np.pi/2., Phi = 0., Diameter = None,
-                HRr = None, HRt = None, ARr = None, ARt = None,
-                HRK = None, ARK = None, Thickness = None,
-                N = None, KeepI = None, Name = None, Ref = None):
+                Theta = np.pi/2., Phi = 0., Diameter = 10.*cm,
+                HRr = .99, HRt = .01, ARr = .1, ARt = .9,
+                HRK = 0.01, ARK = 0, Thickness = 2.*cm,
+                N = 1.4585, KeepI = False, Name = 'Mirror', Ref = None):
         '''Mirror constructor.
 
         Parameters are the attributes and the angles theta and phi are spherical
@@ -82,39 +83,31 @@ class Mirror(Optic):
         Returns a mirror.
 
         '''
-
-        if Wedge is None:
-            Wedge = 0.
-        if Alpha is None:
-            Alpha = 0.
-        if Theta is None:
-            Theta = np.pi/2.
-        if Phi is None:
-            Phi = 0.
-        if Name is None:
-            Name = "Mirror"
-
-        Norm = np.array([np.sin(Theta)*np.cos(Phi),
-                        np.sin(Theta) * np.sin(Phi),
-                        np.cos(Theta)], dtype = np.float64)
-
-        super(Mirror, self).__init__(ARCenter = None, ARNorm = None, N = N,
-            HRK = HRK, ARK = ARK, ARr = ARr, ARt = ARt, HRr = HRr, HRt = HRt,
-        KeepI = KeepI, HRCenter = [X, Y, Z], HRNorm = Norm,
-        Thickness = Thickness, Diameter = Diameter, Name = Name, Ref = Ref)
-
-        # Keep the constructor data for outputting
+        # Initialize input data
         self.Wedge = float(Wedge)
         self.Alpha = float(Alpha)
 
-        #Calculate ARCenter and ARNorm with wedge and alpha and thickness:
-        self.ARCenter = self.HRCenter\
-            - (self.Thick + .5*np.tan(self.Wedge)*self.Dia)*self.HRNorm
+        #prepare for mother constructor
+        HRNorm = np.array([np.sin(Theta)*np.cos(Phi),
+                        np.sin(Theta) * np.sin(Phi),
+                        np.cos(Theta)], dtype = np.float64)
 
-        a,b = geometry.basis(self.HRNorm)
-        self.ARNorm = -np.cos(self.Wedge) * self.HRNorm\
+        HRCenter = np.array([X, Y, Z], dtype = np.float64)
+
+        #Calculate ARCenter and ARNorm with wedge and alpha and thickness:
+        ARCenter = HRCenter\
+            - (Thickness + .5*np.tan(self.Wedge)*Diameter)*HRNorm
+
+        a,b = geometry.basis(HRNorm)
+        ARNorm = -np.cos(self.Wedge) * HRNorm\
                         + np.sin(self.Wedge)*(np.cos(self.Alpha) * a\
                                             + np.sin(self.Alpha) * b)
+
+        super(Mirror, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
+        N = N, HRK = HRK, ARK = ARK, ARr = ARr, ARt = ARt, HRr = HRr, HRt = HRt,
+        KeepI = KeepI, HRCenter = [X, Y, Z], HRNorm = HRNorm,
+        Thickness = Thickness, Diameter = Diameter, Name = Name, Ref = Ref)
+
         #Warnings for console output
         if settings.warning:
             self.geoCheck("mirror")

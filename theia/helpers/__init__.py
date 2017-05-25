@@ -13,3 +13,5 @@ __version__ = "0.0.0"
 __maintainer__ = "R. Duque"
 __email__ = "raphael.duque@polytechnique.edu"
 __status__ = "dev"
+
+__all__ = ['geometry', 'interaction', 'settings', 'tools', 'units']

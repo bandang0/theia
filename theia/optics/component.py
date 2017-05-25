@@ -4,13 +4,13 @@
 #   class SetupComponent
 #       __init__
 #       __str__
-#       lineList
+#       lines
 #       isHit
 
 import numpy as np
 from abc import ABCMeta, abstractmethod
-from helpers.tools import formatter
-from helpers.units import *
+from ..helpers.tools import formatter
+from ..helpers.units import *
 
 class SetupComponent(object):
     '''
@@ -38,8 +38,8 @@ class SetupComponent(object):
     __metaclass__ = ABCMeta
     SetupCount = 0   #counts the setup components
 
-    def __init__(self, HRCenter = [0., 0., 0.], HRNorm = [-1., 0., 0.],
-                Name = None, Ref = None, Thickness = 2.*cm, Diameter = 10.*cm):
+    def __init__(self, HRCenter, HRNorm,
+                Name, Ref, Thickness, Diameter):
         '''SetupComponent constructor.
 
         Parameters are the attributes of the object to construct.
@@ -47,33 +47,17 @@ class SetupComponent(object):
         Returns a setupComponent.
 
         '''
-        # this is to simulate empy constructor
-        if HRCenter is None:
-            HRCenter = [0., 0., 0.]
-        if HRNorm is None:
-            HRNorm = [-1., 0., 0.]
-        if Thickness is None:
-            Thickness = 2.*cm
-        if Diameter is None:
-            Diameter = 10.*cm
-
+        # allow empty constructor
+        if Ref is None:
+            Ref = "Set" + str(SetupComponent.SetupCount)
         # initialize data
         self.HRCenter = np.array(HRCenter, dtype = np.float64)
         self.HRNorm = np.array(HRNorm, dtype = np.float64)
         self.HRNorm = self.HRNorm/np.linalg.norm(self.HRNorm)
         self.Thick = float(Thickness)
         self.Dia = float(Diameter)
-
-        #initialize setup name and ref
-        if Name is not None:
-            self.Name = Name
-        else:
-            self.Name = "Setup"
-
-        if Ref is not None:
-            self.Ref = Ref
-        else:
-            self.Ref = "Set" + str(SetupComponent.SetupCount)
+        self.Name = Name
+        self.Ref = Ref
 
         SetupComponent.SetupCount = SetupComponent.SetupCount + 1
 

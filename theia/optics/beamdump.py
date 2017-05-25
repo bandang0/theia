@@ -3,16 +3,16 @@
 # Provides:
 #   class BeamDump
 #       __init__
-#       lineList
+#       lines
 #       isHit
 #       hit
 
 import numpy as np
-from helpers import settings
-from helpers.geometry import rectToSph, linePlaneInter, lineCylInter
-from helpers.tools import formatter, hitTrue
-from helpers.units import *
-from component import SetupComponent
+from ..helpers import settings
+from ..helpers.geometry import rectToSph, linePlaneInter, lineCylInter
+from ..helpers.tools import formatter, hitTrue
+from ..helpers.units import *
+from .component import SetupComponent
 
 class BeamDump(SetupComponent):
     '''
@@ -38,8 +38,9 @@ class BeamDump(SetupComponent):
 
     '''
 
-    def __init__(self, X = 0., Y = 0., Z = 0., Theta = None, Phi = None,
-                Name = None, Ref = None, Thickness = None, Diameter = None):
+    def __init__(self, X = 0., Y = 0., Z = 0., Theta = np.pi/2., Phi = 0.,
+                Name = 'BeamDump', Ref = None,
+                Thickness = 2.*cm, Diameter = 5.*cm):
         '''BeamDump constructor.
 
         Parameters are the attributes.
@@ -47,21 +48,16 @@ class BeamDump(SetupComponent):
         Returns a BeamDump.
 
         '''
-        if Theta is None:
-            Theta = np.pi/2.
-        if Phi is None:
-            Phi = 0.
-        if Name is None:
-            Name = "BeamDump"
-
+        # prepare for mother constructor
         Norm = np.array([np.sin(Theta)*np.cos(Phi),
                         np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
 
+        HRCenter = np.array([X, Y, Z], dtype = np.float64)
+
         # initialize from base constructor
         super(BeamDump, self).__init__(Name = Name, Ref = Ref,
-                HRCenter = [X, Y, Z], HRNorm = Norm, Thickness = Thickness)
-
+                HRCenter = HRcenter, HRNorm = Norm, Thickness = Thickness)
 
 
     def lines(self):

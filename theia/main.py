@@ -1,10 +1,13 @@
 '''Main module of theia, defines the main function.'''
 
+# Provides:
+#   main
+
 import os
 import sys
-from helpers import settings, interaction
-from helpers.tools import InputError
-from running import simulation
+from .helpers import settings, interaction
+from .helpers.tools import InputError
+from .running import simulation
 
 def main(options, args):
     '''Main function of theia.'''

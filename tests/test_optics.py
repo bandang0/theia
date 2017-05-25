@@ -1,4 +1,4 @@
-'''Test the optics module.'''
+'''Test the optics module. This is not portable *at all*.'''
 
 import sys
 

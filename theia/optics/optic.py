@@ -8,8 +8,8 @@
 #       geoCheck
 
 import numpy as np
-from helpers import settings
-from component import SetupComponent
+from ..helpers import settings
+from .component import SetupComponent
 
 class Optic(SetupComponent):
     '''
@@ -58,10 +58,8 @@ class Optic(SetupComponent):
 
     OptCount = 0   #counts the setup components
 
-    def __init__(self, ARCenter = [0.02, 0., 0.], ARNorm = [1., 0., 0.],
-                N = 1.4585, HRK = 0., ARK = 0., ARr = 0.1, ARt = 0.9, HRr = 0.9,
-                HRt = 0.1, KeepI = False, HRCenter = None, HRNorm = None,
-                Thickness = None, Diameter = None, Name = None, Ref = None):
+    def __init__(self, ARCenter, ARNorm, N, HRK, ARK, ARr, ARt, HRr,
+                HRt, KeepI, HRCenter, HRNorm, Thickness, Diameter, Name, Ref):
         '''Optic base constructor.
 
         Parameters are the attributes of the object to construct.
@@ -70,33 +68,10 @@ class Optic(SetupComponent):
 
         '''
         # allow empty constructor
-        if ARCenter is None:
-            ARCenter = [0.02, 0., 0.]
-        if ARNorm is None:
-            ARNorm = [1., 0., 0.]
-        if N is None:
-            N = 1.4585
-        if HRK is None:
-            HRK = 0.
-        if ARK is None:
-            ARK = 0.
-        if ARr is None:
-            ARr = 0.1
-        if ARt is None:
-            ARt = 0.9
-        if HRr is None:
-            HRr = 0.9
-        if HRt is None:
-            HRt = 0.1
-        if KeepI is None:
-            KeepI = False
+        if Ref is None:
+            Ref = "Opt" + str(Optic.OptCount)
 
-        # initialize data from base constructor
-        super(Optic, self).__init__(HRCenter = HRCenter, HRNorm = HRNorm,
-                Name = Name, Ref = Ref, Thickness = Thickness,
-                Diameter = Diameter)
-
-        # initilaize with input data
+        # initialize with input data
         self.ARCenter = np.array(ARCenter, dtype = np.float64)
         self.ARNorm = np.array(ARNorm, dtype = np.float64)
         self.ARNorm = self.ARNorm/np.linalg.norm(self.ARNorm)
@@ -109,17 +84,10 @@ class Optic(SetupComponent):
         self.ARt = float(ARt)
         self.KeepI = KeepI
 
-        # override base names and refs
-        if Name is None:
-            self.Name = "Optic"
-        else:
-            self.Name = Name
-
-        if Ref is None:
-            self.Ref = "Opt" + str(Optic.OptCount)
-        else:
-            self.Ref = Ref
-
+        #call mother constructor
+        super(Optic, self).__init__(HRCenter = HRCenter, HRNorm = HRNorm,
+                Name = Name, Ref = Ref, Thickness = Thickness,
+                Diameter = Diameter)
         Optic.OptCount = Optic.OptCount + 1
 
 

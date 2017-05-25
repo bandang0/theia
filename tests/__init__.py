@@ -1,7 +1,7 @@
 '''
 This is the tests sub-package of theia.
 
-It provides modules to test the other modukles of theia.
+It provides modules to test the other modules of theia.
 
 '''
 

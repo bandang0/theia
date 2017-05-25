@@ -1,4 +1,4 @@
-'''Test the tree module.'''
+'''Test the tree module. This is not portable *at all*.'''
 
 import sys
 

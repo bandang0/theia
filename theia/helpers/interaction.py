@@ -1,5 +1,8 @@
 '''Module to define interaction functions for theia.'''
 
+# Provides:
+#	usage
+#	welcomeString	
 
 usage = "Usage: theia [options] FNAME\n\nArguments:\n"\
 	+ "  FNAME\t\t .tia format input file name."

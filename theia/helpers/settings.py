@@ -1,5 +1,8 @@
 '''Module to initiate all global variables for theia.'''
 
+# Provides:
+#   init
+
 def init(dic):
     '''Initiate globals with dictionary.
 

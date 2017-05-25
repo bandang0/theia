@@ -3,13 +3,13 @@
 # Provides:
 #   class ThinLens
 #       __init__
-#       lineList
+#       lines
 
 import numpy as np
-from helpers import settings
-from helpers.units import *
-from helpers.geometry import rectToSph
-from optics.lens import Lens
+from ..helpers import settings
+from ..helpers.units import *
+from ..helpers.geometry import rectToSph
+from .lens import Lens
 
 class ThinLens(Lens):
     '''
@@ -57,9 +57,9 @@ class ThinLens(Lens):
 
     '''
 
-    def __init__(self, Focal = 10*cm, KeepI = None, Theta = None, Phi = None,
-                Diameter = None, R = None, T = None,
-                X = 0., Y = 0., Z = 0., Name = None, Ref = None):
+    def __init__(self, Focal = 10*cm, KeepI = False, Theta = np.pi/2., Phi = 0.,
+                Diameter = 5.*cm, R = .1, T = .9,
+                X = 0., Y = 0., Z = 0., Name = "ThinLens", Ref = None):
         '''ThinLens constructor.
 
         Parameters are the attributes.
@@ -67,52 +67,39 @@ class ThinLens(Lens):
         Returns a ThinLens.
 
         '''
-        # empty constructor
-        if Theta is None:
-            Theta = np.pi/2.
-        if Phi is None:
-            Phi = 0.
-        if Focal is None:
-            Focal = 10*cm
-        if R is None:
-            R = .1
-        if T is None:
-            T = .9
-        if Name is None:
-            Name = "ThinLens"
+        # initialize focal
+        self.Focal = float(Focal)
 
-        Norm = np.array([np.sin(Theta)*np.cos(Phi),
+        #prepare for mother constructor
+        HRNorm = np.array([np.sin(Theta)*np.cos(Phi),
                         np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
+        Center = np.array([X, Y, Z], dtype = np.float64)
+        N = 1.4548
 
-        # initialize with lens mother constructor
-        super(Lens, self).__init__(ARCenter = None, ARNorm = None, N = None,
-                HRK = None, ARK = None,
-                ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
-                HRCenter = [X, Y, Z], HRNorm = Norm, Thickness = None,
-                Diameter = Diameter, Name = Name, Ref = Ref)
-
-        # initialize focal and curvatures for thin lenses
-        self.Focal = float(Focal)
         # thin lens approximation of lensmaker's equation
-        self.HRK = - 0.5/(self.Focal*(self.N - 1.))
-        self.ARK = self.HRK
-        self.ARNorm = - self.HRNorm
+        HRK = - 0.5/(self.Focal*(N - 1.))
+        ARK = HRK
+        ARNorm = - HRNorm
 
         # calculate  ARCenter, ARNorm  and HRCenter with focal
         if self.Focal >= 0.:
-            self.Thick = settings.zero
-            #separate AR/HR
-            self.ARCenter = self.HRCenter + settings.zero * self.ARNorm
+            Thickness = settings.zero
         else:
             try:    #arcsin might fail, if it does then the semi angle is pi/2
-                theta = np.arcsin(self.Dia * self.HRK/2.)   # half angle
+                theta = np.arcsin(Diameter * HRK/2.)   # half angle
             except FloatingPointError:
                 theta = np.pi/2.
-            self.Thick = settings.zero + 2.*(1.-np.cos(theta))/self.HRK
-            cen = self.HRCenter
-            self.HRCenter = cen + self.Thick*self.HRNorm/2.
-            self.ARCenter = cen - self.Thick*self.HRNorm/2.
+            Thickness = settings.zero + 2.*(1.-np.cos(theta))/HRK
+        HRCenter = Center + Thickness*HRNorm/2.
+        ARCenter = Center - Thickness*HRNorm/2.
+
+        # initialize with lens mother constructor
+        super(Lens, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm, N = N,
+                HRK = HRK, ARK = ARK,
+                ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
+                HRCenter = HRCenter, HRNorm = HRNorm, Thickness = Thickness,
+                Diameter = Diameter, Name = Name, Ref = Ref)
 
         #warns on geometry
         if settings.warning:

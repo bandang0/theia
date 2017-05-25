@@ -4,7 +4,7 @@
 #   class GaussianBeam
 #       __init__
 #       __str__
-#       lineList
+#       lines
 #       Q
 #       QParam
 #       ROC
@@ -16,9 +16,9 @@
 
 
 import numpy as np
-from helpers.units import *
-from helpers import geometry
-from helpers.tools import formatter
+from ..helpers.units import *
+from ..helpers import geometry
+from ..helpers.tools import formatter
 
 class GaussianBeam(object):
     '''

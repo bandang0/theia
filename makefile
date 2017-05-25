@@ -21,11 +21,6 @@ clean-tutos:
 	find tutos/ -name "*.opt.ps" -exec rm --force {} +
 	find tutos/ -name "*.out" -exec rm --force {} +
 
-# remove build data
-clean-build:
-	rm -rf build
-	rm -rf dist
-	rm -rf theia.egg-info
 
 # clean tests results
 clean-tests:
@@ -35,6 +30,12 @@ clean-tests:
 
 # clean all
 clean-all: clean-pyc clean-doc clean-tutos clean-tests
+
+# remove build data
+clean-build:
+	rm -rf build
+	rm -rf dist
+	rm -rf theia.egg-info
 
 # tests
 test-optics:
@@ -56,6 +57,15 @@ go:
 #compile pdf
 go-pdf:
 	cd doc/ ; pdflatex -interaction=nonstopmode primer.tex
-	
+	cd doc/ ; pdflatex -interaction=nonstopmode userguide.tex
+
 #build documentation
 go-doc:	go-pdf clean-doc
+
+#install all
+install: go go-doc clean-pyc clean-build
+
+#uninstall
+clear:
+	rm -rf ~/.local/lib/python2.7/site-packages/theia*
+	rm -rf ~/.local/bin/theia

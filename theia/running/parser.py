@@ -1,9 +1,13 @@
 '''Module for the parsing on input data fro m.tia file.'''
 
+# Provides:
+#   readIn
+#   dicOf
+
 import numpy as np
-from helpers import settings
-from helpers.units import *
-from helpers.tools import InputError
+from ..helpers import settings
+from ..helpers.units import *
+from ..helpers.tools import InputError
 
 # these defs are for evaluation from input file
 pi = np.pi

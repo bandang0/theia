@@ -1,58 +1,47 @@
 '''This is a second example of use of theia as a library.'''
 
-import sys
+import numpy as np
+from theia.running import simulation as sim
+from theia.optics import beam as gbeam
+from theia.optics import mirror as mir
+from theia.optics import thicklens as tk
+from theia.helpers import settings
+from theia.helpers.units import *
 
-THEIAPATH = '/home/dev0/theia/theia'    # path to access modules of theia
-sys.path.append(THEIAPATH)
-
-import simulation
-import optics
-import tree
-
-from simulation import simulation as sim
-from optics import beam as gbeam
-from optics import mirror as mir
-from tree import beamtree
-from helpers import timer
-from units import *
-
-# Apex of the surface
-A = np.array([0.1,0.,0.], dtype = np.float64)
-theta = 0.52359877
-HRNorm = np.array([-1, .1, 0.], dtype = np.float64)
-HRCenter = A + 0.1*(1-np.cos(theta))*HRNorm
+# initialize globals (necessary to use theia in library form)
+dic = {'info': False, 'warning': True, 'text': True, 'cad': True,
+		'fname': 'test_optics'}
+settings.init(dic)
 
 # Here is a spherical mirror
-mirror1 = mir.Mirror(thickness = 2*cm, diameter = 10*cm, HRCenter = [.1, 0.,0.],
-            HRNorm = [-1, 0, 0.], HRK = 10., ARK = 0, Wedge = 0, HRr = .9,
-            HRt = 0.10, ARr = 0.10, ARt = .90, Name = 'Mirror', Ref = 'M1',
-            ARNorm = [1.,0.,0.])
+mirror1 = mir.Mirror(Thickness = 2, Diameter = 10*cm, X = 1.,
+            Theta = np.pi/2. - np.arctan(.1), Phi = 180.*deg,
+            HRK = 10., ARK = 0, Wedge = 0, HRr = .9,
+            HRt = 0.10, ARr = 0.10, ARt = .90, Ref = 'M1')
 
 # Here are ghost surfaces
-bd1 = mir.Mirror(thickness = 2*cm, diameter = 5*cm,
-            HRCenter = [0., 2., 0],
-            HRNorm = [1., -.2, 0.], HRK = 0., ARK = 0., Wedge = 0., HRr = 0.,
-            HRt = 1., ARr = 0., ARt = 1.0, Name = 'Ghost1', Ref = 'G1',
-            N = 1.0)
+bd1 = tk.ThickLens(Thickness = 0.1*cm, Diameter = 5*cm, Theta = 101.5*deg,
+            Phi = 0., X = 0., Z = .2, K1 = 0., K2 = 0., Ref = 'G1', N = 1.0)
 
-bd2 = mir.Mirror(thickness = 2*cm, diameter = 5*cm, HRCenter = [.3, .0, 0.],
-            HRNorm = [-1.,0., 0.], HRK = 0., ARK = 0., Wedge = 0., HRr = 0.,
-            HRt = 1., ARr = 0., ARt = 1.0, Name = 'Ghost2', Ref = 'G2',
-            N = 1.)
+bd2 = tk.ThickLens(Thickness = 0.1*cm, Diameter = 5*cm, X = 5.,
+            Phi = 180.*deg, K1 = 0., K2 = 0., R = 0, T = 1, N = 1., Ref = 'G2')
 
 # The beam
-beam1 = gbeam.GaussianBeam(Wx = .1*cm, Wy = .1*cm,
-					ortho = True, Dir = [1., 0., 0.], WDistx = 0., WDisty = 0.,
-					Pos = [0., 0., 0.])
+beam1 = gbeam.GaussianBeam(Wx = .1*cm, Wy = .1*cm, Theta = 90.*deg, Phi = 0.,
+					ortho = True, WDistx = 0., WDisty = 0.)
 
 # Create simulation object:
 simu = sim.Simulation(FName = 'vignale')
 
 # Load the initial data of the simulation
-simu.load([beam1], [mirror1, bd1, bd2])
+simu.InBeams = [beam1]
+simu.OptList = [mirror1, bd1, bd2]
+simu.Order = 0
+simu.Threshold = .5*mW
 
 # run the simulation
-simu.run(threshold = 5.*mW, order = 2)
+simu.run()
+simu.writeOut()
 
 if __name__ == "__main__":
     print(simu)

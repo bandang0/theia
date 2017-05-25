@@ -4,21 +4,24 @@
 #   class Simulation
 #       __init__
 #       __str__
+#       numberOfOptics
 #       load
 #       run
+#       writeOut
+#       writeCAD
 
 import numpy as np
 from time import strftime
-from helpers import settings
-from helpers.units import *
-from helpers.tools import formatter
-from optics.optic import Optic
-from optics.beam import GaussianBeam
-from optics.beamdump import BeamDump
-from optics.thinlens import ThinLens
-from optics.thicklens import ThickLens
-from optics.mirror import Mirror
-from tree import beamtree
+from ..helpers import settings
+from ..helpers.units import *
+from ..helpers.tools import formatter
+from ..optics.optic import Optic
+from ..optics.beam import GaussianBeam
+from ..optics.beamdump import BeamDump
+from ..optics.thinlens import ThinLens
+from ..optics.thicklens import ThickLens
+from ..optics.mirror import Mirror
+from ..tree import beamtree
 from . import parser
 
 
@@ -192,4 +195,4 @@ class Simulation(object):
             outF.write(formatter(outList))
 
     def writeCAD(self):
-        pass
+        print "theia: Warning: CAD file writing not implemented yet. Passing."

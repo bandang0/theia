@@ -1,4 +1,4 @@
-'''Test the rendering module.'''
+'''Test the rendering module. This is not portable *at all*.'''
 
 import sys
 
