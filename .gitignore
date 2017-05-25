@@ -100,19 +100,19 @@ ENV/
 /site
 
 # latex stuff
-.aux
-.nav
-.out
-.pdf
-.snm
-.synctex.gz
-.toc
-.vrb
-.ps
+*.aux
+*.nav
+*.out
+*.pdf
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.ps
 
 # OptoCAD executables
-.opt
+*.opt
 
 # trash 
-trash
+trash.py
 trash/

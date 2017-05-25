@@ -1,0 +1,28 @@
+# This is input file to look at lenses!
+# There are a coule of lenses setups to demonstrate convergence and divergence
+# of the beams by lenses.
+Lenses!
+
+#Threshold and order each on their own line
+order = 0
+threshold = 1.*mW
+
+#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
+#th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Name	Ref
+########## SETUP 1
+bm 100.*km, 100.*km, 0.,	0,	1064*nm,	1*W, Y = 0*m, Z = 0., Phi = 0, Ref = 'Beam1'
+th 30.*cm, 0, 0, 90 * deg, 180 *deg, 10*cm, 5*cm, 0.1, 0.9, True, Ref = 'LA'
+
+########## SETUP 2
+bm 100., 100., 0.,	0,	1064*nm,	1*W, Y = -1*m, Z = 0., Phi = 0, Ref = 'Beam2'
+th 30.*cm, -1.0, 0, 90 * deg, 180 *deg, -10.*cm, 5*cm, 0.1, 0.9, True, Ref = 'LB'
+
+########## SETUP 3
+bm 100., 100., 0.,	0,	1064*nm,	1*W, Y = -2*m, Z = 0., Phi = 0, Ref = 'Beam3'
+th 30.*cm, -2., 0, 	90 * deg, 	180 *deg, 		20*cm, 5*cm, 0.1, 0.9, True, Ref = 'LC1'
+th 70.3*cm, -2., 0, 	90 * deg, 	180 *deg, 		20*cm, 5*cm, 0.1, 0.9, True, Ref = 'LC2'
+
+########## SETUP 4
+bm 100., 100., 0.,	0,	1064*nm,	1*W, Y = -3*m, Z = 0., Phi = 0, Ref = 'Beam4'
+th 35.*cm, -3., 0, 	90 * deg, 	180 *deg, 		-5*cm, 5*cm, 0.1, 0.9, True, Ref = 'LD1'
+th 47.7*cm, -3., 0, 	90 * deg, 	180 *deg, 		20*cm, 5*cm, 0.1, 0.9, True, Ref = 'LD2'

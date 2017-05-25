@@ -1,0 +1,7 @@
+Installing theia requires:
+    python [>2.7]
+    numpy [>1.12]
+
+Compiling the documentation requires:
+    pdflatex
+    graphicx [any basic TeXLive or MiKTex installation provides this]
