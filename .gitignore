@@ -110,6 +110,9 @@ ENV/
 *.vrb
 *.ps
 
+# temporary documentation
+doc/tmp/
+
 # OptoCAD executables
 *.opt
 

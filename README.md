@@ -29,6 +29,7 @@ To remove a local `theia` installation from your system, `cd` to the `theia` roo
 `make clear`
 
 To remove a system wide installation is generally a system-specific procedure but the Python2.7 libraries are generally kept in `/usr/local/lib/python2.7/*-packages`
+
 ## Usage
 ##### `theia` program
 In general:
