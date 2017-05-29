@@ -1,2 +1,7 @@
+-----------
 theia 0.1.0:
-    First release.
+    .tia input file
+	.out output file
+	lenses, mirrors
+	non-sequential tracing
+	easy installation thanks to setuptools
