@@ -3,7 +3,7 @@
 
 `theia` is written in Python2.7, in order to offer full modularity, portability and the object-oriented programming style to users.
 
-In its executable form, `theia` allows for readily written text-based input of the optical setup and clear output of the physical data on the propagation of Gaussian beams, also in text form. When used in its library form, `theia` exploits the scripting possibilities of Python and can be used as a powerful tool for tasks such as optical bench design and optimization, stray light hunting, component alignment, etc.
+In its executable form, `theia` allows for readily written text-based input of the optical setup and clear output of the physical data on the propagation of Gaussian beams through the optical setup, also in text form. When used in its library form, `theia` exploits the scripting possibilities of Python and can be used as a powerful tool for tasks such as optical bench design and optimization, stray light hunting, component alignment, etc.
 
 ## Installing
 ##### Requirements
