@@ -10,19 +10,16 @@ In its executable form, `theia` allows for readily written text-based input of t
 Building `theia` and its documentation requires a small number of Python and latex packages which are listed in the REQUIREMENTS file.
 
 ##### Programs - Documentation
-Once in the project root directory, issue the following to install `theia` in your local environment and compile the documentation:
-`make install`
+Once in the project root directory, issue the following to install `theia` locally (this will install the `theia` to `~/.local/bin` and this directory **must** be in your `PATH` to use `theia`):
 
-To compile just the documentation, issue:
-`make go-doc`
-
-To just install `theia` in your local environment:
-`make go`
+- installation and documentation compilation: `make install`;
+- only installation in the local environment: `make go`;
+- only documentation: `make go-doc`.
 
 You can then move the pdf documents found in `doc/` and the tutorial files found in `tutos/` to wherever you feel is best and get rid of the project directory if you like.
 
 For a system-wide installation, issue the following with root privileges:
-`python setup.py install`
+`python setup.py install` (this will nonetheless not compile documentation).
 
 ##### Uninstalling
 To remove a local `theia` installation from your system, `cd` to the `theia` root repository wherever it is (or download a new one) and issue:
@@ -37,14 +34,21 @@ In general:
 
 `theia` takes a `.tia` formatted input text file for the optical setup configuration and has a number of options concerning the output of information to the console and the writing of the output text file.
 
-For the format of the input file, see the `userguide.pdf` in `doc/` and for details on the command line options, you can also see the output of `theia -h`.
+For the format of the input file, see the`userguide.pdf` and `quickref.pdf` files in `doc/` and for details on the command line options, you can also see the output of `theia -h`.
 
 ##### `theia` library
 As usual, you can use the
 ```python
 from theia.running.simulation import Simulation
 ```
-idiom from Python to use specific functions or modules from the `theia` library. Please refer to the `userguide.pdf` file for more details on the API.
+idiom from Python to use specific functions or modules from the `theia` library. Please refer to the `apiguide.pdf` file for more details on the API.
+
+## Documentation
+To learn on `theia`, you will find (after installation) in `doc/`:
+
+- `userguide.pdf` as a global guide to the operation of `theia` on the command line;
+- `quickref.pdf` for an at-a-glance reference on the `.tia` format;
+- `apiguide.pdf` for a detailed guide to the `theia` library.
 
 ## Licensing
 In the effort of taking down walls in the way of physics and computation, `theia` is free software and is released under the GNU General Public License, version 3+. So please feel free (as in freedom) to copy, take home, modify, teach, learn, and redistribute `theia`.

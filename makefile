@@ -58,6 +58,8 @@ go:
 go-pdf:
 	cd doc/ ; pdflatex -interaction=nonstopmode primer.tex
 	cd doc/ ; pdflatex -interaction=nonstopmode userguide.tex
+	cd doc/ ; pdflatex -interaction=nonstopmode apiguide.tex
+	cd doc/ ; pdflatex -interaction=nonstopmode quickref.tex
 
 #build documentation
 go-doc:	go-pdf clean-doc

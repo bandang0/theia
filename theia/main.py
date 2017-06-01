@@ -5,7 +5,8 @@
 
 import os
 import sys
-from .helpers import settings, interaction
+from .helpers import settings
+from .helpers.interaction import welcomeString, recursionErrorString
 from .helpers.tools import InputError
 from .running import simulation
 
@@ -32,7 +33,7 @@ def main(options, args):
     simu = simulation.Simulation(settings.fname)
 
     #welcome to theia
-    print interaction.welcomeString
+    print welcomeString
 
     #load initial data
     print "theia: Run: Reading input data."
@@ -46,7 +47,12 @@ def main(options, args):
 
     #run simulation
     print "theia: Run: Running simulation."
-    simu.run()
+    try:
+        simu.run()
+    except RuntimeError:
+        print "theia: Error: Maximum recursion depth reached. Aborting."\
+                    + recursionErrorString
+        sys.exit(1)
     print "theia: Run: Done."
 
     #write results to .out file
