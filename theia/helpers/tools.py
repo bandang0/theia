@@ -10,7 +10,6 @@
 #   timer
 #   formatter
 
-
 import numpy as np
 import time as tm
 
@@ -58,8 +57,6 @@ class InputError(Exception):
 
         '''
         return repr(self.Message)
-
-
 
 def timer(func):
     '''Decorator function to log execution time of other functions.'''

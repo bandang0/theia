@@ -73,7 +73,6 @@ def linePlaneInter(pos, dirV, planeC, normV, diameter):
             'distance': lam,
             'intersection point': intersect}
 
-
 def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter):
     '''Computes the intersection between a line and a spherical surface.
 
@@ -272,7 +271,6 @@ def lineCylInter(pos, dirV, faceC, normV, thickness, diameter):
                     'intersection point': intersect}
 
     return noInterDict
-
 
 def newDir(inc, nor, n1, n2):
     '''Computes the refl and refr directions produced by inc at interface n1/n2.

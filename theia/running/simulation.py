@@ -100,7 +100,6 @@ class Simulation(object):
                     break
         return n
 
-
     def load(self):
         '''Initialize simulation attributes by input from .tia file.
 
@@ -128,7 +127,6 @@ class Simulation(object):
                 self.OptList.append(ThickLens(**uple[1]))
             elif uple[0] == 'bd':
                 self.OptList.append(BeamDump(**uple[1]))
-
 
     def run(self):
         '''Run simulation with input as read by load.

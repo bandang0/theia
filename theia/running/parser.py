@@ -81,7 +81,6 @@ def readIn(name):
 
     return ans
 
-
 def dicOf(st, line, fileName, lineNumber):
     '''Extract the constructor dictionary from a line.
 

@@ -14,7 +14,6 @@
 #       waistSize
 #       gouy
 
-
 import numpy as np
 from ..helpers.units import *
 from ..helpers import geometry
@@ -132,7 +131,6 @@ class GaussianBeam(object):
 
         self.U = (u, v)
 
-
         # curvature tensor
         if ortho:
             lam = self.Wl/N
@@ -190,7 +188,6 @@ class GaussianBeam(object):
         ans.append("}")
 
         return ans
-
 
     def Q(self, d = 0.):
         '''Return the Q tensor at a distance d of origin.

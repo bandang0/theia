@@ -8,7 +8,6 @@ mm = 1.e-3
 um = 1.e-6
 nm = 1.e-9
 
-
 # Power units
 kW = 1.e3
 W = 1.0

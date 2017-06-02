@@ -3,6 +3,7 @@
 # Provides:
 #	usage
 #	welcomeString
+#	recursionErrorString
 
 usage = "Usage: theia [options] FNAME\n\nArguments:\n"\
 	+ "  FNAME\t\t .tia format input file name."

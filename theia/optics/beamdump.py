@@ -59,7 +59,6 @@ class BeamDump(SetupComponent):
         super(BeamDump, self).__init__(Name = Name, Ref = Ref,
                 HRCenter = HRcenter, HRNorm = Norm, Thickness = Thickness)
 
-
     def lines(self):
         '''Return the list of lines needed to print the object.
         '''
@@ -116,7 +115,6 @@ class BeamDump(SetupComponent):
         HRDict['face'] = 'HR'
         ARDict['face'] = 'AR'
         SideDict['face'] = 'Side'
-
 
         # determine first hit
         hitFaces = filter(lambda dic: dic['isHit'], [HRDict, ARDict, SideDict])

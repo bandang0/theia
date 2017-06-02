@@ -105,7 +105,6 @@ class ThinLens(Lens):
         if settings.warning:
             self.geoCheck("thinlens")
 
-
     def lines(self):
         '''Returns the list of lines necessary to print the object.
         '''

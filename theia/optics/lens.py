@@ -108,7 +108,6 @@ class Lens(Optic):
         ARDict['face'] = 'AR'
         SideDict['face'] = 'Side'
 
-
         # determine first hit
         hitFaces = filter(lambda dic: dic['isHit'], [HRDict, ARDict, SideDict])
 
@@ -122,7 +121,6 @@ class Lens(Optic):
             if hitFaces[i]['distance'] < dist:
                 dist = hitFaces[i]['distance']
                 j=i
-
 
         return {'isHit': True,
                 'intersection point': hitFaces[j]['intersection point'],
@@ -157,7 +155,6 @@ class Lens(Optic):
                                 order, threshold)
         else:
             return self.hitSide(beam)
-
 
     def hitActive(self, beam, point, faceTag, order, threshold):
         '''Compute the daughter beams after interaction on HR or AR at point.

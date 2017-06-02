@@ -15,7 +15,6 @@ from ..helpers.units import *
 from .optic import Optic
 from .beam import GaussianBeam as gbeam
 
-
 class Mirror(Optic):
     '''
 
@@ -186,7 +185,6 @@ class Mirror(Optic):
         ARDict['face'] = 'AR'
         SideDict['face'] = 'Side'
 
-
         # determine first hit
         hitFaces = filter(lambda dic: dic['isHit'], [HRDict, ARDict, SideDict])
 
@@ -234,7 +232,6 @@ class Mirror(Optic):
             return self.hitAR(beam, dic['intersection point'], order, threshold)
         else:
             return self.hitSide(beam)
-
 
     def hitHR(self, beam, point, order, threshold):
         '''Compute the daughter beams after interaction on HR at point.
@@ -289,7 +286,6 @@ class Mirror(Optic):
         if dir2['TR'] and settings.info:
             print "theia: Info: Total reflection of "  + beam.Ref + ' on HR of'\
             + self.Name + " (" + self.Ref + ")."
-
 
         # if there is no refracted
         if beam.P * self.HRt < threshold or beam.StrayOrder + 1 > order\

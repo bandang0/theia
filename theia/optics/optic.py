@@ -90,7 +90,6 @@ class Optic(SetupComponent):
                 Diameter = Diameter)
         Optic.OptCount = Optic.OptCount + 1
 
-
     def hitSide(self, beam):
         '''Compute the daughter beams after interaction on Side at point.
 
@@ -144,7 +143,6 @@ class Optic(SetupComponent):
         vec = apex2 - apex1
 
         return np.dot(vec, self.HRNorm) > 0.
-
 
     def geoCheck(self, word):
         '''Makes geometrical checks on surfaces and warns when necessary.
