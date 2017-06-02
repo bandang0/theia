@@ -10,7 +10,7 @@
 import numpy as np
 from ..helpers import settings
 from ..helpers.geometry import rectToSph, linePlaneInter, lineCylInter
-from ..helpers.tools import formatter, hitTrue
+from ..helpers.tools import formatter
 from ..helpers.units import *
 from .component import SetupComponent
 
@@ -119,7 +119,7 @@ class BeamDump(SetupComponent):
 
 
         # determine first hit
-        hitFaces = filter(hitTrue, [HRDict, ARDict, SideDict])
+        hitFaces = filter(lambda dic: dic['isHit'], [HRDict, ARDict, SideDict])
 
         if len(hitFaces) == 0:
             return noInterDict

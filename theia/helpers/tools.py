@@ -1,7 +1,6 @@
 '''Defines some generic functions for theia.'''
 
 # Provides:
-#   hitTrue
 #   class TotalReflectionError
 #       __init__
 #       __str__
@@ -14,16 +13,6 @@
 
 import numpy as np
 import time as tm
-
-def hitTrue(dic):
-    '''To filter dicts according to their 'isHit' key.
-
-    dic: dictionary with 'isHit' key. [dict]
-
-    Returns dic['isHit']
-
-    '''
-    return dic['isHit']
 
 class TotalReflectionError(Exception):
     '''TotalReflectionError class.

@@ -150,7 +150,7 @@ class BeamTree(object):
 
         return sList
 
-
+#Beware this is a global scope function not a method of the BeamTree class
 def treeOfBeam(srcBeam, optList, order, threshold):
     '''Function to calculate the tree of daughter beams of srcBeam.
 

@@ -12,7 +12,6 @@
 import numpy as np
 from ..helpers import geometry, settings
 from ..helpers.units import *
-from ..helpers.tools import hitTrue
 from .optic import Optic
 from .beam import GaussianBeam as gbeam
 
@@ -189,7 +188,7 @@ class Mirror(Optic):
 
 
         # determine first hit
-        hitFaces = filter(hitTrue, [HRDict, ARDict, SideDict])
+        hitFaces = filter(lambda dic: dic['isHit'], [HRDict, ARDict, SideDict])
 
         if len(hitFaces) == 0:
             return noInterDict

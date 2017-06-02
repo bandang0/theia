@@ -12,4 +12,4 @@ __status__ = "doc"
 __maintainer__ = "R. Duque"
 __email__ = "raphael.duque@polytechnique.edu"
 
-__all__ = ['main', 'helpers', 'optics', 'rendering', 'running', 'tree']
+__all__ = ['main']

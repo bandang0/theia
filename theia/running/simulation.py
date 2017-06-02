@@ -48,7 +48,7 @@ class Simulation(object):
 
     '''
 
-    def __init__(self, FName):
+    def __init__(self, FName = 'simulationinput'):
         '''Simulation constructor.
 
         FName: output files name without extension. [string]

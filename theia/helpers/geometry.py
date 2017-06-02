@@ -14,7 +14,7 @@ from math import atan2
 import numpy as np
 np.seterr(divide = 'raise', invalid = 'raise')  # np raises FloatingPointError
 
-from tools import TotalReflectionError
+from .tools import TotalReflectionError
 from . import settings
 
 def refrAngle(theta, n1, n2):
