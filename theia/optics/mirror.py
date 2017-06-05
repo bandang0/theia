@@ -13,7 +13,7 @@ import numpy as np
 from ..helpers import geometry, settings
 from ..helpers.units import *
 from .optic import Optic
-from .beam import GaussianBeam as gbeam
+from .beam import GaussianBeam
 
 class Mirror(Optic):
     '''
@@ -73,7 +73,7 @@ class Mirror(Optic):
                 HRr = .99, HRt = .01, ARr = .1, ARt = .9,
                 HRK = 0.01, ARK = 0, Thickness = 2.*cm,
                 N = 1.4585, KeepI = False, Name = 'Mirror', Ref = None):
-        '''Mirror constructor.
+        '''Mirror initializer.
 
         Parameters are the attributes and the angles theta and phi are spherical
         coordinates of HRNorm.
@@ -84,8 +84,12 @@ class Mirror(Optic):
         # Initialize input data
         self.Wedge = float(Wedge)
         self.Alpha = float(Alpha)
+        Theta = float(Theta)
+        Phi = float(Phi)
+        Diameter = float(Diameter)
+        Thickness = float(Thickness)
 
-        #prepare for mother constructor
+        #prepare for mother initializer
         HRNorm = np.array([np.sin(Theta)*np.cos(Phi),
                         np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
@@ -342,17 +346,19 @@ class Mirror(Optic):
 
         # Create new beams
         if not 'r' in ans:
-            ans['r'] = gbeam(ortho = False, Q = Qr,
+            ans['r'] = GaussianBeam(Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
                     StrayOrder = beam.StrayOrder, Ref = beam.Ref + 'r',
-                    Optic = self.Ref, Face = 'HR')
+                    Optic = self.Ref, Face = 'HR', Name = "Beam",
+                    Length = 0., OptDist = 0.)
 
         if not 't' in ans:
-            ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point,
+            ans['t'] = GaussianBeam(Q = Qt, Pos = point, Name = "Beam",
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.HRt, StrayOrder = beam.StrayOrder + 1,
-                Ref = beam.Ref + 't', Optic = self.Ref, Face = 'HR')
+                Ref = beam.Ref + 't', Optic = self.Ref, Face = 'HR',
+                Length = 0., OptDist = 0.)
 
         return ans
 
@@ -462,16 +468,18 @@ class Mirror(Optic):
 
         # Create new beams
         if not 'r' in ans:
-            ans['r'] = gbeam(ortho = False, Q = Qr,
+            ans['r'] = gbeam(ortho = False, Q = Qr, Name = "Beam",
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
                     StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r',
-                    Optic = self.Ref, Face = 'AR')
+                    Optic = self.Ref, Face = 'AR',
+                    Length = 0., OptDist = 0.)
 
         if not 't' in ans:
-            ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point,
+            ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point, Name = "Beam",
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.ARt, StrayOrder = beam.StrayOrder,
-                Ref = beam.Ref + 't', Optic = self.Ref, Face = 'AR')
+                Ref = beam.Ref + 't', Optic = self.Ref, Face = 'AR',
+                Length = 0., OptDist =0.)
 
         return ans

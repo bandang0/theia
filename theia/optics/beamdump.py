@@ -41,23 +41,28 @@ class BeamDump(SetupComponent):
     def __init__(self, X = 0., Y = 0., Z = 0., Theta = np.pi/2., Phi = 0.,
                 Name = 'BeamDump', Ref = None,
                 Thickness = 2.*cm, Diameter = 5.*cm):
-        '''BeamDump constructor.
+        '''BeamDump initializer.
 
         Parameters are the attributes.
 
         Returns a BeamDump.
 
         '''
-        # prepare for mother constructor
+        #Check input
+        Thickness = float(Thickness)
+        Diameter = float(Diameter)
+
+        # prepare for mother initializer
         Norm = np.array([np.sin(Theta)*np.cos(Phi),
                         np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
 
         HRCenter = np.array([X, Y, Z], dtype = np.float64)
 
-        # initialize from base constructor
+        # initialize from base initializer
         super(BeamDump, self).__init__(Name = Name, Ref = Ref,
-                HRCenter = HRcenter, HRNorm = Norm, Thickness = Thickness)
+                Diameter = Diameter, HRCenter = HRCenter, HRNorm = Norm,
+                Thickness = Thickness)
 
     def lines(self):
         '''Return the list of lines needed to print the object.

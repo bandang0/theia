@@ -1,34 +1,6 @@
 \documentclass{article}
 
-
-\usepackage{graphicx} % Allows including images
-\usepackage{stackengine}
-\usepackage{scalerel}
-\usepackage{xcolor}
-\usepackage{geometry}
-
-\graphicspath{{./img/}}
-\renewcommand{\abstractname}{}
-\renewcommand{\tt}[1]{\texttt{#1}}
-
-\newcommand\dangersign[1][2ex]{%
-  \renewcommand\stacktype{L}%
-  \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny !}}{#1}%
-}
-
-\newcommand{\warn}[1]{\begin{center}
-\begin{tabular}{ c  p{12cm} }
-\dangersign[22pt] & \vspace{-0.6cm} #1
-\end{tabular}
-\end{center}}
-
-\geometry{
- a4paper,
- left=30mm,
- right=30mm,
- top=30mm,
- bottom=30mm
- }
+\input{macro}
 
 \title{\texttt{theia} \\ \quad \\A 3D Gaussian beam tracer \\ \quad \\ \begin{small} Version 0.1.0 \end{small} \\ \quad \\ \textit{User Guide}}
 

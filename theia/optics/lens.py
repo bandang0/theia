@@ -9,7 +9,7 @@
 import numpy as np
 from ..helpers import geometry, settings
 from .optic import Optic
-from .beam import GaussianBeam as gbeam
+from .beam import GaussianBeam
 
 class Lens(Optic):
     '''
@@ -279,16 +279,18 @@ class Lens(Optic):
 
         # Create new beams
         if not 'r' in ans:
-            ans['r'] = gbeam(ortho = False, Q = Qr,
+            ans['r'] = GaussianBeam(Q = Qr, Name = "Beam",
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
                     StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r',
-                    Optic = self.Ref, Face = faceTag)
+                    Optic = self.Ref, Face = faceTag,
+                    Length = 0., OptDist = 0.)
 
         if not 't' in ans:
-            ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point,
+            ans['t'] = GaussianBeam(Q = Qt, Pos = point, Name = "Beam",
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.HRt, StrayOrder = beam.StrayOrder,
-                Ref = beam.Ref + 't', Optic = self.Ref, Face = faceTag)
+                Ref = beam.Ref + 't', Optic = self.Ref, Face = faceTag,
+                Length = 0., OptDist = 0.)
 
         return ans

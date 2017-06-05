@@ -40,22 +40,22 @@ class SetupComponent(object):
 
     def __init__(self, HRCenter, HRNorm,
                 Name, Ref, Thickness, Diameter):
-        '''SetupComponent constructor.
+        '''SetupComponent initializer.
 
         Parameters are the attributes of the object to construct.
 
         Returns a setupComponent.
 
         '''
-        # allow empty constructor
+        # allow empty initializer
         if Ref is None:
             Ref = "Set" + str(SetupComponent.SetupCount)
         # initialize data
         self.HRCenter = np.array(HRCenter, dtype = np.float64)
         self.HRNorm = np.array(HRNorm, dtype = np.float64)
         self.HRNorm = self.HRNorm/np.linalg.norm(self.HRNorm)
-        self.Thick = float(Thickness)
-        self.Dia = float(Diameter)
+        self.Thick = Thickness
+        self.Dia = Diameter
         self.Name = Name
         self.Ref = Ref
 

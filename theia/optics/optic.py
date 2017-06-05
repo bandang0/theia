@@ -60,14 +60,14 @@ class Optic(SetupComponent):
 
     def __init__(self, ARCenter, ARNorm, N, HRK, ARK, ARr, ARt, HRr,
                 HRt, KeepI, HRCenter, HRNorm, Thickness, Diameter, Name, Ref):
-        '''Optic base constructor.
+        '''Optic base initializer.
 
         Parameters are the attributes of the object to construct.
 
         Returns an Optic.
 
         '''
-        # allow empty constructor
+        # allow empty initializer
         if Ref is None:
             Ref = "Opt" + str(Optic.OptCount)
 
@@ -75,16 +75,16 @@ class Optic(SetupComponent):
         self.ARCenter = np.array(ARCenter, dtype = np.float64)
         self.ARNorm = np.array(ARNorm, dtype = np.float64)
         self.ARNorm = self.ARNorm/np.linalg.norm(self.ARNorm)
-        self.N = float(N)
-        self.HRK = float(HRK)
-        self.ARK = float(ARK)
-        self.HRr = float(HRr)
-        self.HRt = float(HRt)
-        self.ARr = float(ARr)
-        self.ARt = float(ARt)
+        self.N = N
+        self.HRK = HRK
+        self.ARK = ARK
+        self.HRr = HRr
+        self.HRt = HRt
+        self.ARr = ARr
+        self.ARt = ARt
         self.KeepI = KeepI
 
-        #call mother constructor
+        #call mother initializer
         super(Optic, self).__init__(HRCenter = HRCenter, HRNorm = HRNorm,
                 Name = Name, Ref = Ref, Thickness = Thickness,
                 Diameter = Diameter)

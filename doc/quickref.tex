@@ -1,0 +1,37 @@
+\documentclass[a4paper, landscape]{article}
+
+\input{macro}
+\geometry{left=1cm,
+			right=1cm,
+			top=1cm,
+			bottom=1cm}
+
+\title{theia Quick Reference}
+
+\begin{document}
+
+\begin{tabular}{| p{.6cm} | p{10cm}| p{6cm} | p{5cm} |}
+\hline
+\textbf{Key} & \textbf{Input Order} & \textbf{Defaults} & \textbf{Remarks} \\ \hline \hline
+
+\tt{bm} & \tt{Wx}, \tt{Wy} (waist sizes), \tt{WDistx}, \tt{WDisty} (waist positions from beam origin), \tt{Wl}, \tt{P}, \tt{X}, \tt{Y}, \tt{Z} (position of origin in space), \tt{Theta}, \tt{Phi} (orientation), \tt{Alpha} (rotation of eigenbase for orthogonal beams), \tt{Name}, \tt{Ref}  & \tt{Alpha = 0.} $\leftrightarrow$ eigen X is $\perp$ to beam direction and has maximum $Z$ component, if direction is $\pm e_Z$ then eigen X is $\pm e_X$\\ \hline
+
+\tt{mr} & \tt{X}, \tt{Y}, \tt{Z} (position of center of HR chord), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{Wedge}, \tt{Alpha} (wedge and wedge rotation), \tt{HRK}, \tt{ARK} (curvatures), \tt{Diameter}, \tt{Thickness} (of the construction cylinder), \tt{N}, \tt{HRr}, \tt{HRt}, \tt{ARr}, \tt{ARt} (power reflectances and transmittances), \tt{KeepI}, \tt{Name}, \tt{Ref} & \\ \hline
+
+\tt{th} & \tt{X}, \tt{Y}, \tt{Z} (position of center of lens), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{Focal} (focal length),  \tt{Diameter}, \tt{R}, \tt{T} (power reflectance and transmittance), \tt{KeepI}, \tt{Name}, \tt{Ref} & \\ \hline
+
+\tt{tk} & \tt{X}, \tt{Y}, \tt{Z} (position of apex of HR face of lens), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{K1}, \tt{K2} (curvatures), \tt{Diameter},  \tt{Thickness}, \tt{N}, \tt{R}, \tt{T} (power reflectance and transmittance), \tt{KeepI}, \tt{Name}, \tt{Ref} & \\ \tt{Thickness}: on optical axis (from apex to apex)\hline
+
+\tt{bd} & \tt{X}, \tt{Y}, \tt{Z} (position of center of HR), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{Diameter},  \tt{Thickness}, \tt{Name}, \tt{Ref} & \\ \hline
+
+\end{tabular}
+
+\paragraph{Notes.}\begin{itemize}
+\item \tt{Theta}, \tt{Phi} are spherical coordinates around $e_Z$ and \tt{Phi = 0.} $\leftrightarrow~ + e_X$ 
+\item Curvature signs convention: 
+\end{itemize}
+
+\paragraph{Units.}(km, m = 1., cm, mm, um, nm), (kW, W = 1., mW, uW, nW), (THz, GHz, MHz, kHz, Hz = 1., mHz, uHz), (ppm = 1.e-6, rad = 1., deg), pi
+\paragraph{Functions.} sin, cos, tan, arcsin, arccos, arctan, sqrt, exp
+
+\end{document}

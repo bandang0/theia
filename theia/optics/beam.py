@@ -3,6 +3,7 @@
 # Provides:
 #   class GaussianBeam
 #       __init__
+#       userBeam
 #       __str__
 #       lines
 #       Q
@@ -54,101 +55,92 @@ class GaussianBeam(object):
     '''
     BeamCount = 0   # counts beams
 
-    def __init__(self, Wx = None, Wy = None, WDistx = 0., WDisty = 0.,
-        Pos = None,
-        Q = None, ortho = True, N = 1., Theta = np.pi/2., Phi = None, Alpha = 0.,
-        Wl = 1064.*nm, P = 1*W, X = 0., Y = 0., Z = 0., Dir = [1., 0., 0.],
-        Ux = None, Uy = None, Name = None, Ref = None, OptDist = 0.*m,
-        Length = 0.*m, StrayOrder = 0, Optic = None, Face = None):
-        '''Beam constructor.
+    def __init__(self, Q, N, Wl, P, Pos, Dir, Ux, Uy, Name, Ref, OptDist,
+        Length, StrayOrder, Optic, Face):
+        '''Beam initializer.
 
-        This constructor allows to construct *orthogonal* Gaussian beams if the
-        ortho parameter is True, or a general astigmatic beam if it is False.
-        If ortho is True, a pair of waists and waist distances has to be given
-        and the corresponding orthogonal beam is returned.
-        If it is False a general tensor attribute can directly be given.
-
-        The Ux vector which is input is the second of the orthonormal basis.
+        This is the initializer used internally for beam creation, for user
+        inputed beams, see class method userGaussianBeam.
 
         Returns a Gaussian beam with attributes as the parameters.
 
         '''
 
         # external params
-        self.N = float(N)
-        self.Wl = float(Wl)
-        self.P = float(P)
-        self.OptDist = float(OptDist)
-        self.Length = float(Length)
+        self.N = N
+        self.Wl = Wl
+        self.P = P
+        self.OptDist = OptDist
+        self.Length = Length
         self.StrayOrder = StrayOrder
 
-        # name
-        if Name is not None:
-            self.Name = Name
-        else:
-            self.Name = 'Beam' + str(self.__class__.BeamCount)
+        self.Name = Name
+        self.Ref = Ref
 
-        if Ref is not None:
-            self.Ref = Ref
-        else:
-            self.Ref = 'Beam' + str(self.__class__.BeamCount)
-
-        if Pos is not None:
-            self.Pos = np.array(Pos, dtype = np.float64)
-        else:
-            self.Pos = np.array([X, Y, Z], dtype=np.float64)
-
-
-        if Theta is not None and Phi is not None:
-            self.Dir = np.array([np.sin(Theta) * np.cos(Phi),
-                            np.sin(Theta) * np.sin(Phi),
-                            np.cos(Theta)], dtype = np.float64)
-        else:
-            self.Dir = np.array(Dir, dtype=np.float64)
-            self.Dir = self.Dir/np.linalg.norm(self.Dir)
+        self.Pos = Pos
+        self.Dir = Dir
 
         # orthonormal basis in which Q is expressed
-        if Ux is None and Uy is None:
-            #ths happens when alpha is given, user input
-            Alpha = float(Alpha)
-            (u1,v1) = geometry.basis(self.Dir)
-            v = np.cos(Alpha)*v1 - np.sin(Alpha)*u1
-            u = np.cos(Alpha)*u1 + np.sin(Alpha)*v1
-        elif Ux is not None and Uy is None:
-            u = np.array(Ux, dtype = np.float64)
-            u = u/np.linalg.norm(Ux)
-            v = np.cross(self.Dir, u)
-        elif Ux is None and Uy is not None:
-            v = np.array(Uy, dtype = np.float64)
-            v = v/np.linalg.norm(v)
-            u = np.cross(v, self.Dir)
-        elif Ux is not None and Uy is not None:
-            # this happens when we know u and v, only internal use basically
-            u = np.array(Ux, dtype = np.float64)
-            v = np.array(Uy, dtype = np.float64)
-            u = u/np.linalg.norm(u)
-            v = v/np.linalg.norm(v)
+        self.U = (Ux, Uy)
 
-        self.U = (u, v)
-
-        # curvature tensor
-        if ortho:
-            lam = self.Wl/N
-            Wx = float(Wx)
-            Wy = float(Wy)
-            qx = complex(- float(WDistx)  + 1.j * np.pi*Wx**2./lam )
-            qy = complex(- float(WDisty)  + 1.j * np.pi*Wy**2./lam )
-            # Q tensor for orthogonal beam
-            self.QTens = np.array([[1./qx, 0.],[0., 1./qy]],
-                        dtype = np.complex64)
-        elif not ortho:
-            self.QTens = Q
+        # Curvature tensor
+        self.QTens = np.array(Q, dtype = np.complex64)
 
         #origin optics
         self.Optic = Optic
         self.Face = Face
 
         self.__class__.BeamCount = self.__class__.BeamCount + 1
+
+    @classmethod
+    def userGaussianBeam(cls, Wx = 1.*mm, Wy = 1.*mm, WDistx = 0., WDisty = 0.,
+                        Wl = 1064.*nm, P = 1.*W, X = 0., Y = 0., Z = 0.,
+                        Theta = np.pi/2., Phi = 0., Alpha = 0., Name = None,
+                        Ref = None):
+        '''Constructor used for user inputed beams, separated from the class
+        initializer because the internal state of a beam is very different from
+        the input of this user-defined beam.
+
+        Input parameters are processed to make arguments for the class
+        contructor and then the corresponding beam is returned.
+        '''
+
+        #externs
+        P = float(P)
+        Pos = np.array([X, Y, Z], dtype = np.float64)
+        Dir = np.array([np.sin(Theta) * np.cos(Phi),
+                np.sin(Theta) * np.sin(Phi),
+                np.cos(Theta)], dtype = np.float64)
+
+        # basis for Q tensor
+        Alpha = float(Alpha)
+        (u1,v1) = geometry.basis(Dir)
+        v = np.cos(Alpha)*v1 - np.sin(Alpha)*u1
+        u = np.cos(Alpha)*u1 + np.sin(Alpha)*v1
+
+        # Q tensor for orthogonal beam
+        Wl = float(Wl)
+        Wx = float(Wx)
+        Wy = float(Wy)
+        qx = complex(- float(WDistx)  + 1.j * np.pi*Wx**2./Wl )
+        qy = complex(- float(WDisty)  + 1.j * np.pi*Wy**2./Wl )
+        QTens = np.array([[1./qx, 0.],[0., 1./qy]],
+                            dtype = np.complex64)
+
+        if Name is None:
+            Name = "Beam"
+        else:
+            Name = Name
+
+        if Ref is None:
+            Ref = "Beam" + str(self.__class__.BeamCount)
+        else:
+            Ref = Ref
+
+        return GaussianBeam(Q = QTens, N = 1., Wl = Wl, P = P,
+            Pos = Pos, Dir = Dir,
+            Ux = u, Uy = v, Name = Name, Ref = Ref, OptDist = 0.,
+            Length = 0., StrayOrder = 0, Optic = 'Laser', Face = 'Out')
 
     def __str__(self):
         '''String representation of the beam, when calling print(beam).

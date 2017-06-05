@@ -1,24 +1,87 @@
  \documentclass{article}
 
+\input{macro}
 
-\usepackage{graphicx} % Allows including images
-\graphicspath{{./img/}}
-
-\title{\texttt{theia} \\ \quad \\A 3D Gaussian beam tracer \\ \quad \\ Version 0.1.0 \\ \textit{User Guide}}
+\title{\texttt{theia} \\ \quad \\A 3D Gaussian beam tracer \\ \quad \\ Version 0.1.0 \\ \textit{API Guide}}
 
 \author{Rapha\"el Duque}
 
 \begin{document}
 
 \maketitle
-
 \begin{abstract}
-This document is a user's guide to the \texttt{theia} command line tool. It gives the information concerning the installation instructions, the usage and the input and output of \texttt{theia} necessary for operation of the prgoram from the command line. For details on the \texttt{theia} library, please refer to the API Guide provided along with this User Guide.
+theia is a command line program and Python library for 3D Gaussian beam tracing. It supports many different types of optical components, general 3D placing and orientation of these components and general astigmatic Gaussian beams, among other features. theia was developed at the Optics Group of the Virgo gravitational observatory in Cascina, Italy. Please see the \tt{README.md} file of \tt{theia} or surf to \tt{http://???.???.???.???} for more information.
+
+This document is an Application Programming Interface Guide for the theia library. It give somewhat more detail on the algorithm and data structures of theia and how they are implemented in theia. This guide may be useful to anyone who wants to use theia to develop their own optical simulation scripts, and to anyone who would like to contribute to theia.
 \end{abstract}
 
 \newpage
 
-theia.
+\subsection{A note on global variables}
 
+\subsection{Inheritance hierarchy}
 
+\subsection{Call graph}
+
+\subsection{Miscellaneous remarks}
+
+\paragraph{Coding style.}In the development of theia we have tried to stick to a couple of coding style conventions, which may help to review the code and are important to know for anyone wishing to contribute.
+
+\begin{itemize}
+\item The code of theia is heavily commented and doc-stringed, andn it should stay that way in order for theia to be an accessible library.
+
+\item Throughout the library, classes and attributes look \tt{LikeThis} whereas objects and methods look \tt{likeThis}.
+
+\item There is an approximate (it isn't true only in the \tt{helpers} sub-package) \textit{one file} $\rightarrow$ \textit{one class} correspondence and files are named accordingly with the objects they define. Generally, we have a tendency to distribute functions in different modules if they provide different functionalities, regardless of the total number of modules. Functions are together in a module if they belong together, consequently they are many modules in theia.
+
+\item We tend never to skip more than 1 line (Python is already very formatted).
+
+\item \tt{\# Provides} lines at the very beginning of modules allow to know at a glance what variables, functions and classes the module provides.
+
+\item Imports: import first from the Python standard library and third-party packages, then from theia sub-packages other than the current, then from the current theia sub-package. For theia sub-packages imports, always use the \tt{from ... import} idiom, always use relative imports (\tt{from ..helpers import interaction}) and for standard library and third-parties always \tt{import} before you \tt{from ... import}. We try to not import what we don't need.
+
+\item Class doc-string: present class attributes before instance attributes and mention if they are inherited.
+\end{itemize}
+
+\paragraph{User input and initializers.}Concerning initializers and 
 \end{document} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

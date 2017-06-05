@@ -25,7 +25,7 @@ class TotalReflectionError(Exception):
     '''
 
     def __init__(self, message):
-        '''TotalReflectionError exception constructor.
+        '''TotalReflectionError exception initializer.
 
         '''
         self.Message = message
@@ -47,7 +47,7 @@ class InputError(Exception):
     '''
 
     def __init__(self, message):
-        '''InputError exception constuctor.
+        '''InputError exception initializer.
 
         '''
         self.Message = message

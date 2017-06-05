@@ -35,7 +35,7 @@ class BeamTree(object):
 
     def __init__(self, Root = None,
                 T = None, R = None):
-        '''BeamTree constructor.'''
+        '''BeamTree initializer.'''
         self.Root = Root
         self.T = T
         self.R = R

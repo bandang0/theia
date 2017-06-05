@@ -54,10 +54,10 @@ class ThickLens(Lens):
     *******                             *******
 
     **Note**: in the case of thicklenses, the thickness provided to and by the
-    constructor is the thickness *on the optical axis*, and not the thickness
+    initializer is the thickness *on the optical axis*, and not the thickness
     on the side of the component (like mirrors).
 
-    **Note**: in the case of thicklenses, the center provided to the constructor
+    **Note**: in the case of thicklenses, the center provided to the initializer
     is the *apex* of the principal face, and not the chord of the HR surface.
 
     '''
@@ -67,14 +67,25 @@ class ThickLens(Lens):
                 Thickness = 2.*cm, N = 1.4585, KeepI = False,
                 Diameter = 5.*cm, R = 0.1, T = .9,
                 Name = "Thicklens", Ref = None):
-        '''ThickLens constructor.
+        '''ThickLens initializer.
 
         Parameters are the attributes.
 
         Returns a ThickLens.
 
         '''
-        # prepare for mother constructor
+        #check input
+        K1 = float(K1)
+        K2 = float(K2)
+        Theta = float(Theta)
+        Phi = float(Phi)
+        Thickness = float(Thickness)
+        N = float(N)
+        Diameter = float(Diameter)
+        R = float(R)
+        T = float(T)
+
+        # prepare for mother initializer
         HRNorm = np.array([np.sin(Theta)*np.cos(Phi), np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
         Apex1 = np.array([X, Y, Z], dtype = np.float64)
@@ -106,7 +117,7 @@ class ThickLens(Lens):
         else:
             ARCenter = Apex2
 
-        # initialize with base constructor
+        # initialize with base initializer
         super(Lens, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm, N = N,
                 HRK = K1, ARK = K2,
                 ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,

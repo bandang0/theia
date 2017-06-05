@@ -49,7 +49,7 @@ class Simulation(object):
     '''
 
     def __init__(self, FName = 'simulationinput'):
-        '''Simulation constructor.
+        '''Simulation initializer.
 
         FName: output files name without extension. [string]
 
@@ -118,7 +118,7 @@ class Simulation(object):
             elif uple[0] == 'threshold':
                 self.Threshold = uple[1]
             elif uple[0] ==  'bm':
-                self.InBeams.append(GaussianBeam(**uple[1]))
+                self.InBeams.append(GaussianBeam.userGaussianBeam(**uple[1]))
             elif uple[0] == 'mr':
                 self.OptList.append(Mirror(**uple[1]))
             elif uple[0] == 'th':

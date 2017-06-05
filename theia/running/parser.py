@@ -11,6 +11,14 @@ from ..helpers.tools import InputError
 
 # these defs are for evaluation from input file
 pi = np.pi
+cos = np.cos
+sin = np.sin
+tan = np.tan
+arcsin = np.arcsin
+arccos = np.arccos
+arctan = np.arctan
+sqrt = np.sqrt
+exp = np.exp
 
 def readIn(name):
     '''Finds the input data in a file.
@@ -82,7 +90,7 @@ def readIn(name):
     return ans
 
 def dicOf(st, line, fileName, lineNumber):
-    '''Extract the constructor dictionary from a line.
+    '''Extract the initializer dictionary from a line.
 
     st: object tag, 'bm', 'th', ... [string]
     line: line of data in .tia format (supposed no spaces nor tabs nor comments)

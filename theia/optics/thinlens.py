@@ -17,7 +17,7 @@ class ThinLens(Lens):
     ThinLens class.
 
     This class represents thin lenses, which are specified only by their focal
-    lengths, diameter, position and orientation. Only the constructor and the
+    lengths, diameter, position and orientation. Only the initializer and the
     printing distinguishes thin lenses (in implementation) from other lenses.
 
     *=== Attributes ===*
@@ -60,17 +60,22 @@ class ThinLens(Lens):
     def __init__(self, Focal = 10*cm, KeepI = False, Theta = np.pi/2., Phi = 0.,
                 Diameter = 5.*cm, R = .1, T = .9,
                 X = 0., Y = 0., Z = 0., Name = "ThinLens", Ref = None):
-        '''ThinLens constructor.
+        '''ThinLens initializer.
 
         Parameters are the attributes.
 
         Returns a ThinLens.
 
         '''
-        # initialize focal
+        # initialize focal and check data
         self.Focal = float(Focal)
+        Theta = float(Theta)
+        Phi = float(Phi)
+        Diameter = float(Diameter)
+        R = float(R)
+        T = float(T)
 
-        #prepare for mother constructor
+        #prepare for mother initializer
         HRNorm = np.array([np.sin(Theta)*np.cos(Phi),
                         np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
@@ -94,7 +99,7 @@ class ThinLens(Lens):
         HRCenter = Center + Thickness*HRNorm/2.
         ARCenter = Center - Thickness*HRNorm/2.
 
-        # initialize with lens mother constructor
+        # initialize with lens mother initializer
         super(Lens, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm, N = N,
                 HRK = HRK, ARK = ARK,
                 ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
