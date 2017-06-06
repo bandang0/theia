@@ -25,3 +25,10 @@ tk 4, 	0, 	0, 	360*deg/4., 0., K1 = -0.01, K2 = -0.02, Diameter = 10*cm, KeepI =
 #beamdump (X,Y,Z is the center of the principal face)
 #bd	X	Y	Z	Theta	Phi	Dia	Thickness Name Ref
 bd 8., 0., 0., 90*deg, -23*deg, 20*cm, Thickness = 2*mm, Ref = 'BD1'
+
+#test all the empty constructors
+mr
+bd
+tk
+th
+bm

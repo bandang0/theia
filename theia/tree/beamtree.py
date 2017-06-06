@@ -52,7 +52,7 @@ class BeamTree(object):
         '''
         ans = []
         ans.append("Tree: {")
-        ans.append("Root beam: " + str(self.Root.Name))
+        ans.append("Root beam: " + str(self.Root.Ref))
         ans.append("Number of beams: " + str(self.numberOfBeams()))
         ans.append("}")
 
@@ -62,7 +62,7 @@ class BeamTree(object):
         '''Returns the string representation the tree of beams.
 
         '''
-        before = ["Tree: Root beam = " + str(self.Root.Name) + " {"]
+        before = ["Tree: Root beam = " + str(self.Root.Ref) + " {"]
         after = ["}"]
         return formatter(before + self.beamLines() + after)
 

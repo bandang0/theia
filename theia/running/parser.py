@@ -102,6 +102,11 @@ def dicOf(st, line, fileName, lineNumber):
     '''
 
     ans = {}
+
+    #allow empty constructor
+    if line == '':
+        return ans
+
     words = line.split(',')
     i = 0
     while i < len(words):    #inputs without '='

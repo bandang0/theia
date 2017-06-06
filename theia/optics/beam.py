@@ -133,7 +133,7 @@ class GaussianBeam(object):
             Name = Name
 
         if Ref is None:
-            Ref = "Beam" + str(self.__class__.BeamCount)
+            Ref = "Beam" + str(GaussianBeam.BeamCount)
         else:
             Ref = Ref
 

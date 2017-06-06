@@ -185,7 +185,7 @@ class Simulation(object):
         outList.append('#' * 10 + "BEAM LISTING" + '#' * 10)
 
         for tree in self.BeamTreeList:
-            outList.append("Tree: Root beam = " + str(tree.Root.Name) + " {")
+            outList.append("Tree: Root beam = " + str(tree.Root.Ref) + " {")
             outList = outList + tree.outputLines()
             outList.append("}")
 

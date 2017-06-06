@@ -468,7 +468,7 @@ class Mirror(Optic):
 
         # Create new beams
         if not 'r' in ans:
-            ans['r'] = gbeam(ortho = False, Q = Qr, Name = "Beam",
+            ans['r'] = GaussianBeam(Q = Qr, Name = "Beam",
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
                     StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r',
@@ -476,10 +476,10 @@ class Mirror(Optic):
                     Length = 0., OptDist = 0.)
 
         if not 't' in ans:
-            ans['t'] = gbeam(ortho = False, Q = Qt, Pos = point, Name = "Beam",
+            ans['t'] = GaussianBeam(Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.ARt, StrayOrder = beam.StrayOrder,
                 Ref = beam.Ref + 't', Optic = self.Ref, Face = 'AR',
-                Length = 0., OptDist =0.)
+                Length = 0., OptDist =0., Name = "Beam")
 
         return ans
