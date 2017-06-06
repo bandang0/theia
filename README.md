@@ -13,8 +13,8 @@ Building `theia` and its documentation requires a small number of Python and lat
 Once in the project root directory, issue the following to install `theia` locally (this will install the `theia` to `~/.local/bin` and this directory **must** be in your `PATH` to use `theia`):
 
 - installation and documentation compilation: `make install`;
-- only installation in the local environment: `make go`;
-- only documentation: `make go-doc`.
+- only installation in the local environment: `make build-theia`;
+- only documentation: `make build-doc`.
 
 You can then move the pdf documents found in `doc/` and the tutorial files found in `tutos/` to wherever you feel is best and get rid of the project directory if you like.
 
@@ -46,7 +46,7 @@ idiom from Python to use specific functions or modules from the `theia` library.
 ## Documentation
 To learn on `theia`, you will find (after installation) in `doc/`:
 
-- `userguide.pdf` as a global guide to the operation of `theia` on the command line;
+- `userguide.pdf` as a global guide to the operation of `theia` on the command line and an introduction to the `theia` library;
 - `quickref.pdf` for an at-a-glance reference on the `.tia` format;
 - `apiguide.pdf` for a detailed guide to the `theia` library.
 

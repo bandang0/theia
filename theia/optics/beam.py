@@ -16,7 +16,6 @@
 #       gouy
 
 import numpy as np
-from ..helpers.units import *
 from ..helpers import geometry
 from ..helpers.tools import formatter
 
@@ -93,8 +92,8 @@ class GaussianBeam(object):
         self.__class__.BeamCount = self.__class__.BeamCount + 1
 
     @classmethod
-    def userGaussianBeam(cls, Wx = 1.*mm, Wy = 1.*mm, WDistx = 0., WDisty = 0.,
-                        Wl = 1064.*nm, P = 1.*W, X = 0., Y = 0., Z = 0.,
+    def userGaussianBeam(cls, Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
+                        Wl = 1064.e-9, P = 1., X = 0., Y = 0., Z = 0.,
                         Theta = np.pi/2., Phi = 0., Alpha = 0., Name = None,
                         Ref = None):
         '''Constructor used for user inputed beams, separated from the class

@@ -1,5 +1,10 @@
 # makefile for theia
 
+#variables
+EPYOPTS = --name=theia -u http://37.117.61.221:56000 --graph=all --inheritance=listed \
+		-v
+PDFLATEXCMD = pdflatex -interaction=nonstopmode
+
 # remove compiled modules
 clean-pyc:
 	find . -name "*.pyc" -exec rm --force {} +
@@ -14,6 +19,10 @@ clean-doc:
 	find doc/ -name "*.nav" -exec rm --force {} +
 	find doc/ -name "*.log" -exec rm --force {} +
 	find doc/ -name "*.aux" -exec rm --force {} +
+	find doc/ -name "*.dvi" -exec rm --force {} +
+	find doc/ -name "*.idx" -exec rm --force {} +
+	find doc/ -name "*.ilg" -exec rm --force {} +
+	find doc/ -name "*.ps" -exec rm --force {} +
 
 # remove compiled tutos
 clean-tutos:
@@ -50,22 +59,35 @@ test-tree:
 test-running:
 	@cd tests ; python test_simulation.py
 
+#compile pdf
+compile-pdf:
+	-cd doc/src ; $(PDFLATEXCMD) primer.tex
+	-cd doc/src ; $(PDFLATEXCMD) userguide.tex
+	-cd doc/src ; $(PDFLATEXCMD) quickref.tex
+	-cd doc/src ; $(PDFLATEXCMD) api.tex
+
+copy-pdf: clean-doc
+	mv doc/src/primer.pdf doc/primer.pdf
+	mv doc/src/quickref.pdf doc/quickref.pdf
+	mv doc/src/api.pdf doc/apiguide.pdf
+	mv doc/src/userguide.pdf doc/userguide.pdf
+
+#generate html and pdf from epydoc
+epydoc-pdf:
+	epydoc --pdf $(EPYOPTS) -o doc/src theia
+
+epydoc-html:
+	epydoc --html $(EPYOPTS) -o doc/html theia
+
 #build theia
-go:
+build-theia:
 	@python setup.py install --user
 
-#compile pdf
-go-pdf:
-	cd doc/ ; pdflatex -interaction=nonstopmode primer.tex
-	cd doc/ ; pdflatex -interaction=nonstopmode userguide.tex
-	cd doc/ ; pdflatex -interaction=nonstopmode apiguide.tex
-	cd doc/ ; pdflatex -interaction=nonstopmode quickref.tex
-
 #build documentation
-go-doc:	go-pdf clean-doc
-
+build-doc: compile-pdf compile-pdf copy-pdf
+	
 #install all
-install: go go-doc clean-pyc clean-build
+install: build-theia build-doc clean-pyc clean-build
 
 #uninstall
 clear:

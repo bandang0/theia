@@ -10,7 +10,6 @@
 import numpy as np
 from abc import ABCMeta, abstractmethod
 from ..helpers.tools import formatter
-from ..helpers.units import *
 
 class SetupComponent(object):
     '''

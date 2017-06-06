@@ -7,7 +7,7 @@
 
 import numpy as np
 from ..helpers import settings
-from ..helpers.units import *
+from ..helpers.units import mm, cm, deg
 from ..helpers.geometry import rectToSph
 from .lens import Lens
 
@@ -57,8 +57,8 @@ class ThinLens(Lens):
 
     '''
 
-    def __init__(self, Focal = 10*cm, KeepI = False, Theta = np.pi/2., Phi = 0.,
-                Diameter = 5.*cm, R = .1, T = .9,
+    def __init__(self, Focal = 10.e-2, KeepI = False, Theta = np.pi/2., Phi = 0.,
+                Diameter = 5.e-2, R = .1, T = .9,
                 X = 0., Y = 0., Z = 0., Name = "ThinLens", Ref = None):
         '''ThinLens initializer.
 

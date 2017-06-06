@@ -11,7 +11,7 @@
 
 import numpy as np
 from ..helpers import geometry, settings
-from ..helpers.units import *
+from ..helpers.units import deg, cm
 from .optic import Optic
 from .beam import GaussianBeam
 
@@ -69,9 +69,9 @@ class Mirror(Optic):
     '''
 
     def __init__(self, Wedge = 0., Alpha = 0., X = 0. ,Y = 0., Z = 0.,
-                Theta = np.pi/2., Phi = 0., Diameter = 10.*cm,
+                Theta = np.pi/2., Phi = 0., Diameter = 10.e-2,
                 HRr = .99, HRt = .01, ARr = .1, ARt = .9,
-                HRK = 0.01, ARK = 0, Thickness = 2.*cm,
+                HRK = 0.01, ARK = 0, Thickness = 2.e-2,
                 N = 1.4585, KeepI = False, Name = 'Mirror', Ref = None):
         '''Mirror initializer.
 

@@ -12,7 +12,7 @@
 #   treeOfBeam
 
 from ..helpers import settings
-from ..helpers.units import *
+from ..helpers.units import mm, deg
 from ..helpers.tools import formatter
 from ..helpers.geometry import rectToSph
 

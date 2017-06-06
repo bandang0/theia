@@ -109,6 +109,10 @@ ENV/
 *.toc
 *.vrb
 *.ps
+*.dvi
+*.idx
+*.ilg
+
 
 # temporary documentation
 doc/tmp/
@@ -119,3 +123,6 @@ doc/tmp/
 # trash 
 trash.py
 trash/
+
+#html documentation
+html/

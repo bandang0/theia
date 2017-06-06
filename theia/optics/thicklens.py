@@ -8,7 +8,7 @@
 import numpy as np
 from ..helpers import settings
 from ..helpers.geometry import rectToSph
-from ..helpers.units import *
+from ..helpers.units import cm, deg
 from .lens import Lens
 
 class ThickLens(Lens):
@@ -64,8 +64,8 @@ class ThickLens(Lens):
 
     def __init__(self, K1 = 0.01, K2 = 0.01, X = 0., Y = 0., Z = 0.,
                 Theta = np.pi/2., Phi = 0.,
-                Thickness = 2.*cm, N = 1.4585, KeepI = False,
-                Diameter = 5.*cm, R = 0.1, T = .9,
+                Thickness = 2.e-2, N = 1.4585, KeepI = False,
+                Diameter = 5.e-2, R = 0.1, T = .9,
                 Name = "Thicklens", Ref = None):
         '''ThickLens initializer.
 
