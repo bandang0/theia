@@ -50,7 +50,7 @@ To learn on `theia`, you will find (after installation) in `doc/`:
 - `quickref.pdf` for an at-a-glance reference on the `.tia` format;
 - `apiguide.pdf` for a detailed guide to the `theia` library.
 
-For an easy online documentation, surf to `http://31.117.61.221:56000/docs/html/index.html`.
+For an easy online documentation, surf to `http://93.71.63.5:56000/docs/html/index.html`.
 
 Don't forget that once you've installed `theia` you can call `pydoc [IMPORT PATH TO A THEIA MODULE OR PACKAGE]` from the command line for a quick query.
 

@@ -103,7 +103,6 @@ ENV/
 *.aux
 *.nav
 *.out
-*.pdf
 *.snm
 *.synctex.gz
 *.toc
@@ -115,6 +114,7 @@ ENV/
 
 # temporary documentation
 doc/tmp/
+doc/*.pdf
 
 # OptoCAD executables
 *.opt

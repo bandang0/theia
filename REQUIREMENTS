@@ -4,4 +4,4 @@ Installing theia requires:
 
 Compiling the documentation requires:
     pdflatex
-    graphicx [any basic TeXLive or MiKTex installation provides this]
+    
