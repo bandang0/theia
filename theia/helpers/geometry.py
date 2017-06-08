@@ -15,6 +15,7 @@ import numpy as np
 np.seterr(divide = 'raise', invalid = 'raise')  # np raises FloatingPointError
 
 from .tools import TotalReflectionError
+from .units import pi
 from . import settings
 
 def refrAngle(theta, n1, n2):
@@ -109,7 +110,7 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter):
     try:
         theta = np.arcsin(diameter*kurv/2.)  # this is half undertending angle
     except FloatingPointError:
-        theta = np.pi/2.
+        theta = pi/2.
     sphereC = chordC + np.cos(theta)*chordNorm/kurv
     R = 1/kurv  # radius
     PC = sphereC - pos  # vector from pos to center of curvature

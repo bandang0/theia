@@ -7,7 +7,7 @@
 
 import numpy as np
 from ..helpers import settings
-from ..helpers.units import mm, cm, deg
+from ..helpers.units import mm, cm, deg, pi
 from ..helpers.geometry import rectToSph
 from .lens import Lens
 
@@ -57,7 +57,7 @@ class ThinLens(Lens):
 
     '''
 
-    def __init__(self, Focal = 10.e-2, KeepI = False, Theta = np.pi/2., Phi = 0.,
+    def __init__(self, Focal = 10.e-2, KeepI = False, Theta = pi/2., Phi = 0.,
                 Diameter = 5.e-2, R = .1, T = .9,
                 X = 0., Y = 0., Z = 0., Name = "ThinLens", Ref = None):
         '''ThinLens initializer.
@@ -94,7 +94,7 @@ class ThinLens(Lens):
             try:    #arcsin might fail, if it does then the semi angle is pi/2
                 theta = np.arcsin(Diameter * HRK/2.)   # half angle
             except FloatingPointError:
-                theta = np.pi/2.
+                theta = pi/2.
             Thickness = settings.zero + 2.*(1.-np.cos(theta))/HRK
         HRCenter = Center + Thickness*HRNorm/2.
         ARCenter = Center - Thickness*HRNorm/2.

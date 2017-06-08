@@ -1,15 +1,17 @@
 \usepackage{graphicx} % Allows including images
 \usepackage{stackengine}
 \usepackage{scalerel}
-\usepackage{xcolor}
+\usepackage{xcolor, soul}
+\sethlcolor{lightgray}
 \usepackage{geometry}
 \usepackage{multicol}
 \usepackage{listings}
+\usepackage{gensymb}
 
 \graphicspath{{./../img/}}
 \renewcommand{\abstractname}{}
 \renewcommand{\tt}[1]{\texttt{#1}}
-
+\newcommand{\ttt}[1]{\hl{\texttt{#1}}}
 \newcommand\dangersign[1][2ex]{%
   \renewcommand\stacktype{L}%
   \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny !}}{#1}%

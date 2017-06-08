@@ -8,7 +8,7 @@
 import numpy as np
 from ..helpers import settings
 from ..helpers.geometry import rectToSph
-from ..helpers.units import cm, deg
+from ..helpers.units import cm, deg, pi
 from .lens import Lens
 
 class ThickLens(Lens):
@@ -63,7 +63,7 @@ class ThickLens(Lens):
     '''
 
     def __init__(self, K1 = 0.01, K2 = 0.01, X = 0., Y = 0., Z = 0.,
-                Theta = np.pi/2., Phi = 0.,
+                Theta = pi/2., Phi = 0.,
                 Thickness = 2.e-2, N = 1.4585, KeepI = False,
                 Diameter = 5.e-2, R = 0.1, T = .9,
                 Name = "Thicklens", Ref = None):
@@ -98,11 +98,11 @@ class ThickLens(Lens):
         try:
             theta1 = np.abs(np.arcsin(Diameter * K1/2. ))
         except FloatingPointError:
-            theta1 = np.pi/2.
+            theta1 = pi/2.
         try:
             theta2 = np.abs(np.arcsin(Diameter * K2/2. ))
         except FloatingPointError:
-            theta2 = np.pi/2.
+            theta2 = pi/2.
 
         # real HR and AR centers
         if np.abs(K1) > 0.:

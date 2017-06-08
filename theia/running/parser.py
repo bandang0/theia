@@ -1,4 +1,4 @@
-'''Module for the parsing on input data fro m.tia file.'''
+'''Module for the parsing on input data from .tia file.'''
 
 # Provides:
 #   readIn
@@ -10,7 +10,6 @@ from ..helpers.units import *
 from ..helpers.tools import InputError
 
 # these defs are for evaluation from input file
-pi = np.pi
 cos = np.cos
 sin = np.sin
 tan = np.tan
@@ -97,7 +96,9 @@ def dicOf(st, line, fileName, lineNumber):
     and without the obect tag. [string]
     fileName: name of file (used to write errors). [string]
     lineNumber: number fo this line in the file (used to write errors). [int]
-    Returns a dictionary ready for construction.
+    
+	May raise an InputError
+	Returns a dictionary ready for construction.
 
     '''
 

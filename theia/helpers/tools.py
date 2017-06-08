@@ -10,7 +10,6 @@
 #   timer
 #   formatter
 
-import numpy as np
 import time as tm
 
 class TotalReflectionError(Exception):

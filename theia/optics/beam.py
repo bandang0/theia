@@ -18,6 +18,7 @@
 import numpy as np
 from ..helpers import geometry
 from ..helpers.tools import formatter
+from ..helpers.units import pi
 
 class GaussianBeam(object):
     '''
@@ -94,7 +95,7 @@ class GaussianBeam(object):
     @classmethod
     def userGaussianBeam(cls, Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
                         Wl = 1064.e-9, P = 1., X = 0., Y = 0., Z = 0.,
-                        Theta = np.pi/2., Phi = 0., Alpha = 0., Name = None,
+                        Theta = pi/2., Phi = 0., Alpha = 0., Name = None,
                         Ref = None):
         '''Constructor used for user inputed beams, separated from the class
         initializer because the internal state of a beam is very different from
@@ -121,8 +122,8 @@ class GaussianBeam(object):
         Wl = float(Wl)
         Wx = float(Wx)
         Wy = float(Wy)
-        qx = complex(- float(WDistx)  + 1.j * np.pi*Wx**2./Wl )
-        qy = complex(- float(WDisty)  + 1.j * np.pi*Wy**2./Wl )
+        qx = complex(- float(WDistx)  + 1.j * pi*Wx**2./Wl )
+        qy = complex(- float(WDisty)  + 1.j * pi*Wy**2./Wl )
         QTens = np.array([[1./qx, 0.],[0., 1./qy]],
                             dtype = np.complex64)
 
@@ -260,8 +261,8 @@ class GaussianBeam(object):
         zR = self.rayleigh()
         D = self.waistPos()
 
-        return (np.sqrt((lam/np.pi)*((d - D[0])**2. + zR[0]**2.)/zR[0]) ,
-                np.sqrt((lam/np.pi)*((d - D[1])**2. + zR[1]**2.)/zR[1]))
+        return (np.sqrt((lam/pi)*((d - D[0])**2. + zR[0]**2.)/zR[0]) ,
+                np.sqrt((lam/pi)*((d - D[1])**2. + zR[1]**2.)/zR[1]))
 
     def waistSize(self):
         '''Return a tuple with the waist sizes in x and y.

@@ -50,6 +50,10 @@ To learn on `theia`, you will find (after installation) in `doc/`:
 - `quickref.pdf` for an at-a-glance reference on the `.tia` format;
 - `apiguide.pdf` for a detailed guide to the `theia` library.
 
+For an easy online documentation, surf to `http://31.117.61.221:56000/docs/html/index.html`.
+
+Don't forget that once you've installed `theia` you can call `pydoc [IMPORT PATH TO A THEIA MODULE OR PACKAGE]` from the command line for a quick query.
+
 ## Licensing
 In the effort of taking down walls in the way of physics and computation, `theia` is free software and is released under the GNU General Public License, version 3+. So please feel free (as in freedom) to copy, take home, modify, teach, learn, and redistribute `theia`.
 

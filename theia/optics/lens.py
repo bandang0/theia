@@ -8,6 +8,7 @@
 
 import numpy as np
 from ..helpers import geometry, settings
+from ..helpers.units import pi
 from .optic import Optic
 from .beam import GaussianBeam
 
@@ -195,7 +196,7 @@ class Lens(Optic):
             try:
                 theta = np.arcsin(self.Dia * K/2.)   #undertending angle
             except FloatingPointError:
-                theta = np.pi/2.
+                theta = pi/2.
             sphereC = Center + np.cos(theta)*Norm/K
             localNorm = sphereC - point
             localNorm = localNorm/np.linalg.norm(localNorm)

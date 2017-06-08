@@ -59,12 +59,17 @@ test-tree:
 test-running:
 	@cd tests ; python test_simulation.py
 
-#compile pdf
+#compile pdf (do it twice for all the refs to fall into place)
 compile-pdf:
 	-cd doc/src ; $(PDFLATEXCMD) primer.tex
 	-cd doc/src ; $(PDFLATEXCMD) userguide.tex
 	-cd doc/src ; $(PDFLATEXCMD) quickref.tex
 	-cd doc/src ; $(PDFLATEXCMD) api.tex
+	-cd doc/src ; $(PDFLATEXCMD) primer.tex
+	-cd doc/src ; $(PDFLATEXCMD) userguide.tex
+	-cd doc/src ; $(PDFLATEXCMD) quickref.tex
+	-cd doc/src ; $(PDFLATEXCMD) api.tex
+
 
 copy-pdf: clean-doc
 	mv doc/src/primer.pdf doc/primer.pdf
@@ -84,7 +89,7 @@ build-theia:
 	@python setup.py install --user
 
 #build documentation
-build-doc: compile-pdf compile-pdf copy-pdf
+build-doc: compile-pdf compile-pdf compile-pdf copy-pdf
 	
 #install all
 install: build-theia build-doc clean-pyc clean-build

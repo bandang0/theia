@@ -113,7 +113,6 @@ ENV/
 *.idx
 *.ilg
 
-
 # temporary documentation
 doc/tmp/
 
