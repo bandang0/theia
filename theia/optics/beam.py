@@ -18,7 +18,7 @@
 import numpy as np
 from ..helpers import geometry
 from ..helpers.tools import formatter
-from ..helpers.units import pi
+from ..helpers.units import pi, nm, deg, mm
 
 class GaussianBeam(object):
     '''
@@ -91,56 +91,6 @@ class GaussianBeam(object):
         self.Face = Face
 
         self.__class__.BeamCount = self.__class__.BeamCount + 1
-
-    @classmethod
-    def userGaussianBeam(cls, Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
-                        Wl = 1064.e-9, P = 1., X = 0., Y = 0., Z = 0.,
-                        Theta = pi/2., Phi = 0., Alpha = 0., Name = None,
-                        Ref = None):
-        '''Constructor used for user inputed beams, separated from the class
-        initializer because the internal state of a beam is very different from
-        the input of this user-defined beam.
-
-        Input parameters are processed to make arguments for the class
-        contructor and then the corresponding beam is returned.
-        '''
-
-        #externs
-        P = float(P)
-        Pos = np.array([X, Y, Z], dtype = np.float64)
-        Dir = np.array([np.sin(Theta) * np.cos(Phi),
-                np.sin(Theta) * np.sin(Phi),
-                np.cos(Theta)], dtype = np.float64)
-
-        # basis for Q tensor
-        Alpha = float(Alpha)
-        (u1,v1) = geometry.basis(Dir)
-        v = np.cos(Alpha)*v1 - np.sin(Alpha)*u1
-        u = np.cos(Alpha)*u1 + np.sin(Alpha)*v1
-
-        # Q tensor for orthogonal beam
-        Wl = float(Wl)
-        Wx = float(Wx)
-        Wy = float(Wy)
-        qx = complex(- float(WDistx)  + 1.j * pi*Wx**2./Wl )
-        qy = complex(- float(WDisty)  + 1.j * pi*Wy**2./Wl )
-        QTens = np.array([[1./qx, 0.],[0., 1./qy]],
-                            dtype = np.complex64)
-
-        if Name is None:
-            Name = "Beam"
-        else:
-            Name = Name
-
-        if Ref is None:
-            Ref = "Beam" + str(GaussianBeam.BeamCount)
-        else:
-            Ref = Ref
-
-        return GaussianBeam(Q = QTens, N = 1., Wl = Wl, P = P,
-            Pos = Pos, Dir = Dir,
-            Ux = u, Uy = v, Name = Name, Ref = Ref, OptDist = 0.,
-            Length = 0., StrayOrder = 0, Optic = 'Laser', Face = 'Out')
 
     def __str__(self):
         '''String representation of the beam, when calling print(beam).
@@ -280,3 +230,52 @@ class GaussianBeam(object):
         WDist = self.waistPos()
         return (np.arctan((d-WDist[0])/zR[0]),
                 np.arctan((d-WDist[1])/zR[1]))
+
+def userGaussianBeam(Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
+                    Wl = 1064.e-9, P = 1., X = 0., Y = 0., Z = 0.,
+                    Theta = pi/2., Phi = 0., Alpha = 0., Name = None,
+                    Ref = None):
+    '''Constructor used for user inputed beams, separated from the class
+    initializer because the internal state of a beam is very different from
+    the input of this user-defined beam.
+
+    Input parameters are processed to make arguments for the class
+    contructor and then the corresponding beam is returned.
+    '''
+
+    #externs
+    P = float(P)
+    Pos = np.array([X, Y, Z], dtype = np.float64)
+    Dir = np.array([np.sin(Theta) * np.cos(Phi),
+            np.sin(Theta) * np.sin(Phi),
+            np.cos(Theta)], dtype = np.float64)
+
+    # basis for Q tensor
+    Alpha = float(Alpha)
+    (u1,v1) = geometry.basis(Dir)
+    v = np.cos(Alpha)*v1 - np.sin(Alpha)*u1
+    u = np.cos(Alpha)*u1 + np.sin(Alpha)*v1
+
+    # Q tensor for orthogonal beam
+    Wl = float(Wl)
+    Wx = float(Wx)
+    Wy = float(Wy)
+    qx = complex(- float(WDistx)  + 1.j * pi*Wx**2./Wl )
+    qy = complex(- float(WDisty)  + 1.j * pi*Wy**2./Wl )
+    QTens = np.array([[1./qx, 0.],[0., 1./qy]],
+                        dtype = np.complex64)
+
+    if Name is None:
+        Name = "Beam"
+    else:
+        Name = Name
+
+    if Ref is None:
+        Ref = "Beam" + str(GaussianBeam.BeamCount)
+    else:
+        Ref = Ref
+
+    return GaussianBeam(Q = QTens, N = 1., Wl = Wl, P = P,
+        Pos = Pos, Dir = Dir,
+        Ux = u, Uy = v, Name = Name, Ref = Ref, OptDist = 0.,
+        Length = 0., StrayOrder = 0, Optic = 'Laser', Face = 'Out')

@@ -26,7 +26,7 @@ simulation parameters were made to prevent this situation. What you can do:
 \t2. Increase the maximum recursion depth of your Python environment by placing
 \t   `sys.setrecursionlimit([whatever you need])`
 \t   right under the `"if __name__ == '__main__'` line in bin/theia, rebuild
-\t   theia with `make go` in the project root and rerun your simulation;
+\t   theia with `make build-theia` in the project root and rerun your simulation;
 \t3. Contact your local administrator to increase the maximum recursion depth
 \t   on a system-wide basis and rerun your simulation.
 '''

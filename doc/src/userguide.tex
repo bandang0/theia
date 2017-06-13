@@ -58,7 +58,7 @@ The physical objects a representation of which \tt{theia} deals with are general
 
 $$ E(\vec r , t) = \exp(i\eta(z) -i\frac{k}{2} {}^t(x,y)Q(z)(x,y))e^{i(\omega t - kz)} $$
 
-in which $z$ is the coordinate of $\vec r$, $(x,y)$ its coordinates in the plane transversal to the beam's direction, and $Q$ is a complex matrix, and $\eta$ accounts for all other phase accumulation (Gouy, etc.). \footnote{Note that in the case where the beam is orthogonal (but \textit{not} in the general astigmatic case), there exists a orthogonal basis of the transverse plane in which the $Q$ matrix is diagonal and the expression of the electrical field is reduced to a more familiar form $\exp(-i\frac{k}{2} (x^2/q_x(z) + y^2/q_y(z)))$. See the references of the \textit{theia Primer} document for more information on this.}
+in which $z$ is the coordinate of $\vec r$, $(x,y)$ its coordinates in the plane transversal to the beam's direction, and $Q$ is a complex matrix, and $\eta$ accounts for all other phase accumulation (Gouy, etc.). \footnote{Note that in the case where the beam is orthogonal (but \textit{not} in the general astigmatic case), there exists a orthogonal basis of the transverse plane in which the $Q$ matrix is diagonal and the expression of the electrical field is reduced to a more familiar form $\exp(-i\frac{k}{2} (x^2/q_x(z) + y^2/q_y(z)))$. This description is amply detailed in \cite{1,2}.}
 
 Thus, to specify completely the state of the beam at a position $z$ along the beam, one has to specify two vectors (the eigen directions) which span the transversal plane, and the matrix $Q(z)$ in the basis of these vectors. From $Q$, one can derive the waists and positions of these waists, Rayleigh ranges, etc.
 
@@ -67,7 +67,7 @@ In \tt{theia}, to each beam are attached these two vectors and the value of $Q$ 
 
 \paragraph{Inputting Gaussian data.}Inputting to the \tt{.tia} file only allows for orthogonal beams. Thus it is asked to the user to specify the waists and positions of these waists, and the angle of rotation of the beam (in the clockwise sens looking down the beam) with respect to the beam which has as a first eigen direction the vector with the largest possible global $Z$ coordinate (and which is of course orthogonal to the beam direction). 
 
-In other words, if the user specifies a direction $\vec{dir}$ and an angle of 0, then she or he is saying that the first semi-axis of the amplitude ellipsis (in which the first input waist and waist distance are found) is that unitary $u$ vector orthogonal to $\vec{dir}$, and which has the largest possible $Z$ coordinate. See figure \ref{vectors} for an illustration. And the second semi-axis is the unitary $v$ vector such that $\vec{dir}, u, v)$ is a right-handed orthonormal basis.
+In other words, if the user specifies a direction $\vec{dir}$ and an angle of 0, then she or he is saying that the first semi-axis of the amplitude ellipsis (in which the first input waist and waist distance are found) is that unitary $u$ vector orthogonal to $\vec{dir}$, and which has the largest possible $Z$ coordinate. See figure \ref{vectors} for an illustration. And the second semi-axis is the unitary $v$ vector such that ($\vec{dir}, u, v)$ is a right-handed orthonormal basis.
 
 What if $\vec{dir}$ is directed by $\pm e_Z$ and the "largest possible $Z$ coordinate" condition makes no sens? Then $u$ is $\pm e_X$ and $v$ is $\pm e_Y$.
 
@@ -101,7 +101,7 @@ If \tt{Alpha} is not 0, then this reference is situated at the image of the \tt{
 \subsection{Algorithm and approximations}
 As previously described, \tt{theia} traces beams by interaction of the input beams with the optics, recursively. Here are the rules to calculate the beams.
 
-\paragraph{Physical rules.}The laws of refraction and  reflection are applied to calculate the directions of the new beams, as well as the origin $Q$ matrix (and the base vectors to express it) of the new beams.  The calculation of the $Q$ matrix follows a phase matching method and is detailed in the references of the \textit{theia Primer} Document. Total reflection is also taken into account, and the powers of the new beams are calculated according to the reflectance and transmittance of the surface. This rule introduces the approximation that the radius of curvature of the beam must be much smaller than the radii of curvature of the optics at hand. Apart from this, there are no other approximations (nor for the geometrical optics calculations to determine the direction of the new beams, nor for the exact point of origin of the new beams on the curved surfaces\footnote{We are of course limited by the precision of floating pint numbers on the underlying machine.}). 
+\paragraph{Physical rules.}The laws of refraction and  reflection are applied to calculate the directions of the new beams, as well as the origin $Q$ matrix (and the base vectors to express it) of the new beams.  The calculation of the $Q$ matrix follows a phase matching method and is detailed in \cite{1,2}. Total reflection is also taken into account, and the powers of the new beams are calculated according to the reflectance and transmittance of the surface. This rule introduces the approximation that the radius of curvature of the beam must be much smaller than the radii of curvature of the optics at hand. Apart from this, there are no other approximations (nor for the geometrical optics calculations to determine the direction of the new beams, nor for the exact point of origin of the new beams on the curved surfaces\footnote{We are of course limited by the precision of floating pint numbers on the underlying machine.}). 
 
 \paragraph{Computational rules.}In order for the program to terminate, some computational rules have been introduced. Each simulation is led with an \textit{order} and a \textit{threshold}:
 
@@ -204,7 +204,7 @@ For beams, mirrors, beamdumps, thin and thick lenses, report to the \textit{Quic
 \begin{itemize}
 \item Standard Python literal integers, floats and operators: \tt{4.}, \tt{.2e-3 * 3 / 2}, etc.
 \item The functions and constants that are available as built-ins in this scope (these are listed in the \textit{Quick Reference} document): \tt{arccos(3 * exp(-2.)) * mW}, \tt{sqrt(4.*mm*mm)}, \tt{arctan(pi/12)}, etc.
-\item Any user defined function or constant as long as it is declared as a global in the \tt{theia.helpers.settings} module and initialized correctly (see section 5.1 on globals), declared in the \tt{theia.helpers.units} module, or declared directly in \tt{theia.running.parser}. After all of these operations, \tt{theia} has to be rebuilt with \tt{make install}.
+\item Any user defined function or constant as long as it is declared as a global in the \\ \tt{theia.helpers.settings} module and initialized correctly (see section 5.1 on globals), declared in the \tt{theia.helpers.units} module, or declared directly in \tt{theia.running.parser}. After all of these operations, \tt{theia} has to be rebuilt with \tt{make install}.
 \end{itemize}
 
 
@@ -328,7 +328,7 @@ Figure \ref{inheritancehierarchy} presents the inheritance hierarchy of the clas
 \item For classes that may be instantiated internally and by users, the class has a \tt{classmethod} decorated method, whose parameters \textit{all have default values} and which is intended to be used with input from the user, as the constructors described in the previous point 1. This method is named \tt{user\$CLASSNAME} and processes the input of the user into input for the class's proper \tt{\_\_init\_\_} initializer. On the other hand, this proper initializer is intended for internal use only and has \textit{no default values}. This is for example the case of the \tt{optics.beam.GaussianBeam} class, whose constructor is called internally to generate new beams and with user input read from the input file. In this last case it is \tt{userGaussianBeam} which is called.
 \end{enumerate}
 
-\paragraph{Abstract Base Classes.}The highest class of the optical classes hierarchy is the \tt{optics.component.SetupComponent} class. Its metaclass is set to \tt{abc.ABCMeta}, making it an abstract base class\footnote{See \tt{docs.python.org/2/library/abc.html} for details}. This essentially means that no daughter class of this class can be instantiated unless all the methods decorated with \tt{abc.abstractmethod} have been reimplemented by the daughter class. The methods concerned with this limitation are \tt{optics.component.SetupComponent.lines} and \tt{optics.component.SetupComponent.isHit}. Methods decorated with \tt{abstractmethod} in an abstract base class can eventually be implemented in the mother class, but in theia they all \tt{pass}, and could be called \textit{pure virtual} for someone coming from C++.
+\paragraph{Abstract Base Classes.}The highest class of the optical classes hierarchy is the \\ \tt{optics.component.SetupComponent} class. Its metaclass is set to \tt{abc.ABCMeta}, making it an abstract base class\footnote{See \tt{docs.python.org/2/library/abc.html} for details}. This essentially means that no daughter class of this class can be instantiated unless all the methods decorated with \tt{abc.abstractmethod} have been reimplemented by the daughter class. The methods concerned with this limitation are \tt{optics.component.SetupComponent.lines} and \tt{optics.component.SetupComponent.isHit}. Methods decorated with \tt{abstractmethod} in an abstract base class can eventually be implemented in the mother class, but in theia they all \tt{pass}, and could be called \textit{pure virtual} for someone coming from C++.
 
 \subsection{Call graph}
 Here (figure \ref{callgraph}) is the call graph of the \tt{theia} CLI tool, from which one can easily deduce the call graph of any individual function. You can refer to the \textit{API Guide} or the online API documentation to find out in which module the functions are defined.
@@ -375,5 +375,18 @@ def __str__(self):
 	
 \end{lstlisting}
 
+\begin{thebibliography}{99} 
+
+\bibitem{1}
+Kochkina, Wanner, Schmelzer, Tr\"obs, Heinzel:
+\textit{Modeling of the General Astigmatic Gaussian Beam and its Propagation through 3D Optical Systems},
+Applied Optics 24 (2013)
+
+\bibitem{2}
+Arnaud, Kogelnik:
+\textit{Gaussian Light Beams with General Astigmatism},
+Applied Optics 8 (1969)
+
+\end{thebibliography}
 
 \end{document} 

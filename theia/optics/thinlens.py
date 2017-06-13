@@ -95,7 +95,7 @@ class ThinLens(Lens):
                 theta = np.arcsin(Diameter * HRK/2.)   # half angle
             except FloatingPointError:
                 theta = pi/2.
-            Thickness = settings.zero + 2.*(1.-np.cos(theta))/HRK
+            Thickness = 2.*settings.zero + 2.*(1.-np.cos(theta))/HRK
         HRCenter = Center + Thickness*HRNorm/2.
         ARCenter = Center - Thickness*HRNorm/2.
 
