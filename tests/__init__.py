@@ -10,6 +10,6 @@ __copyright__ = "Copyright 2017, R. Duque"
 __credits__ = ["R. Duque"]
 __license__ = "GNU GPL"
 __version__ = "0.1.0"
-__status__ = "alpha"
+__status__ = "stable"
 __maintainer__ = "R. Duque"
 __email__ = "raphael.duque@polytechnique.edu"
