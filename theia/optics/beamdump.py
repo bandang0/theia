@@ -26,6 +26,7 @@ class BeamDump(SetupComponent):
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
         [integer]
+    Name: class attribute. [string]
     HRCenter (inherited): center of the principal face of the BeamDump in space.
         [3D vector]
     HRnorm (inherited): normal unitary vector the this principal face,
@@ -33,13 +34,12 @@ class BeamDump(SetupComponent):
     Thick (inherited): thickness of the dump, counted in opposite direction to
         HRNorm. [float]
     Dia (inherited): diameter of the component. [float]
-    Name (inherited): name of the component. [string]
     Ref (inherited): reference string (for keeping track with the lab). [string]
 
     '''
-
+    Name = "BeamDump"
     def __init__(self, X = 0., Y = 0., Z = 0., Theta = pi/2., Phi = 0.,
-                Name = 'BeamDump', Ref = None,
+                Ref = None,
                 Thickness = 2.e-2, Diameter = 5.e-2):
         '''BeamDump initializer.
 
@@ -60,7 +60,7 @@ class BeamDump(SetupComponent):
         HRCenter = np.array([X, Y, Z], dtype = np.float64)
 
         # initialize from base initializer
-        super(BeamDump, self).__init__(Name = Name, Ref = Ref,
+        super(BeamDump, self).__init__(Ref = Ref,
                 Diameter = Diameter, HRCenter = HRCenter, HRNorm = Norm,
                 Thickness = Thickness)
 

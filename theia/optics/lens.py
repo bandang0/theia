@@ -23,7 +23,7 @@ class Lens(Optic):
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
         [integer]
-    OptCount (inherited): class attribute, counts optical components. [string]
+    OptCount (inherited): class attribute, counts optical components. [integer]
     HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
     HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
         towards the outside of the component). [3D vector]
@@ -280,7 +280,7 @@ class Lens(Optic):
 
         # Create new beams
         if not 'r' in ans:
-            ans['r'] = GaussianBeam(Q = Qr, Name = "Beam",
+            ans['r'] = GaussianBeam(Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
                     StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r',
@@ -288,7 +288,7 @@ class Lens(Optic):
                     Length = 0., OptDist = 0.)
 
         if not 't' in ans:
-            ans['t'] = GaussianBeam(Q = Qt, Pos = point, Name = "Beam",
+            ans['t'] = GaussianBeam(Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.HRt, StrayOrder = beam.StrayOrder,
                 Ref = beam.Ref + 't', Optic = self.Ref, Face = faceTag,

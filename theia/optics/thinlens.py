@@ -23,14 +23,14 @@ class ThinLens(Lens):
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
         [integer]
-    OptCount (inherited): class attribute, counts optical components. [string]
+    OptCount (inherited): class attribute, counts optical components. [integer]
+    Name: class attribute. [string]
     HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
     HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
         towards the outside of the component). [3D vector]
     Thick (inherited): thickness of the optic, counted in opposite direction to
         HRNorm. [float]
     Dia (inherited): diameter of the component. [float]
-    Name (inherited): name of the component. [string]
     Ref (inherited): reference string (for keeping track with the lab). [string]
     ARCenter (inherited): center of the 'chord' of the AR surface. [3D vector]
     ARNorm (inherited): unitary normal to the 'chord' of the AR (always pointing
@@ -57,9 +57,11 @@ class ThinLens(Lens):
 
     '''
 
+    Name = "ThinLens"
+
     def __init__(self, Focal = 10.e-2, KeepI = False, Theta = pi/2., Phi = 0.,
                 Diameter = 5.e-2, R = .1, T = .9,
-                X = 0., Y = 0., Z = 0., Name = "ThinLens", Ref = None):
+                X = 0., Y = 0., Z = 0., Ref = None):
         '''ThinLens initializer.
 
         Parameters are the attributes.
@@ -104,7 +106,7 @@ class ThinLens(Lens):
                 HRK = HRK, ARK = ARK,
                 ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
                 HRCenter = HRCenter, HRNorm = HRNorm, Thickness = Thickness,
-                Diameter = Diameter, Name = Name, Ref = Ref)
+                Diameter = Diameter, Ref = Ref)
 
         #warns on geometry
         if settings.warning:

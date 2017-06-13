@@ -3,8 +3,8 @@
 # In this simulaton, two plane-convex mirrors are used to form a cavity
 #and a gussian beam with parameters resonant with this cavity in placed inside
 #we observe as expected (and hoped) that the gaussian bem reproduces itself
-#after each reflexion. After 72 reflexions, the beam has the same waist position 
-#with a precison of 1.e-9 and the same Rayleigh range and ROC with a precison 
+#after each reflexion. After 72 reflexions, the beam has the same waist position
+#with a precison of 1.e-9 and the same Rayleigh range and ROC with a precison
 #of 1.e-4.
 
 CavitySimulation
@@ -14,13 +14,11 @@ order = 0
 threshold = .5*mW
 
 # input beam tuned to the cavity
-#bm	Wx							Wy							WDistx	WDisty	Wl			P	X	Y			Z	Theta	Phi	Alpha	Name		Ref
-bm 0.00041151046092387087*m, 	0.00041151046092387087*m, 	0.,		0.,		1064*nm,	1*W, 	Y = 0*m, 	Z = 0*cm, 	Phi = 0,  	Name = '',	Ref = 'ORI'
+#bm	Wx							Wy							WDistx	WDisty	Wl			P	X	Y			Z	Theta	Phi	Alpha		Ref
+bm 0.00041151046092387087*m, 	0.00041151046092387087*m, 	0.,		0.,		1064*nm,	1*W, 	Y = 0*m, 	Z = 0*cm, 	Phi = 0, 	Ref = 'ORI'
 
 # mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
-#mr	X	Y	Z	Theta		Phi	Wedge	Alpha				HRK			ARK		Diameter		Thickness		N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
+#mr	X	Y	Z	Theta		Phi	Wedge	Alpha				HRK			ARK		Diameter		Thickness		N	HRr	HRt	ARr	ARt	KeepI	Ref
 mr X = -49.4987437*cm, Theta = 90*deg, Phi = 0*deg, Wedge = 0*deg, HRK = 1, ARK = 0,  Diameter = 20*cm, Thickness = 10*cm, Alpha = 0*deg, N= 1.1, Ref = 'M1'
 
 mr X = 49.4987437*cm, Z = 0*cm, Theta = 90*deg, Phi = pi, HRK = 1, ARK = 0, Wedge = 0*deg, Diameter = 20*cm, Thickness = 10*cm, Alpha = 0*deg, N= 1.1, Ref = 'M2'
-
-

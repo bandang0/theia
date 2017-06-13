@@ -32,6 +32,7 @@ class GaussianBeam(object):
 
     *=== Attributes ===*
     BeamCount: class attribute, counts beams. [integer]
+    Name: class attribute. [string]
     QTens: general astigmatic complex curvature tensor at the origin.
         [np. array of complex]
     N: Refraction index of the medium in which the beam is placed. [float]
@@ -41,7 +42,6 @@ class GaussianBeam(object):
     Dir: Normalized direction in 3D space of the beam axis. [3D vector]
     U: A tuple of unitary vectors which along with Dir form a direct orthonormal
         basis in which the Q tensor is expressed. [tuple of 3D vectors]
-    Name: Name of the beam if any. [string]
     Ref: Reference to the beam. [string]
     OptDist: Optical length. [float]
     Length: Geometrical length of the beam. [float]
@@ -54,8 +54,9 @@ class GaussianBeam(object):
 
     '''
     BeamCount = 0   # counts beams
+    Name = "Beam"
 
-    def __init__(self, Q, N, Wl, P, Pos, Dir, Ux, Uy, Name, Ref, OptDist,
+    def __init__(self, Q, N, Wl, P, Pos, Dir, Ux, Uy, Ref, OptDist,
         Length, StrayOrder, Optic, Face):
         '''Beam initializer.
 
@@ -74,7 +75,6 @@ class GaussianBeam(object):
         self.Length = Length
         self.StrayOrder = StrayOrder
 
-        self.Name = Name
         self.Ref = Ref
 
         self.Pos = Pos
@@ -233,7 +233,7 @@ class GaussianBeam(object):
 
 def userGaussianBeam(Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
                     Wl = 1064.e-9, P = 1., X = 0., Y = 0., Z = 0.,
-                    Theta = pi/2., Phi = 0., Alpha = 0., Name = None,
+                    Theta = pi/2., Phi = 0., Alpha = 0.,
                     Ref = None):
     '''Constructor used for user inputed beams, separated from the class
     initializer because the internal state of a beam is very different from
@@ -265,11 +265,6 @@ def userGaussianBeam(Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
     QTens = np.array([[1./qx, 0.],[0., 1./qy]],
                         dtype = np.complex64)
 
-    if Name is None:
-        Name = "Beam"
-    else:
-        Name = Name
-
     if Ref is None:
         Ref = "Beam" + str(GaussianBeam.BeamCount)
     else:
@@ -277,5 +272,5 @@ def userGaussianBeam(Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
 
     return GaussianBeam(Q = QTens, N = 1., Wl = Wl, P = P,
         Pos = Pos, Dir = Dir,
-        Ux = u, Uy = v, Name = Name, Ref = Ref, OptDist = 0.,
+        Ux = u, Uy = v, Ref = Ref, OptDist = 0.,
         Length = 0., StrayOrder = 0, Optic = 'Laser', Face = 'Out')

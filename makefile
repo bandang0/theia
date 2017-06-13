@@ -1,8 +1,8 @@
 # makefile for theia
 
 #variables
-EPYOPTS = --name=theia -u http://93.71.63.5:56000 --graph=all --inheritance=listed \
-		-v
+EPYOPTS = --name=theia -u http://93.71.63.5:56000 --graph=all \
+ 		--inheritance=listed -v
 PDFLATEXCMD = pdflatex -interaction=nonstopmode
 
 # remove compiled modules
@@ -90,7 +90,7 @@ build-theia:
 
 #build documentation
 build-doc: compile-pdf compile-pdf compile-pdf copy-pdf
-	
+
 #install all
 install: build-theia build-doc clean-pyc clean-build
 

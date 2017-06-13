@@ -7,8 +7,8 @@ Lenses!
 order = 0
 threshold = 1.*mW
 
-#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
-#th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Name	Ref
+#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Ref
+#th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Ref
 ########## SETUP 1
 bm 100.*km, 100.*km, 0.,	0,	1064*nm,	1*W, Y = 0*m, Z = 0., Phi = 0, Ref = 'Beam1'
 th 30.*cm, 0, 0, 90 * deg, 180 *deg, 10*cm, 5*cm, 0.1, 0.9, True, Ref = 'LA'

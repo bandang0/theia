@@ -23,14 +23,14 @@ class Optic(SetupComponent):
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
         [integer]
-    OptCount: class attribute, counts optical components. [string]
+    OptCount: class attribute, counts optical components. [integer]
+    Name: class attribute. [string]
     HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
     HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
      towards the outside of the component). [3D vector]
     Thick (inherited): thickness of the optic, counted in opposite direction to
         HRNorm. [float]
     Dia (inherited): diameter of the component. [float]
-    Name (inherited): name of the component. [string]
     Ref (inherited): reference string (for keeping track with the lab). [string]
     ARCenter: center of the 'chord' of the AR surface. [3D vector]
     ARNorm: unitary normal to the 'chord' of the AR (always pointing
@@ -57,9 +57,10 @@ class Optic(SetupComponent):
     '''
 
     OptCount = 0   #counts the setup components
+    Name = "Optic"
 
     def __init__(self, ARCenter, ARNorm, N, HRK, ARK, ARr, ARt, HRr,
-                HRt, KeepI, HRCenter, HRNorm, Thickness, Diameter, Name, Ref):
+                HRt, KeepI, HRCenter, HRNorm, Thickness, Diameter, Ref):
         '''Optic base initializer.
 
         Parameters are the attributes of the object to construct.
@@ -86,7 +87,7 @@ class Optic(SetupComponent):
 
         #call mother initializer
         super(Optic, self).__init__(HRCenter = HRCenter, HRNorm = HRNorm,
-                Name = Name, Ref = Ref, Thickness = Thickness,
+                Ref = Ref, Thickness = Thickness,
                 Diameter = Diameter)
         Optic.OptCount = Optic.OptCount + 1
 

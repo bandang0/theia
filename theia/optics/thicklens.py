@@ -22,14 +22,14 @@ class ThickLens(Lens):
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
         [integer]
-    OptCount (inherited): class attribute, counts optical components. [string]
+    OptCount (inherited): class attribute, counts optical components. [integer]
+    Name: class attribute. [string]
     HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
     HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
         towards the outside of the component). [3D vector]
     Thick (inherited): thickness of the optic, counted in opposite direction to
         HRNorm. [float]
     Dia (inherited): diameter of the component. [float]
-    Name (inherited): name of the component. [string]
     Ref (inherited): reference string (for keeping track with the lab). [string]
     ARCenter (inherited): center of the 'chord' of the AR surface. [3D vector]
     ARNorm (inherited): unitary normal to the 'chord' of the AR (always pointing
@@ -61,12 +61,12 @@ class ThickLens(Lens):
     is the *apex* of the principal face, and not the chord of the HR surface.
 
     '''
+    Name = "ThickLens"
 
     def __init__(self, K1 = 0.01, K2 = 0.01, X = 0., Y = 0., Z = 0.,
                 Theta = pi/2., Phi = 0.,
                 Thickness = 2.e-2, N = 1.4585, KeepI = False,
-                Diameter = 5.e-2, R = 0.1, T = .9,
-                Name = "Thicklens", Ref = None):
+                Diameter = 5.e-2, R = 0.1, T = .9, Ref = None):
         '''ThickLens initializer.
 
         Parameters are the attributes.
@@ -122,7 +122,7 @@ class ThickLens(Lens):
                 HRK = K1, ARK = K2,
                 ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
                 HRCenter = HRCenter, HRNorm = HRNorm, Thickness = Thickness,
-                Diameter = Diameter, Name = Name, Ref = Ref)
+                Diameter = Diameter, Ref = Ref)
 
         #Warnings for console output
         if settings.warning:

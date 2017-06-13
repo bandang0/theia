@@ -15,7 +15,7 @@ settings.init(dic)
 # Here is a spherical mirror
 mirror1 = mir.Mirror(Thickness = 2*m, Diameter = 2*m, Phi = 180.*deg,
             X = 0, HRK = 1, ARK = 0, Wedge = 0, HRr = 1.0,
-            HRt = 0.00, ARr = 0.10, ARt = .90, Name = 'Semi-sphere', Ref = 'M1')
+            HRt = 0.00, ARr = 0.10, ARt = .90,  Ref = 'M1')
 
 # Here are some beams which all depart from the focus of the semi-spherical
 # mirror

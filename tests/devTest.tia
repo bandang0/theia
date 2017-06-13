@@ -7,23 +7,23 @@ order = 1
 threshold = 1.*mW
 
 # input beam
-#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
+#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Ref
 bm 0.5, 1, 0.,	0,	1064*nm,	1*W, Y = 0*m, Z = 0., Phi = 0, Ref = 'TB'
 
 # mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
-#mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
+#mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Ref
 mr X = 2*m, Phi = 3.141592, HRK = 1e-2, ARK = 0, Wedge = 0*deg, Diameter = 10*cm, Thickness = 5*cm, Alpha = 90*deg, N= 1.1,  Ref = 'M1'
 
 # thin lens (X,Y,Z is the center of the thin lens)
-#th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Name	Ref
+#th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Ref
 th 3, 0, 0, 90 * deg, 180 *deg, 10*cm, 5*cm, 0.1, 0.9, True, Ref = 'L1'
 
 # thick lens (X,Y,Z is the apex of the HR face)
-#tk	X	Y	Z	Theta		Phi	K1	K2	Diameter	Thickness	N	R	T	KeepI	Name	Ref
+#tk	X	Y	Z	Theta		Phi	K1	K2	Diameter	Thickness	N	R	T	KeepI	Ref
 tk 4, 	0, 	0, 	360*deg/4., 0., K1 = -0.01, K2 = -0.02, Diameter = 10*cm, KeepI = False, Ref = 'L2'
 
 #beamdump (X,Y,Z is the center of the principal face)
-#bd	X	Y	Z	Theta	Phi	Dia	Thickness Name Ref
+#bd	X	Y	Z	Theta	Phi	Dia	Thickness Ref
 bd 8., 0., 0., 90*deg, -23*deg, 20*cm, Thickness = 2*mm, Ref = 'BD1'
 
 #test all the empty constructors

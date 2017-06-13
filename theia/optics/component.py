@@ -36,9 +36,9 @@ class SetupComponent(object):
 
     __metaclass__ = ABCMeta
     SetupCount = 0   #counts the setup components
+    Name = "SetupComponent"
 
-    def __init__(self, HRCenter, HRNorm,
-                Name, Ref, Thickness, Diameter):
+    def __init__(self, HRCenter, HRNorm, Ref, Thickness, Diameter):
         '''SetupComponent initializer.
 
         Parameters are the attributes of the object to construct.
@@ -55,7 +55,6 @@ class SetupComponent(object):
         self.HRNorm = self.HRNorm/np.linalg.norm(self.HRNorm)
         self.Thick = Thickness
         self.Dia = Diameter
-        self.Name = Name
         self.Ref = Ref
 
         SetupComponent.SetupCount = SetupComponent.SetupCount + 1

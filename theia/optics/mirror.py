@@ -28,14 +28,14 @@ class Mirror(Optic):
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
         [integer]
-    OptCount (inherited): class attribute, counts optical components. [string]
+    OptCount (inherited): class attribute, counts optical components. [integer]
+    Name: class attribute. [string]
     HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
     HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
      towards the outside of the component). [3D vector]
     Thick (inherited): thickness of the optic, counted in opposite direction to
         HRNorm. [float]
     Dia (inherited): diameter of the component. [float]
-    Name (inherited): name of the component. [string]
     Ref (inherited): reference string (for keeping track with the lab). [string]
     ARCenter (inherited): center of the 'chord' of the AR surface. [3D vector]
     ARNorm (inherited): unitary normal to the 'chord' of the AR (always pointing
@@ -68,11 +68,12 @@ class Mirror(Optic):
 
     '''
 
+    Name = "Mirror"
     def __init__(self, Wedge = 0., Alpha = 0., X = 0. ,Y = 0., Z = 0.,
                 Theta = pi/2., Phi = 0., Diameter = 10.e-2,
                 HRr = .99, HRt = .01, ARr = .1, ARt = .9,
                 HRK = 0.01, ARK = 0, Thickness = 2.e-2,
-                N = 1.4585, KeepI = False, Name = 'Mirror', Ref = None):
+                N = 1.4585, KeepI = False,  Ref = None):
         '''Mirror initializer.
 
         Parameters are the attributes and the angles theta and phi are spherical
@@ -108,7 +109,7 @@ class Mirror(Optic):
         super(Mirror, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
         N = N, HRK = HRK, ARK = ARK, ARr = ARr, ARt = ARt, HRr = HRr, HRt = HRt,
         KeepI = KeepI, HRCenter = [X, Y, Z], HRNorm = HRNorm,
-        Thickness = Thickness, Diameter = Diameter, Name = Name, Ref = Ref)
+        Thickness = Thickness, Diameter = Diameter, Ref = Ref)
 
         #Warnings for console output
         if settings.warning:
@@ -350,11 +351,11 @@ class Mirror(Optic):
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
                     StrayOrder = beam.StrayOrder, Ref = beam.Ref + 'r',
-                    Optic = self.Ref, Face = 'HR', Name = "Beam",
+                    Optic = self.Ref, Face = 'HR',
                     Length = 0., OptDist = 0.)
 
         if not 't' in ans:
-            ans['t'] = GaussianBeam(Q = Qt, Pos = point, Name = "Beam",
+            ans['t'] = GaussianBeam(Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.HRt, StrayOrder = beam.StrayOrder + 1,
                 Ref = beam.Ref + 't', Optic = self.Ref, Face = 'HR',
@@ -468,7 +469,7 @@ class Mirror(Optic):
 
         # Create new beams
         if not 'r' in ans:
-            ans['r'] = GaussianBeam(Q = Qr, Name = "Beam",
+            ans['r'] = GaussianBeam(Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
                     StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r',
@@ -480,6 +481,6 @@ class Mirror(Optic):
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
                 P = beam.P * self.ARt, StrayOrder = beam.StrayOrder,
                 Ref = beam.Ref + 't', Optic = self.Ref, Face = 'AR',
-                Length = 0., OptDist =0., Name = "Beam")
+                Length = 0., OptDist =0.)
 
         return ans

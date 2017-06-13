@@ -32,20 +32,19 @@ def init(dic):
     #order of data in .tia
     inOrder = {}
     inOrder['bm'] = ['Wx','Wy','WDistx','WDisty','Wl','P',
-            'X','Y','Z','Theta','Phi','Alpha','Name','Ref']
+            'X','Y','Z','Theta','Phi','Alpha','Ref']
 
     inOrder['mr'] = ['X','Y','Z','Theta','Phi','Wedge','Alpha',
             'HRK','ARK','Diameter','Thickness','N','HRr','HRt','ARr','ARt',
-            'KeepI', 'Name','Ref']
+            'KeepI', 'Ref']
 
     inOrder['th'] = ['X','Y','Z','Theta','Phi','Focal','Diameter',
-            'R','T','KeepI','Name','Ref']
+            'R','T','KeepI','Ref']
 
     inOrder['tk'] = ['X','Y','Z','Theta','Phi','K1','K2','Diameter',
-            'Thickness','N','R','T','KeepI','Name','Ref']
+            'Thickness','N','R','T','KeepI','Ref']
 
-    inOrder['bd'] = ['X','Y','Z','Theta','Phi','Diameter','Thickness',
-            'Name', 'Ref']
+    inOrder['bd'] = ['X','Y','Z','Theta','Phi','Diameter','Thickness', 'Ref']
 
     #parsed from command line
     info = dic['info']

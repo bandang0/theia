@@ -17,13 +17,13 @@ alpha = np.pi/2. - np.arctan(.1)
 beta = np.pi/2. + np.arctan(.1)
 mirror1 = mir.Mirror(Thickness = 1*cm, Diameter = 5*cm, X = 1*m,
             Theta = alpha, Phi = 180.*deg, HRK = 0.90, ARK = 0, Wedge = 0, HRr = 0.90,
-            HRt = 0.10, ARr = 0.10, ARt = .90, Name = 'Mirror1', Ref = 'M1',
+            HRt = 0.10, ARr = 0.10, ARt = .90, Ref = 'M1',
             N = 1.5)
 
 mirror2 = mir.Mirror(Thickness = 1* cm, Diameter = 10*cm,
             Y = 20*cm, Theta = beta, Phi = 0., HRK = 0.90,
             ARK = 0, Wedge = 0, HRr = 0.90, HRt = 0.1, ARr = 0.1, ARt = 0.90,
-            Name = 'Mirror2', Ref = 'M2', N = 1.5)
+            Ref = 'M2', N = 1.5)
 
 #Input beam
 beam1 = gbeam.userGaussianBeam(Wx = .5*cm, Wy = .5*cm, WDistx = 0, WDisty = 0,
