@@ -26,8 +26,8 @@ mirror2 = mir.Mirror(Thickness = 1* cm, Diameter = 10*cm,
             Name = 'Mirror2', Ref = 'M2', N = 1.5)
 
 #Input beam
-beam1 = gbeam.GaussianBeam(Wx = .5*cm, Wy = .5*cm, WDistx = 0, WDisty = 0,
-            ortho = True, Ref = 'ORI')
+beam1 = gbeam.userGaussianBeam(Wx = .5*cm, Wy = .5*cm, WDistx = 0, WDisty = 0,
+             Ref = 'ORI')
 
 # parameters
 threshold = -1*W

@@ -16,7 +16,7 @@ from ..helpers import settings
 from ..helpers.units import mW
 from ..helpers.tools import formatter
 from ..optics.optic import Optic
-from ..optics.beam import GaussianBeam
+from ..optics.beam import userGaussianBeam
 from ..optics.beamdump import BeamDump
 from ..optics.thinlens import ThinLens
 from ..optics.thicklens import ThickLens
@@ -118,7 +118,7 @@ class Simulation(object):
             elif uple[0] == 'threshold':
                 self.Threshold = uple[1]
             elif uple[0] ==  'bm':
-                self.InBeams.append(GaussianBeam.userGaussianBeam(**uple[1]))
+                self.InBeams.append(userGaussianBeam(**uple[1]))
             elif uple[0] == 'mr':
                 self.OptList.append(Mirror(**uple[1]))
             elif uple[0] == 'th':

@@ -27,8 +27,8 @@ bd2 = tk.ThickLens(Thickness = 0.1*cm, Diameter = 5*cm, X = 5.,
             Phi = 180.*deg, K1 = 0., K2 = 0., R = 0, T = 1, N = 1., Ref = 'G2')
 
 # The beam
-beam1 = gbeam.GaussianBeam(Wx = .1*cm, Wy = .1*cm, Theta = 90.*deg, Phi = 0.,
-					ortho = True, WDistx = 0., WDisty = 0.)
+beam1 = gbeam.userGaussianBeam(Wx = .1*cm, Wy = .1*cm, Theta = 90.*deg,
+					Phi = 0., WDistx = 0., WDisty = 0.)
 
 # Create simulation object:
 simu = sim.Simulation(FName = 'vignale')

@@ -1,5 +1,6 @@
 '''This is a first example of use of theia.'''
 
+import numpy as np
 from theia.running import simulation as sim
 from theia.optics import beam as gbeam
 from theia.optics import mirror as mir
@@ -21,9 +22,9 @@ mirror1 = mir.Mirror(Thickness = 2*m, Diameter = 2*m, Phi = 180.*deg,
 beams = []
 for i in range(-3, 3):
 	for j in range(-3, 3):
-		beams.append(gbeam.GaussianBeam(Wx = .5*cm, Wy = .5*cm,
-					ortho = True, Dir = [1., i/4., j/4.],
-					Pos = [0.5, 0., 0.]))
+		beams.append(gbeam.userGaussianBeam(Wx = 0.001, Wy = 0.001,
+					Theta = np.pi/2. + i * np.pi/7.,
+					Phi = j * np.pi/7., X = 0.5))
 # Create simulation object:
 simu = sim.Simulation(FName = 'sphere')
 simu.LName = 'An Important Property of Spherical Mirrors'
