@@ -14,6 +14,8 @@
 #       width
 #       waistSize
 #       gouy
+#       translate
+#   userGaussianBeam
 
 import numpy as np
 from ..helpers import geometry
@@ -230,6 +232,15 @@ class GaussianBeam(object):
         WDist = self.waistPos()
         return (np.arctan((d-WDist[0])/zR[0]),
                 np.arctan((d-WDist[1])/zR[1]))
+
+    def translate(self, X = 0., Y = 0., Z = 0.):
+        '''Move the beam to (current position + (X, Y, Z)).
+
+        X, Y, Z: components of the translation vector.
+
+        No return value.
+        '''
+        self.Pos = self.Pos + np.array([X, Y, Z], dtype = np.float64)
 
 def userGaussianBeam(Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
                     Wl = 1064.e-9, P = 1., X = 0., Y = 0., Z = 0.,

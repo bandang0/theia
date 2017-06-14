@@ -6,6 +6,7 @@
 #       hitSide
 #       collision
 #       geoCheck
+#       translate
 
 import numpy as np
 from ..helpers import settings
@@ -73,9 +74,8 @@ class Optic(SetupComponent):
             Ref = "Opt" + str(Optic.OptCount)
 
         # initialize with input data
-        self.ARCenter = np.array(ARCenter, dtype = np.float64)
-        self.ARNorm = np.array(ARNorm, dtype = np.float64)
-        self.ARNorm = self.ARNorm/np.linalg.norm(self.ARNorm)
+        self.ARCenter = ARCenter
+        self.ARNorm = ARNorm
         self.N = N
         self.HRK = HRK
         self.ARK = ARK
@@ -175,3 +175,16 @@ class Optic(SetupComponent):
             print "theia: Warning: In " + word + " %s (%s), HR and AR surfaces"\
                 %(self.Name, self.Ref)\
                 +" intersect."
+
+    def translate(self, X = 0., Y = 0., Z = 0.):
+        '''Move the optic to (current position + (X, Y, Z)).
+
+        This version takes care of HRcenter and ARCenter and overwrites the
+        SetupComponent version.
+
+        X, Y, Z: components of the translation vector.
+
+        No return value.
+        '''
+        self.HRCenter = self.HRCenter + np.array([X, Y, Z], dtype = np.float64)
+        self.ARCenter = self.ARCenter + np.array([X, Y, Z], dtype = np.float64)

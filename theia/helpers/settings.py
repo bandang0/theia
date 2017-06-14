@@ -45,7 +45,9 @@ def init(dic):
             'Thickness','N','R','T','KeepI','Ref']
 
     inOrder['bd'] = ['X','Y','Z','Theta','Phi','Diameter','Thickness', 'Ref']
-
+    inOrder['gh'] = ['X','Y','Z','Theta','Phi','Diameter', 'Ref']
+    inOrder['bo'] = ['X', 'Y', 'Z']
+    
     #parsed from command line
     info = dic['info']
     warning = dic['warning']

@@ -21,6 +21,7 @@ from ..optics.beamdump import BeamDump
 from ..optics.thinlens import ThinLens
 from ..optics.thicklens import ThickLens
 from ..optics.mirror import Mirror
+from ..optics.ghost import Ghost
 from ..tree import beamtree
 from . import parser
 
@@ -109,9 +110,16 @@ class Simulation(object):
 
         '''
         finalList = parser.readIn(self.FName + '.tia')
+
+        # default dictionary for translation
+        translateDic = {'X': 0., 'Y': 0., 'Z': 0.}
+
         # populate simulation attributes with objects from input
         for uple in finalList:
-            if uple[0] == 'LName':
+            if uple[0] == 'bo':
+                #update translation dic
+                translateDic = uple[1]
+            elif uple[0] == 'LName':
                 self.LName = uple[1]
             elif uple[0] == 'order':
                 self.Order = uple[1]
@@ -119,14 +127,23 @@ class Simulation(object):
                 self.Threshold = uple[1]
             elif uple[0] ==  'bm':
                 self.InBeams.append(userGaussianBeam(**uple[1]))
+                #translate last read object
+                self.InBeams[len(self.InBeams)-1].translate(**translateDic)
             elif uple[0] == 'mr':
                 self.OptList.append(Mirror(**uple[1]))
+                self.OptList[len(self.OptList)-1].translate(**translateDic)
             elif uple[0] == 'th':
                 self.OptList.append(ThinLens(**uple[1]))
+                self.OptList[len(self.OptList)-1].translate(**translateDic)
             elif uple[0] == 'tk':
                 self.OptList.append(ThickLens(**uple[1]))
+                self.OptList[len(self.OptList)-1].translate(**translateDic)
             elif uple[0] == 'bd':
                 self.OptList.append(BeamDump(**uple[1]))
+                self.OptList[len(self.OptList)-1].translate(**translateDic)
+            elif uple[0] == 'gh':
+                self.OptList.append(Ghost(**uple[1]))
+                self.OptList[len(self.OptList)-1].translate(**translateDic)
 
     def run(self):
         '''Run simulation with input as read by load.

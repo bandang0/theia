@@ -193,7 +193,7 @@ def treeOfBeam(srcBeam, optList, order, threshold):
             + srcBeam.Ref + "."
         return BeamTree(Root = srcBeam)
 
-    # get parametrs of this closest impact
+    # get parameters of this closest impact
     finalisHit = finalOpt.isHit(srcBeam)
     finalHit = finalOpt.hit(srcBeam, order = order, threshold = threshold)
 

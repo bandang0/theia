@@ -83,6 +83,10 @@ def readIn(name):
                 ans.append(('tk',dicOf('tk',line[2:line.find('\n')],name,j)))
             elif line[0:2] == 'bd':
                 ans.append(('bd',dicOf('bd',line[2:line.find('\n')],name,j)))
+            elif line[0:2] == 'gh':
+                ans.append(('gh',dicOf('gh',line[2:line.find('\n')],name,j)))
+            elif line[0:2] == 'bo':
+                ans.append(('bo',dicOf('bo',line[2:line.find('\n')],name,j)))
             else:
                 ans.append(('LName', line[0:line.find('\n')]))
 
@@ -96,7 +100,7 @@ def dicOf(st, line, fileName, lineNumber):
     and without the obect tag. [string]
     fileName: name of file (used to write errors). [string]
     lineNumber: number fo this line in the file (used to write errors). [int]
-    
+
 	May raise an InputError
 	Returns a dictionary ready for construction.
 

@@ -8,14 +8,21 @@ threshold = 1.*mW
 
 # input beam
 #bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Ref
+bo 12, 2, 0
+
 bm 0.5, 1, 0.,	0,	1064*nm,	1*W, Y = 0*m, Z = 0., Phi = 0, Ref = 'TB'
 
 # mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
 #mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Ref
+
+bo X = 0, Z = 5
+
 mr X = 2*m, Phi = 3.141592, HRK = 1e-2, ARK = 0, Wedge = 0*deg, Diameter = 10*cm, Thickness = 5*cm, Alpha = 90*deg, N= 1.1,  Ref = 'M1'
 
 # thin lens (X,Y,Z is the center of the thin lens)
 #th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Ref
+bo
+
 th 3, 0, 0, 90 * deg, 180 *deg, 10*cm, 5*cm, 0.1, 0.9, True, Ref = 'L1'
 
 # thick lens (X,Y,Z is the apex of the HR face)

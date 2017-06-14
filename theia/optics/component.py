@@ -6,6 +6,8 @@
 #       __str__
 #       lines
 #       isHit
+#       hit
+#       translate
 
 import numpy as np
 from abc import ABCMeta, abstractmethod
@@ -23,7 +25,7 @@ class SetupComponent(object):
     SetupCount: class attribute, counts setup components. [integer]
     HRCenter: center of the principal face of the component in space.
         [3D vector]
-    HRnorm: normal unitary vector the this principal face, supposed to point
+    HRNorm: normal unitary vector the this principal face, supposed to point
         outside the media. [3D vector]
     Thick: thickness of the component, counted in opposite direction to
         HRNorm. [float]
@@ -50,9 +52,8 @@ class SetupComponent(object):
         if Ref is None:
             Ref = "Set" + str(SetupComponent.SetupCount)
         # initialize data
-        self.HRCenter = np.array(HRCenter, dtype = np.float64)
-        self.HRNorm = np.array(HRNorm, dtype = np.float64)
-        self.HRNorm = self.HRNorm/np.linalg.norm(self.HRNorm)
+        self.HRCenter = HRCenter
+        self.HRNorm = HRNorm
         self.Thick = Thickness
         self.Dia = Diameter
         self.Ref = Ref
@@ -82,3 +83,23 @@ class SetupComponent(object):
 
         '''
         pass
+
+    @abstractmethod
+    def hit(self, beam, order, threshold):
+        '''Compute the refracted and reflected beams after interaction.
+
+        Abstract (pure virtual) method.
+
+        '''
+
+    def translate(self, X = 0., Y = 0., Z = 0.):
+        '''Move the component to (current position + (X, Y, Z)).
+
+        This version only takes care of the HRCenter, version of sub classes
+        take care of ARCenter if relevant.
+
+        X, Y, Z: components of the translation vector.
+
+        No return value.
+        '''
+        self.HRCenter = self.HRCenter + np.array([X, Y, Z], dtype = np.float64)

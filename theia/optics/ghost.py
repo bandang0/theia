@@ -1,32 +1,35 @@
-'''Defines the BeamDump class for theia.'''
+'''Defines the Ghost class for theia.'''
 
 # Provides:
-#   class BeamDump
+#   class Ghost
 #       __init__
 #       lines
 #       isHit
 #       hit
 
 import numpy as np
-from ..helpers import settings
-from ..helpers.geometry import rectToSph, linePlaneInter, lineCylInter
+from ..helpers.geometry import rectToSph, linePlaneInter
 from ..helpers.units import deg, pi
 from .component import SetupComponent
+from .beam import GaussianBeam
 
-class BeamDump(SetupComponent):
+class Ghost(SetupComponent):
     '''
 
-    BeamDump class.
+    Ghost class.
 
-    This class represents components on which rays stop. They have cylindrical
-    symmetry and stop beams on all their faces. They can represent baffles
-    for example.
+    This class represents surfaces which don't interact with the beams. They
+    just transmit the same beam, and may be useful to monitor the beams on their
+    way, without having to calculate the Q yourself if you're looking for the
+    Q at another place than the origin of the beam.
+
+    Ghost surfaces basically have a null thickness and transmit the beams.
 
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
         [integer]
     Name: class attribute. [string]
-    HRCenter (inherited): center of the principal face of the BeamDump in space.
+    HRCenter (inherited): center of the principal face of the Ghost in space.
         [3D vector]
     HRnorm (inherited): normal unitary vector the this principal face,
         supposed to point outside the media. [3D vector]
@@ -36,19 +39,17 @@ class BeamDump(SetupComponent):
     Ref (inherited): reference string (for keeping track with the lab). [string]
 
     '''
-    Name = "BeamDump"
+    Name = "Ghost"
     def __init__(self, X = 0., Y = 0., Z = 0., Theta = pi/2., Phi = 0.,
-                Ref = None,
-                Thickness = 2.e-2, Diameter = 5.e-2):
-        '''BeamDump initializer.
+                Ref = None, Diameter = 5.e-2):
+        '''Ghost initializer.
 
         Parameters are the attributes.
 
-        Returns a BeamDump.
+        Returns a Ghost.
 
         '''
         #Check input
-        Thickness = float(Thickness)
         Diameter = float(Diameter)
 
         # prepare for mother initializer
@@ -61,14 +62,13 @@ class BeamDump(SetupComponent):
         # initialize from base initializer
         super(BeamDump, self).__init__(Ref = Ref,
                 Diameter = Diameter, HRCenter = HRCenter, HRNorm = Norm,
-                Thickness = Thickness)
+                Thickness = 0.)
 
     def lines(self):
         '''Return the list of lines needed to print the object.
         '''
         ans = []
-        ans.append("BeamDump: " + self.Name + " (" + self.Ref + ") {")
-        ans.append("Thick: " + str(self.Thick) + "m")
+        ans.append("Ghost: " + self.Name + " (" + self.Ref + ") {")
         ans.append("Diameter: " + str(self.Dia) + "m")
         ans.append("Center: " + str(self.HRCenter))
         sph = rectToSph(self.HRNorm)
@@ -79,10 +79,10 @@ class BeamDump(SetupComponent):
         return ans
 
     def isHit(self, beam):
-        '''Determine if a beam hits the BeamDump.
+        '''Determine if a beam hits the Ghost surface.
 
-        This uses the line***Inter functions from the geometry module to find
-        characteristics of impact of beams on beamdumps.
+        This uses the linePlaneInter function from the geometry module to find
+        characteristics of impact of beams on ghost surfaces.
 
         beam: incoming beam. [GaussianBeam]
 
@@ -106,44 +106,17 @@ class BeamDump(SetupComponent):
         HRDict = linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
                                     self.HRNorm, self.Dia)
 
-        SideDict =lineCylInter(beam.Pos, beam.Dir,
-                                    self.HRCenter, self.HRNorm,
-                                    self.Thick, self.Dia)
-
-        ARCenter = self.HRCenter - self.Thick*self.HRNorm
-
-        ARDict = linePlaneInter(beam.Pos, beam.Dir, ARCenter,
-                                    - self.HRNorm, self.Dia)
-
-        # face tags
-        HRDict['face'] = 'HR'
-        ARDict['face'] = 'AR'
-        SideDict['face'] = 'Side'
-
-        # determine first hit
-        hitFaces = filter(lambda dic: dic['isHit'], [HRDict, ARDict, SideDict])
-
-        if len(hitFaces) == 0:
+        if HRDict['isHit']:
+            return {'isHit': True,
+                    'intersection point': HRDict['intersection point'],
+                    'face': HRDict['face'],
+                    'distance': HRDict['distance']
+                    }
+        else:
             return noInterDict
 
-        dist = hitFaces[0]['distance']
-        j=0
-
-        for i in range(len(hitFaces)):
-            if hitFaces[i]['distance'] < dist:
-                dist = hitFaces[i]['distance']
-                j=i
-
-        return {'isHit': True,
-                'intersection point': hitFaces[j]['intersection point'],
-                'face': hitFaces[j]['face'],
-                'distance': hitFaces[j]['distance']
-                }
-
     def hit(self, beam, order, threshold):
-        '''Compute the refracted and reflected beams after interaction.
-
-        BeamDumps always stop beams.
+        '''Return the beam simply transmitted by the ghost surface.
 
         beam: incident beam. [GaussianBeam]
         order: maximum strayness of daughter beams, which are not returned if
@@ -151,16 +124,22 @@ class BeamDump(SetupComponent):
         threshold: idem for the power of the daughter beams. [float]
 
         Returns a dictionary of beams with keys:
-            't': None
-            'r': None
+            't': Gaussian beam which is the continuity of the incident beam.
 
         '''
         # get impact parameters and update beam
         dic = self.isHit(beam)
         beam.Length = dic['distance']
         beam.OptDist = beam.N * beam.Length
-        if settings.info:
-            print "theia: Info: Reached beam stop (" + beam.Ref + ' on '\
-            + self.Ref + ').'
 
-        return {'r': None, 't': None}
+        # get interaction point as origin of new beam
+        interactionPoint = dic['intersection point']
+
+        # and Q tensor at interaction as new Q
+        newQ = beam.Q(beam.Length)
+
+        return {'t': GaussianBeam(Q = newQ, N = beam.N, Wl = beam.Wl,
+                        P = beam.P, Pos = interactionPoint, Dir = beam.Dir,
+                        Ux = beam.Ux, Uy = beam.Uy, Ref = beam.Ref,
+                        OptDist = 0., Length = 0., StrayOrder = beam.StrayOrder,
+                        Optic = self.Ref, Face = '')}
