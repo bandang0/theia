@@ -3,7 +3,6 @@
 # Provides:
 #   class GaussianBeam
 #       __init__
-#       userBeam
 #       __str__
 #       lines
 #       Q

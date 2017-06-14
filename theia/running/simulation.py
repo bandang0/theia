@@ -12,6 +12,7 @@
 
 import numpy as np
 from time import strftime
+import FreeCAD as App
 from ..helpers import settings
 from ..helpers.units import mW
 from ..helpers.tools import formatter
@@ -23,6 +24,7 @@ from ..optics.thicklens import ThickLens
 from ..optics.mirror import Mirror
 from ..optics.ghost import Ghost
 from ..tree import beamtree
+from ..rendering.writer import writeToCAD
 from . import parser
 
 
@@ -210,4 +212,26 @@ class Simulation(object):
             outF.write(formatter(outList))
 
     def writeCAD(self):
-        print "theia: Warning: CAD file writing not implemented yet. Passing."
+        '''Write the CAD .fcstd file by calling rendering functions.
+
+        '''
+
+        #New fcstd document
+        App.newDocument(self.FName)
+        App.setActiveDocument(self.FName)
+        doc = App.ActiveDocument
+
+        #write all optics
+        for opt in self.OptList:
+                writeToCAD(opt, doc)
+
+        # write beams
+        for beam in self.InBeams:
+            writeToCAD(beam, doc)
+        for tree in self.BeamTreeList:
+            for beam in tree:
+                writeToCAD(beam, doc)
+
+        #Wrap up
+        doc.recompute()
+        doc.saveAs(self.Fname + '.fcstd')
