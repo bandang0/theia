@@ -9,6 +9,15 @@ from theia.helpers.interaction import usage
 # parse command line and store in options, args
 parser = OptionParser(usage = usage)
 
+lhelp = "specify the FreeCAD library location. If none is specified, theia "\
+		+ "finds it  using the UNIX `whereis` command. If option '-c', "\
+		+ "'--no-CAD  is used, the FreeCAD search and import are skipped "\
+		+ "as a whole."
+
+parser.add_option('-l', '--FreeCAD-lib',
+				help = lhelp,
+				action = 'store', type = 'string', dest = 'fclib')
+
 parser.add_option('-i', '--no-info',
 				help = 'do not output tracing information to stdout.',
 				action = 'store_false', dest = 'info', default = True)

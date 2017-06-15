@@ -27,12 +27,14 @@ class BeamTree(object):
     interaction producing these with the Root beam
 
     *=== Attributes ===*
+    Name: class attribute, name of object. [string]
     Root: beam of this node of the tree. [GaussianBeam]
     T: beam resulting from the transmission of the Root beam. [BeamTree]
     R: beam resulting from the reflection of the Root beam. [BeamTree]
 
     '''
-
+    Name = "BeamTree"
+    
     def __init__(self, Root = None,
                 T = None, R = None):
         '''BeamTree initializer.'''

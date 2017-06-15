@@ -125,3 +125,7 @@ trash/
 
 #html documentation
 html/
+
+#FreeCAD
+*.fcstd
+*.fcstd1

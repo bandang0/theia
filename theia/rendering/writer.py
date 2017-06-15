@@ -2,6 +2,7 @@
 
 # Provides:
 #   writeToCAD
+#   writeTree
 
 import FreeCAD as App
 from .shapes import mirrorShape, lensShape, beamDumpShape, ghostShape, beamShape
@@ -10,10 +11,13 @@ from .features import FCMirror, FCLens, FCBeamDump, FCBeam
 def writeToCAD(component, doc):
     '''Write the relevant shape and feature content of components in CAD file.
 
+    This function is for everython except for beams.
     To the doc .fcstd file are added two objects, one of type
         App::FeaturePython which will hold the internal data of the component
         for reviewing in the side panel of FreeCAD, and one of type
-        Part::Feature for visualization.
+        Part::Feature for visualization. The classes for the App::FeaturePython
+        objects are i nthe features modules, and those for the shapes are in
+        the shapes module.
     The important functions are the PythonFeatures
         constructors found in features, and the shape functions found in shapes.
 
@@ -29,32 +33,56 @@ def writeToCAD(component, doc):
     FCDic = {'Mirror': FCMirror,
                 'ThickLens': FCLens,
                 'ThinLens': FCLens,
-                'BeamDump': FCBeamDump,
-                'Beam': FCBeam}
+                'BeamDump': FCBeamDump}
 
     shapeDic = {'Mirror': mirrorShape,
                 'ThickLens': lensShape,
                 'ThinLens': lensShape,
                 'BeamDump': beamDumpShape,
-                'Beam': beamShape
                 'Ghost': ghostShape}
 
-    #First feature (only for other than ghost)
-    if not component.Name == "Ghost":
-        featureObj = doc.addObject("App:FeaturePython", component.Ref)
-        FCDic[component.Name](featureObj, component)
+    #First take care of optics
+    if component.Name in ['Mirror', 'ThickLens', 'BeamDump']:
+        # First feature (not for ghosts)
+        if not component.Name == 'Ghost':
+            featureObj = doc.addObject("App::FeaturePython",
+                            component.Ref + '_doc')
+            FCDic[component.Name](featureObj, component)
 
-    # Then shape
-    shapeObj = doc.addObject("Part::Feature", component.Ref)
-    shapeObj.Shape = shapeDic[component.Name](component)
+        # Then shape
+        shapeObj = doc.addObject("Part::Feature", component.Ref)
+        shapeObj.Shape = shapeDic[component.Name](component)
+        shapeObj.Placement.Base = App.Vector(tuple(component.HRCenter))
 
-    if not component.Name == 'Beam':
-        #HRCenter is defined
-        shapeObj.Placement.Base = App.Vector(component.HRCenter[0],
-                                            component.HRCenter[1],
-                                            component.HRCenter[2])
-    else:
-        # it is a beam, use pos
-        shapeObj.Placement.Base = App.Vector(component.Pos[0],
-                                            component.Pos[1],
-                                            component.Pos[2])
+    # Then tree (call write tree function)
+    if component.Name == 'BeamTree':
+        writeTree(component, doc)
+
+
+def writeTree(tree, doc):
+    '''Recursively write the shape and feature content of the beams of a tree.
+
+    If the tree's root is not None, write the shape and feature for tree.Root
+        and start over for the daughter trees.
+
+    tree: beamtree to write the info. [BeamTree]
+    doc: CAD file to write to. [CAD file]
+
+    No return value.
+
+    '''
+
+    if tree.Root is not None:
+        # write feature of beam
+        featureObj = doc.addObject("App::FeaturePython", tree.Root.Ref + '_doc')
+        FCBeam(featureObj, tree.Root)
+        # write shape of beam
+        shapeObj = doc.addObject("Part::Feature", tree.Root.Ref)
+        shapeObj.Shape = beamShape(tree.Root)
+        shapeObj.Placement.Base = App.Vector(tuple(tree.Root.Pos))
+
+        #recursively for daughter beams
+        if tree.T is not None:
+            writeTree(tree.T, doc)
+        if tree.R is not None:
+            writeTree(tree.R, doc)

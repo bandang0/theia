@@ -12,7 +12,6 @@
 
 import numpy as np
 from time import strftime
-import FreeCAD as App
 from ..helpers import settings
 from ..helpers.units import mW
 from ..helpers.tools import formatter
@@ -24,7 +23,6 @@ from ..optics.thicklens import ThickLens
 from ..optics.mirror import Mirror
 from ..optics.ghost import Ghost
 from ..tree import beamtree
-from ..rendering.writer import writeToCAD
 from . import parser
 
 
@@ -216,6 +214,13 @@ class Simulation(object):
 
         '''
 
+        # these two following import statements are here because they require
+        # that the PYTHONPATH be updated, and thus they are not
+        # at the beginning of the module, which is read at the very beginning
+        # of main.
+        import FreeCAD as App
+        from ..rendering.writer import writeToCAD
+
         #New fcstd document
         App.newDocument(self.FName)
         App.setActiveDocument(self.FName)
@@ -223,15 +228,12 @@ class Simulation(object):
 
         #write all optics
         for opt in self.OptList:
-                writeToCAD(opt, doc)
+            writeToCAD(opt, doc)
 
-        # write beams
-        for beam in self.InBeams:
-            writeToCAD(beam, doc)
+        # write beams recursively
         for tree in self.BeamTreeList:
-            for beam in tree:
-                writeToCAD(beam, doc)
+            writeToCAD(tree, doc)
 
         #Wrap up
         doc.recompute()
-        doc.saveAs(self.Fname + '.fcstd')
+        doc.saveAs(self.FName + '.fcstd')

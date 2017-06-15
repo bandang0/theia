@@ -5,8 +5,10 @@
 
 import os
 import sys
+import subprocess
 from .helpers import settings
-from .helpers.interaction import welcomeString, recursionErrorString
+from .helpers.interaction import welcome, errorRecursion, errorUnknown
+from .helpers.interaction import errorAtSpecifiedLocation, errorWhereIs
 from .helpers.tools import InputError
 from .running import simulation
 
@@ -20,20 +22,21 @@ def main(options, args):
     dic['text'] = options.text
     dic['cad'] = options.cad
     dic['fname'] = os.path.splitext(args[1])[0] #basename
+    dic['fclib'] = options.fclib
 
     # initiate globals
     settings.init(dic)
 
     #exit with error if file not found
     if not os.path.isfile(settings.fname + '.tia'):
-        print "theia: Error: "+ settings.fname + '.tia: No such file.\nAborting.'
+        print "theia: Error: %s.tia: No such file.\nAborting." %settings.fname
         sys.exit(1)
 
     #create simulation object
     simu = simulation.Simulation(settings.fname)
 
     #welcome to theia
-    print welcomeString
+    print welcome
 
     #load initial data
     print "theia: Run: Reading input data."
@@ -50,8 +53,8 @@ def main(options, args):
     try:
         simu.run()
     except RuntimeError:
-        print "theia: Error: Maximum recursion depth reached. Aborting."\
-                    + recursionErrorString
+        print "theia: Error: Maximum recursion depth reached."\
+                    + errorRecursion + "\nAborting."
         sys.exit(1)
     print "theia: Run: Done."
 
@@ -63,6 +66,36 @@ def main(options, args):
 
     #write CAD file
     if settings.cad:
+        if settings.fclib is not None:
+            print "theia: Run: Loading FreeCAD library from specified location."
+            FREECADPATH = settings.fclib
+            sys.path.append(FREECADPATH)
+            try:
+                import FreeCAD as App
+                import Part
+            except ImportError:
+                print errorAtSpecifiedLocation %settings.fclib
+                sys.exit(1)
+            print "theia: Run: Done."
+        else:
+            print "theia: Run: Searching for FreeCAD library."
+            cmd = subprocess.check_output("whereis freecad", shell=True).split()
+            if len(cmd) < 3:
+                print errorWhereIs
+                sys.exit(1)
+            else:
+                FREECADPATH = cmd[2] + '/lib'
+                sys.path.append(FREECADPATH)
+                print "theia: Run: Loading FreeCAD library from "\
+                    + FREECADPATH + "."
+                try:
+                    import FreeCAD as App
+                    import Part
+                except ImportError:
+                    print errorUnknown %FREECADPATH
+                    sys.exit(1)
+                print "theia: Run: Done."
+
         print "theia: Run: Writing CAD file."
         simu.writeCAD()
         print "theia: Run: Done."

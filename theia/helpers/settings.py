@@ -15,6 +15,7 @@ def init(dic):
     global text
     global cad
     global fname
+    global fclib
 
     #geometry
     global zero #geometrical 0 distance (for seperation)
@@ -47,10 +48,11 @@ def init(dic):
     inOrder['bd'] = ['X','Y','Z','Theta','Phi','Diameter','Thickness', 'Ref']
     inOrder['gh'] = ['X','Y','Z','Theta','Phi','Diameter', 'Ref']
     inOrder['bo'] = ['X', 'Y', 'Z']
-    
+
     #parsed from command line
     info = dic['info']
     warning = dic['warning']
     text = dic['text']
     cad = dic['cad']
     fname = dic['fname']
+    fclib = dic['fclib']
