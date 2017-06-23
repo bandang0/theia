@@ -109,7 +109,7 @@ class Simulation(object):
         No return value.
 
         '''
-        finalList = parser.readIn(self.FName + '.tia')
+        finalList = parser.readIn(settings.fname + '.tia')
 
         # default dictionary for translation
         translateDic = {'X': 0., 'Y': 0., 'Z': 0.}
@@ -206,7 +206,7 @@ class Simulation(object):
             outList = outList + tree.outputLines()
             outList.append("}")
 
-        with open(self.FName + '.out', 'w') as outF:
+        with open(settings.fname + '.out', 'w') as outF:
             outF.write(formatter(outList))
 
     def writeCAD(self):
@@ -236,4 +236,4 @@ class Simulation(object):
 
         #Wrap up
         doc.recompute()
-        doc.saveAs(self.FName + '.fcstd')
+        doc.saveAs(settings.fname + '.fcstd')

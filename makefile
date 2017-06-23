@@ -29,13 +29,16 @@ clean-tutos:
 	find tutos/ -name "*.opt" -exec rm --force {} +
 	find tutos/ -name "*.opt.ps" -exec rm --force {} +
 	find tutos/ -name "*.out" -exec rm --force {} +
-
+	find tutos/ -name "*.fcstd" -exec rm --force {} +
+	find tutos/ -name "*.fcstd1" -exec rm --force {} +
 
 # clean tests results
 clean-tests:
 	find tests/ -name "*.opt" -exec rm --force {} +
 	find tests/ -name "*.opt.ps" -exec rm --force {} +
 	find tests/ -name "*.out" -exec rm --force {} +
+	find tests/ -name "*.fcstd" -exec rm --force {} +
+	find tests/ -name "*.fcstd1" -exec rm --force {} +
 
 # clean all
 clean-all: clean-pyc clean-doc clean-tutos clean-tests
@@ -48,13 +51,13 @@ clean-build:
 
 # tests
 test-optics:
-	@python tests/test_optics.py
+	@cd tests ; python test_optics.py
 
 test-rendering:
-	@python tests/test_rendering.py
+	@cd tests ; python test_rendering.py
 
 test-tree:
-	@python tests/test_tree.py
+	@cd tests ; pythontest_tree.py
 
 test-running:
 	@cd tests ; python test_simulation.py

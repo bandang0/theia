@@ -4,6 +4,7 @@
 #   class Optic
 #       __init__
 #       hitSide
+#       apexes
 #       collision
 #       geoCheck
 #       translate
@@ -106,6 +107,36 @@ class Optic(SetupComponent):
             + beam.Ref + " on " + self.Ref + ', ' + 'Side).'
         return {'t': None, 'r': None}
 
+    def apexes(self):
+        '''Returns the positions of the apexes of HR and AR as a tuple.
+        '''
+        if self.HRK == 0.:
+            apex1 = self.HRCenter
+        else:
+            try:    # the arcsin may fail because dia/2. > ROC
+                theta1 = np.arcsin(self.Dia * self.HRK/2.)  #semi angles
+            except FloatingPointError:
+            #if it fails then the whole semisphere is in the mirror and apex
+            # is a radius away from Center.
+                theta = np.pi/2.
+            apex1 = self.HRCenter - (1-np.cos(theta1))*self.HRNorm/self.HRK
+
+        if self.ARK == 0.:
+            apex2 = self.ARCenter
+        else:
+            if self.Name == 'Mirror':
+                #ARdiameter different if wedge!
+                wedge = self.Wedge
+            else:
+                wedge = 0.
+            try:    #same
+                theta2 = np.arcsin(self.Dia * self.ARK/(2.*np.cos(wedge)))
+            except FloatingPointError:
+                theta2 = np.pi/2.
+            apex2 = self.ARCenter - (1-np.cos(theta2))*self.ARNorm/self.ARK
+
+        return apex1, apex2
+
     def collision(self):
         '''Determine whether the HR and AR surfaces intersect.
 
@@ -117,31 +148,10 @@ class Optic(SetupComponent):
             # no collision if negative curvatures
             return False
 
-        try:    # the arcsin may fail because dia/2. > ROC
-            theta1 = np.arcsin(self.Dia * self.HRK/2.)  #semi angles
+        apex = self.apexes()
 
-            if self.HRK == 0.:
-                apex1 = self.HRcenter
-            else:
-                apex1 = self.HRCenter - (1-np.cos(theta1))*self.HRNorm/self.HRK
-
-        except FloatingPointError:
-            #if it fails then the whole semisphere is in the mirror and apex
-            # is a radius away from Center.
-            apex1 = self.HRCenter - self.HRNorm/self.HRK
-
-        try:    #same
-            theta2 = np.arcsin(self.Dia * self.ARK/2.)
-
-            if self.ARK == 0.:
-                apex2 = self.ARCenter
-            else:
-                apex2 = self.ARCenter - (1-np.cos(theta2))*self.ARNorm/self.ARK
-
-        except FloatingPointError:
-            apex2 = self.ARCenter - self.ARNorm/self.ARK
         #vector from apex1 to apex2
-        vec = apex2 - apex1
+        vec = apex[1] - apex[0]
 
         return np.dot(vec, self.HRNorm) > 0.
 

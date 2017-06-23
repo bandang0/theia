@@ -5,6 +5,7 @@
 #   writeTree
 
 import FreeCAD as App
+from FreeCAD import Base
 from .shapes import mirrorShape, lensShape, beamDumpShape, ghostShape, beamShape
 from .features import FCMirror, FCLens, FCBeamDump, FCBeam
 
@@ -42,7 +43,7 @@ def writeToCAD(component, doc):
                 'Ghost': ghostShape}
 
     #First take care of optics
-    if component.Name in ['Mirror', 'ThickLens', 'BeamDump']:
+    if component.Name in ['Mirror', 'ThickLens', 'ThinLens', 'BeamDump']:
         # First feature (not for ghosts)
         if not component.Name == 'Ghost':
             featureObj = doc.addObject("App::FeaturePython",
@@ -52,7 +53,7 @@ def writeToCAD(component, doc):
         # Then shape
         shapeObj = doc.addObject("Part::Feature", component.Ref)
         shapeObj.Shape = shapeDic[component.Name](component)
-        shapeObj.Placement.Base = App.Vector(tuple(component.HRCenter))
+        shapeObj.Placement.Base = Base.Vector(tuple(component.HRCenter))
 
     # Then tree (call write tree function)
     if component.Name == 'BeamTree':
@@ -79,8 +80,8 @@ def writeTree(tree, doc):
         # write shape of beam
         shapeObj = doc.addObject("Part::Feature", tree.Root.Ref)
         shapeObj.Shape = beamShape(tree.Root)
-        shapeObj.Placement.Base = App.Vector(tuple(tree.Root.Pos))
-
+        shapeObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos))
+        
         #recursively for daughter beams
         if tree.T is not None:
             writeTree(tree.T, doc)

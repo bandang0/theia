@@ -21,7 +21,7 @@ def main(options, args):
     dic['warning'] = options.warning
     dic['text'] = options.text
     dic['cad'] = options.cad
-    dic['fname'] = os.path.splitext(args[1])[0] #basename
+    dic['fname'] = os.path.splitext(args[1])[0] #relative path without '.tia'
     dic['fclib'] = options.fclib
 
     # initiate globals
@@ -32,8 +32,9 @@ def main(options, args):
         print "theia: Error: %s.tia: No such file.\nAborting." %settings.fname
         sys.exit(1)
 
-    #create simulation object
-    simu = simulation.Simulation(settings.fname)
+    #create simulation object with name the basename (not path)
+    FName = settings.fname.split('/')[len(settings.fname.split('/')) - 1]
+    simu = simulation.Simulation(FName)
 
     #welcome to theia
     print welcome
@@ -43,7 +44,7 @@ def main(options, args):
     try:
         simu.load()
     except InputError as IE:
-        print "theia: Error: " + IE.Message + "\nAborting."
+        print "theia: Error: %s\nAborting." %IE.Message
         sys.exit(1)
 
     print "theia: Run: Done."
@@ -79,15 +80,16 @@ def main(options, args):
             print "theia: Run: Done."
         else:
             print "theia: Run: Searching for FreeCAD library."
-            cmd = subprocess.check_output("whereis freecad", shell=True).split()
-            if len(cmd) < 3:
+            cmd = "whereis freecad"
+            output = subprocess.check_output(cmd, shell = True).split()
+            if len(output) < 3:
                 print errorWhereIs
                 sys.exit(1)
             else:
-                FREECADPATH = cmd[2] + '/lib'
+                FREECADPATH = output[2] + '/lib'
                 sys.path.append(FREECADPATH)
-                print "theia: Run: Loading FreeCAD library from "\
-                    + FREECADPATH + "."
+                print "theia: Run: Loading FreeCAD library from %s." \
+                        %FREECADPATH
                 try:
                     import FreeCAD as App
                     import Part

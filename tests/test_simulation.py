@@ -2,21 +2,21 @@
 
 import sys
 
-THEIAPATH = '/home/dev0/theia/theia'    # path to access modules of theia
-sys.path.append(THEIAPATH)
+THEIAPATH = '/home/dev0/theia'    # path to access modules of theia
+FREECADPATH = '/usr/lib/freecad/lib'	# and freecad
+sys.path.insert(0, THEIAPATH)
 
-import numpy as np
-from helpers import settings
-from helpers.units import *
-from helpers.tools import timer
-from helpers.interaction import welcomeString
-from running import simulation
-from optics import beam, beamdump, thicklens, thinlens, mirror
+import theia
+from theia.helpers import settings
+from theia.helpers.units import *
+from theia.optics import beam, beamdump, thinlens, thicklens, mirror
 
 # initialize globals
 dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
-		'fname': 'test_optics'}
+        'fname': 'test_optics', 'fclib': FREECADPATH}
+
 settings.init(dic)
+
 
 # Create simulation object:
 simu = simulation.Simulation(FName = 'devTest')

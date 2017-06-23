@@ -11,7 +11,7 @@ threshold = .005*W
 
 # input beam
 #bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Ref
-bm 170*um, 188*um, -105*mm,	-105.*mm,	1064*nm,	1*W, X = -105*mm, X = 0*m, Z = 0.*cm, Phi = 0*deg,  Ref = 'LAS'
+bm 170*um, 188*um, -105*mm,	-105.*mm,	1064*nm,	1*W, X = 0*m, Z = 0.*cm, Phi = 0*deg,  Ref = 'LAS'
 
 # thin lens (X,Y,Z is the center of the thin lens)
 #th	X		Y		Z	Theta	Phi				Focal				Diameter			R			T			KeepI			Ref
