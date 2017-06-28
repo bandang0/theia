@@ -6,6 +6,7 @@
 
 import FreeCAD as App
 from FreeCAD import Base
+import Part
 from .shapes import mirrorShape, lensShape, beamDumpShape, ghostShape, beamShape
 from .features import FCMirror, FCLens, FCBeamDump, FCBeam
 
@@ -81,7 +82,12 @@ def writeTree(tree, doc):
         shapeObj = doc.addObject("Part::Feature", tree.Root.Ref)
         shapeObj.Shape = beamShape(tree.Root)
         shapeObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos))
-        
+        # write laser shape object
+        if 't' not in tree.Root.Ref and 'r' not in tree.Root.Ref:
+            laserObj = doc.addObject("Part::Feature", 'laser')
+            laserObj.Shape = Part.makeCylinder(0.01, 0.1, Base.Vector(0,0,0),
+                                            Base.Vector(tuple(-tree.Root.Dir)))
+            laserObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos))
         #recursively for daughter beams
         if tree.T is not None:
             writeTree(tree.T, doc)

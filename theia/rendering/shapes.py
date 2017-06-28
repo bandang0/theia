@@ -33,7 +33,7 @@ def lensShape(lens):
     Returns a shape for a CAD file object.
 
     '''
-    return Part.makeCylinder(lens.Dia/2., max(lens.Thick, 0.0001),
+    return Part.makeCylinder(lens.Dia/2., max(lens.Thick, 0.001),
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-lens.HRNorm)))
 

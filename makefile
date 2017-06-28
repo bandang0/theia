@@ -1,7 +1,7 @@
 # makefile for theia
 
 #variables
-EPYOPTS = --name=theia -u http://93.71.63.5:56000 --graph=all \
+EPYOPTS = --name=theia -u http://theia.hopto.org:56000 --graph=all \
  		--inheritance=listed -v
 PDFLATEXCMD = pdflatex -interaction=nonstopmode
 
@@ -68,17 +68,19 @@ compile-pdf:
 	-cd doc/src ; $(PDFLATEXCMD) userguide.tex
 	-cd doc/src ; $(PDFLATEXCMD) quickref.tex
 	-cd doc/src ; $(PDFLATEXCMD) api.tex
+	-cd doc/src ; $(PDFLATEXCMD) statusupdate.tex
 	-cd doc/src ; $(PDFLATEXCMD) primer.tex
 	-cd doc/src ; $(PDFLATEXCMD) userguide.tex
 	-cd doc/src ; $(PDFLATEXCMD) quickref.tex
 	-cd doc/src ; $(PDFLATEXCMD) api.tex
-
+	-cd doc/src ; $(PDFLATEXCMD) statusupdate.tex
 
 copy-pdf: clean-doc
 	mv doc/src/primer.pdf doc/primer.pdf
 	mv doc/src/quickref.pdf doc/quickref.pdf
 	mv doc/src/api.pdf doc/apiguide.pdf
 	mv doc/src/userguide.pdf doc/userguide.pdf
+	mv doc/src/statusupdate.pdf doc/statusupdate.pdf
 
 #generate html and pdf from epydoc
 epydoc-pdf:
