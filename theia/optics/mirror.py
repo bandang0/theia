@@ -89,6 +89,8 @@ class Mirror(Optic):
         Phi = float(Phi)
         Diameter = float(Diameter)
         Thickness = float(Thickness)
+        HRK = float(HRK)
+        ARK = float(ARK)
 
         #prepare for mother initializer
         HRNorm = np.array([np.sin(Theta)*np.cos(Phi),

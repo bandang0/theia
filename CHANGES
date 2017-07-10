@@ -1,7 +1,9 @@
-theia 0.2.0:
-    first graphics
+theia 0.1.1:
+    low-level graphics
+    CAD export info on beams and optics (.fcstd file)
     ghost surfaces
     benches
+    command line option '-l' to specify FreeCAD lib location
 
 -----------
 theia 0.1.0:

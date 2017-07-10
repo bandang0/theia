@@ -9,7 +9,7 @@ from theia.helpers.units import *
 
 # initialize globals (necessary to use theia in library form)
 dic = {'info': False, 'warning': True, 'text': True, 'cad': True,
-		'fname': 'test_optics'}
+		'fname': 'telescope', 'fclib' : '/usr/local/lib/freecad/lib'}
 settings.init(dic)
 
 # Mirrors of telescope

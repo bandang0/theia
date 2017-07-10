@@ -54,7 +54,7 @@ def writeToCAD(component, doc):
         # Then shape
         shapeObj = doc.addObject("Part::Feature", component.Ref)
         shapeObj.Shape = shapeDic[component.Name](component)
-        shapeObj.Placement.Base = Base.Vector(tuple(component.HRCenter))
+        shapeObj.Placement.Base = Base.Vector(tuple(component.HRCenter/0.001))
 
     # Then tree (call write tree function)
     if component.Name == 'BeamTree':
@@ -81,13 +81,14 @@ def writeTree(tree, doc):
         # write shape of beam
         shapeObj = doc.addObject("Part::Feature", tree.Root.Ref)
         shapeObj.Shape = beamShape(tree.Root)
-        shapeObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos))
+        shapeObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos/0.001))
         # write laser shape object
         if 't' not in tree.Root.Ref and 'r' not in tree.Root.Ref:
             laserObj = doc.addObject("Part::Feature", 'laser')
-            laserObj.Shape = Part.makeCylinder(0.01, 0.1, Base.Vector(0,0,0),
+            laserObj.Shape = Part.makeCylinder(0.01/0.001, 0.1/0.001,
+                                            Base.Vector(0,0,0),
                                             Base.Vector(tuple(-tree.Root.Dir)))
-            laserObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos))
+            laserObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos/0.001))
         #recursively for daughter beams
         if tree.T is not None:
             writeTree(tree.T, doc)

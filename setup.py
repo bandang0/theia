@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
 	#General
     name = "theia",
-    version = "0.2.0dev",
+    version = "0.1.1",
     author = "R. Duque",
     description = "3D Gaussian beam tracing and visualization",
 	license = "GNU GPLv3+",

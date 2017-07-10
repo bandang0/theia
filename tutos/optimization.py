@@ -44,7 +44,7 @@ bm = beam.userGaussianBeam(1.*mm, 1.*mm, 0., 0, 1064*nm, 1*W,
 #70 cm = L1.X + 2*Focal to respect the 2F configuration). We're trying n
 #configurations around L2.X = 50
 n = 500
-centers = [ 40.*cm + .2*cm*(float(i)/n) for i in range(-n, n)]
+centers = [ 40.*cm + 2.*cm*(float(i)/n) for i in range(-n, n)]
 waistSizes = []
 waistPositions = []
 

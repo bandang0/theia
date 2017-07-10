@@ -60,7 +60,7 @@ class Ghost(SetupComponent):
         HRCenter = np.array([X, Y, Z], dtype = np.float64)
 
         # initialize from base initializer
-        super(BeamDump, self).__init__(Ref = Ref,
+        super(Ghost, self).__init__(Ref = Ref,
                 Diameter = Diameter, HRCenter = HRCenter, HRNorm = Norm,
                 Thickness = 0.)
 
@@ -109,7 +109,7 @@ class Ghost(SetupComponent):
         if HRDict['isHit']:
             return {'isHit': True,
                     'intersection point': HRDict['intersection point'],
-                    'face': HRDict['face'],
+                    'face': 'HR',
                     'distance': HRDict['distance']
                     }
         else:
@@ -140,6 +140,7 @@ class Ghost(SetupComponent):
 
         return {'t': GaussianBeam(Q = newQ, N = beam.N, Wl = beam.Wl,
                         P = beam.P, Pos = interactionPoint, Dir = beam.Dir,
-                        Ux = beam.Ux, Uy = beam.Uy, Ref = beam.Ref,
+                        Ux = beam.U[0], Uy = beam.U[1], Ref = beam.Ref,
                         OptDist = 0., Length = 0., StrayOrder = beam.StrayOrder,
-                        Optic = self.Ref, Face = '')}
+                        Optic = self.Ref, Face = ''),
+                'r': None}

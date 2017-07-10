@@ -4,4 +4,6 @@ Installing theia requires:
 
 Compiling the documentation requires:
     pdflatex
-    
+
+Full-fledged usage requires:
+    FreeCAD libraries (available in major GNU?Linux distros)
