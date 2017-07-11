@@ -94,7 +94,7 @@ build-theia:
 	@python setup.py install --user
 
 #build documentation
-build-doc: compile-pdf compile-pdf compile-pdf copy-pdf
+build-doc: compile-pdf copy-pdf
 
 #install all
 install: build-theia build-doc clean-pyc clean-build

@@ -2,8 +2,11 @@
 
 # Provides:
 #	usage
-#	welcomeString
-#	recursionErrorString
+#	welcome
+#	errorRecursion
+#	errorAtSpecifiedLocation
+#	errorWhereIs
+#	errorUnknown
 
 usage = "Usage: theia [options] FNAME\n\nArguments:\n"\
 	+ "  FNAME\t\t .tia format input file name."

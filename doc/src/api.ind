@@ -1,43 +1,51 @@
 \begin{theindex}
 
-  \item theia \textit{(package)}, \hyperpage{4--5}
-    \subitem theia.helpers \textit{(package)}, \hyperpage{6}
+  \item theia \textit{(package)}, \hyperpage{5--6}
+    \subitem theia.helpers \textit{(package)}, \hyperpage{7}
       \subsubitem theia.helpers.geometry \textit{(module)}, 
-		\hyperpage{7--9}
+		\hyperpage{8--10}
       \subsubitem theia.helpers.interaction \textit{(module)}, 
-		\hyperpage{10}
-      \subsubitem theia.helpers.settings \textit{(module)}, 
 		\hyperpage{11}
+      \subsubitem theia.helpers.settings \textit{(module)}, 
+		\hyperpage{12}
       \subsubitem theia.helpers.tools \textit{(module)}, 
-		\hyperpage{12--14}
-      \subsubitem theia.helpers.units \textit{(module)}, \hyperpage{15}
-    \subitem theia.main \textit{(module)}, \hyperpage{16}
-      \subsubitem theia.main.main \textit{(function)}, \hyperpage{16}
-    \subitem theia.optics \textit{(package)}, \hyperpage{17}
+		\hyperpage{13--15}
+      \subsubitem theia.helpers.units \textit{(module)}, \hyperpage{16}
+    \subitem theia.main \textit{(module)}, \hyperpage{17}
+      \subsubitem theia.main.main \textit{(function)}, \hyperpage{17}
+    \subitem theia.optics \textit{(package)}, \hyperpage{18}
       \subsubitem theia.optics.beam \textit{(module)}, 
-		\hyperpage{18--21}
+		\hyperpage{19--22}
       \subsubitem theia.optics.beamdump \textit{(module)}, 
-		\hyperpage{22--24}
+		\hyperpage{23--25}
       \subsubitem theia.optics.component \textit{(module)}, 
-		\hyperpage{25--27}
+		\hyperpage{26--28}
+      \subsubitem theia.optics.ghost \textit{(module)}, 
+		\hyperpage{29--31}
       \subsubitem theia.optics.lens \textit{(module)}, 
-		\hyperpage{28--31}
+		\hyperpage{32--35}
       \subsubitem theia.optics.mirror \textit{(module)}, 
-		\hyperpage{32--36}
+		\hyperpage{36--40}
       \subsubitem theia.optics.optic \textit{(module)}, 
-		\hyperpage{37--39}
+		\hyperpage{41--43}
       \subsubitem theia.optics.thicklens \textit{(module)}, 
-		\hyperpage{40--42}
+		\hyperpage{44--46}
       \subsubitem theia.optics.thinlens \textit{(module)}, 
-		\hyperpage{43--45}
-    \subitem theia.rendering \textit{(package)}, \hyperpage{46}
-    \subitem theia.running \textit{(package)}, \hyperpage{47}
+		\hyperpage{47--49}
+    \subitem theia.rendering \textit{(package)}, \hyperpage{50}
+      \subsubitem theia.rendering.features \textit{(module)}, 
+		\hyperpage{51--55}
+      \subsubitem theia.rendering.shapes \textit{(module)}, 
+		\hyperpage{56}
+      \subsubitem theia.rendering.writer \textit{(module)}, 
+		\hyperpage{57}
+    \subitem theia.running \textit{(package)}, \hyperpage{58}
       \subsubitem theia.running.parser \textit{(module)}, 
-		\hyperpage{48--49}
+		\hyperpage{59--60}
       \subsubitem theia.running.simulation \textit{(module)}, 
-		\hyperpage{50--52}
-    \subitem theia.tree \textit{(package)}, \hyperpage{53}
+		\hyperpage{61--63}
+    \subitem theia.tree \textit{(package)}, \hyperpage{64}
       \subsubitem theia.tree.beamtree \textit{(module)}, 
-		\hyperpage{54--55}
+		\hyperpage{65--67}
 
 \end{theindex}

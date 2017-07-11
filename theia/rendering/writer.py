@@ -32,6 +32,7 @@ def writeToCAD(component, doc):
 
     # here are some dics to refer to the right features and shapes for all
     # components
+    fact = 0.001    #factor for units in CAD
     FCDic = {'Mirror': FCMirror,
                 'ThickLens': FCLens,
                 'ThinLens': FCLens,
@@ -54,7 +55,7 @@ def writeToCAD(component, doc):
         # Then shape
         shapeObj = doc.addObject("Part::Feature", component.Ref)
         shapeObj.Shape = shapeDic[component.Name](component)
-        shapeObj.Placement.Base = Base.Vector(tuple(component.HRCenter/0.001))
+        shapeObj.Placement.Base = Base.Vector(tuple(component.HRCenter/fact))
 
     # Then tree (call write tree function)
     if component.Name == 'BeamTree':
@@ -73,6 +74,7 @@ def writeTree(tree, doc):
     No return value.
 
     '''
+    fact = 0.001    #factor for units in CAD
 
     if tree.Root is not None:
         # write feature of beam
@@ -81,14 +83,14 @@ def writeTree(tree, doc):
         # write shape of beam
         shapeObj = doc.addObject("Part::Feature", tree.Root.Ref)
         shapeObj.Shape = beamShape(tree.Root)
-        shapeObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos/0.001))
+        shapeObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos/fact))
         # write laser shape object
         if 't' not in tree.Root.Ref and 'r' not in tree.Root.Ref:
             laserObj = doc.addObject("Part::Feature", 'laser')
-            laserObj.Shape = Part.makeCylinder(0.01/0.001, 0.1/0.001,
+            laserObj.Shape = Part.makeCylinder(0.01/fact, 0.1/fact,
                                             Base.Vector(0,0,0),
                                             Base.Vector(tuple(-tree.Root.Dir)))
-            laserObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos/0.001))
+            laserObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos/fact))
         #recursively for daughter beams
         if tree.T is not None:
             writeTree(tree.T, doc)

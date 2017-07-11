@@ -9,10 +9,16 @@
 \title{theia Quick Reference}
 
 \begin{document}
+\begin{center}
+\large \tt{theia} Quick Reference (v. 0.1.1)
+\end{center}
 
-\begin{tabular}{| p{.6cm} | p{7cm}| p{6cm} | p{5cm} |}
+
+
+\begin{tabular}{| p{.6cm} | p{8cm}| p{8cm} | p{8cm} |}
 \hline
 \textbf{Key} & \textbf{Input Order} & \textbf{Defaults} & \textbf{Remarks} \\ \hline \hline
+\tt{bo} & \tt{X}, \tt{Y}, \tt{Z} (origin of bench) & \tt{X}, \tt{Y}, \tt{Z}~=~0 & This will shift all the coordinates of the following optics and beams (until the next \tt{bo} line) by the amounts given here. If you want to signify that you're back in the general coordinate system, you can put in a blank \tt{bo} line.\\ \hline
 
 \tt{bm} & \tt{Wx}, \tt{Wy} (waist sizes), \tt{WDistx}, \tt{WDisty} (waist positions from beam origin), \tt{Wl}, \tt{P}, \tt{X}, \tt{Y}, \tt{Z} (position of origin in space), \tt{Theta}, \tt{Phi} (orientation), \tt{Alpha} (rotation of eigenbase for orthogonal beams), \tt{Ref}  & \tt{Wx}~=~1.mm, \tt{Wy}~=~1.mm, \tt{WDistx}~=~0., \tt{WDisty}~=~0., \tt{Wl}~=~1064.nm, \tt{P}~=~1.W, \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0., \tt{Theta}~=~pi/2., \tt{Phi}~=~0., \tt{Alpha}~=~0., \tt{Ref}~=~None & \tt{Alpha = 0.} $\leftrightarrow$ eigen X is $\perp$ to beam direction and has maximum $Z$ component. If direction is $\pm e_Z$ then eigen X is $\pm e_X$\\ \hline
 
@@ -24,6 +30,7 @@
 
 \tt{bd} & \tt{X}, \tt{Y}, \tt{Z} (position of center of HR), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{Diameter},  \tt{Thickness}, \tt{Ref} & \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0., \tt{Theta}~=~pi/2., \tt{Phi}~=~0., \tt{Diameter}~=~5.cm,  \tt{Thickness}~=~2.cm,  \tt{Ref}~=~None & \\ \hline
 
+\tt{gh} & \tt{X}, \tt{Y}, \tt{Z} (position of center of HR), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{Diameter}, \tt{Ref} & \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0., \tt{Theta}~=~pi/2., \tt{Phi}~=~0., \tt{Diameter}~=~5.cm, \tt{Ref}~=~None & This component does not affect the beams, but just allows to have a new entry in the output file for the beam emerging from the ghost surface. It does not have a 3D rendering object associated. \\ \hline
 \end{tabular}
 
 \begin{multicols}{2}

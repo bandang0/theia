@@ -21,7 +21,8 @@ def mirrorShape(mirror):
     Returns a shape for a CAD file object.
 
     '''
-    return Part.makeCylinder((mirror.Dia/2.)/0.001, mirror.Thick/0.001,
+    fact = 0.001    #factor for units in CAD
+    return Part.makeCylinder((mirror.Dia/2.)/fact, mirror.Thick/fact,
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-mirror.HRNorm)))
 
@@ -33,7 +34,8 @@ def lensShape(lens):
     Returns a shape for a CAD file object.
 
     '''
-    return Part.makeCylinder((lens.Dia/2.)/0.001, max(lens.Thick/0.001, 0.001),
+    fact = 0.001    #factor for units in CAD
+    return Part.makeCylinder((lens.Dia/2.)/fact, max(lens.Thick/fact, 0.001),
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-lens.HRNorm)))
 
@@ -45,7 +47,8 @@ def beamDumpShape(beamDump):
     Returns a shape for a CAD file object.
 
     '''
-    return Part.makeCylinder((beamDump.Dia/2.)/0.001, beamDump.Thick/0.001,
+    fact = 0.001    #factor for units in CAD
+    return Part.makeCylinder((beamDump.Dia/2.)/fact, beamDump.Thick/fact,
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-beamDump.HRNorm)))
 
@@ -57,7 +60,8 @@ def ghostShape(ghost):
     Returns a shape for a CAD file object.
 
     '''
-    return Part.makeCylinder((ghost.Dia/2.)/0.001, 0.01/0.001,
+    fact = 0.001    #factor for units in CAD
+    return Part.makeCylinder((ghost.Dia/2.)/fact, 0.01/fact,
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-ghost.HRNorm)))
 
@@ -69,12 +73,13 @@ def beamShape(beam):
     Returns a shape for a CAD file object.
 
     '''
+    fact = 0.001    #factor for units in CAD
     line = Part.Line()
     line.StartPoint = Base.Vector(0,0,0)
     zero = np.array([0., 0., 0.])
     if beam.Length > 0.:
-        line.EndPoint = Base.Vector(tuple(zero + beam.Length/0.001 * beam.Dir))
+        line.EndPoint = Base.Vector(tuple(zero + beam.Length/fact * beam.Dir))
     else:
-        line.EndPoint = Base.Vector(tuple(zero + 1.e7/0.001 * beam.Dir))
+        line.EndPoint = Base.Vector(tuple(zero + 1.e7/fact * beam.Dir))
 
     return line.toShape()
