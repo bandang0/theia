@@ -6,7 +6,7 @@ setup(
 	#General
     name = "theia",
     version = "0.1.1",
-    author = "R. Duque",
+    author = u"Rapha\u00EBl Duque",
     description = "3D Gaussian beam tracing and visualization",
 	license = "GNU GPLv3+",
 
