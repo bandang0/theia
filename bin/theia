@@ -4,15 +4,10 @@
 import sys
 from optparse import OptionParser
 from theia.main import main
-from theia.helpers.interaction import usage
+from theia.helpers.interaction import usage, version, lhelp
 
 # parse command line and store in options, args
 parser = OptionParser(usage = usage)
-
-lhelp = "specify the FreeCAD library location. If none is specified, theia "\
-		+ "finds it  using the UNIX `whereis` command. If option '-c', "\
-		+ "'--no-CAD  is used, the FreeCAD search and import are skipped "\
-		+ "as a whole."
 
 parser.add_option('-l', '--FreeCAD-lib',
 				help = lhelp,
@@ -34,7 +29,16 @@ parser.add_option('-c', '--no-CAD',
 				help = 'do not generate .fcstd CAD file.',
 				action = 'store_false', dest = 'cad', default = True)
 
+parser.add_option('-v', '--version',
+				help = 'print verion of theia and exit.',
+				action = 'store_true', dest = 'askedVersion', default = False)
+
 (options, args) = parser.parse_args(sys.argv)
+
+# handle version queries
+if options.askedVersion:
+	print version
+	sys.exit(0)
 
 # handle non-args case
 if len(args) == 1:
