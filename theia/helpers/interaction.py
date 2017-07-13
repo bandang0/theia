@@ -2,6 +2,8 @@
 
 # Provides:
 #	usage
+#	version
+#	lhelp
 #	welcome
 #	errorRecursion
 #	errorAtSpecifiedLocation
