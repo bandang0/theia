@@ -3,8 +3,15 @@
 # theia program entry point
 import sys
 from optparse import OptionParser
+from theia import __version__
 from theia.main import main
-from theia.helpers.interaction import usage, version, lhelp
+from theia.helpers.interaction import usage, lhelp, gbeamInit, gbeamInitCon
+
+
+# handle Gaussian beam initialization
+if gbeamInitCon in sys.argv:
+    gbeamInit()
+    sys.exit(4)
 
 # parse command line and store in options, args
 parser = OptionParser(usage = usage)
@@ -37,7 +44,7 @@ parser.add_option('-v', '--version',
 
 # handle version queries
 if options.askedVersion:
-	print version
+	print __version__
 	sys.exit(0)
 
 # handle non-args case
