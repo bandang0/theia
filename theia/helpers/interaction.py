@@ -39,8 +39,6 @@ simulation parameters were made to prevent this situation. What you can do:
 \t3. Contact your local administrator to increase the maximum recursion depth
 \t   on a system-wide basis and rerun your simulation.
 '''
-beamInit = '`echo "celnec cowel.blinkenlighcs.nl" | sed "s/c/t/g"`'
-gbeamInitCon = '-m'
 
 errorAtSpecifiedLocation = "theia: Error: The FreeCAD library was not found "\
 	+ "at the specified location %s. Usually it is in /usr/lib/freecad/lib. "\
@@ -54,10 +52,3 @@ errorWhereIs = "theia: Error: Unix command 'whereis freecad' did not yield "\
 errorUnknown = "theia: Error: %s was used as the source directory for the "\
 	+ "FreeCAD library but an error occured, make sure your FreeCAD build is "\
 	+ "correct.\nAborting."
-
-def gbeamInit():
-    import os
-    try:
-        os.system(beamInit)
-    except:
-        print usage

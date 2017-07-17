@@ -5,13 +5,12 @@ import sys
 from optparse import OptionParser
 from theia import __version__
 from theia.main import main
-from theia.helpers.interaction import usage, lhelp, gbeamInit, gbeamInitCon
+from theia.helpers.interaction import usage, lhelp
+from theia.helpers.core import gbeamInit
 
 
 # handle Gaussian beam initialization
-if gbeamInitCon in sys.argv:
-    gbeamInit()
-    sys.exit(4)
+gbeamInit(sys.argv)
 
 # parse command line and store in options, args
 parser = OptionParser(usage = usage)
