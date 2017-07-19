@@ -14,7 +14,7 @@ usage = "Usage: theia [options] FNAME\n\nArguments:\n"\
 
 lhelp = "specify the FreeCAD library location. If none is specified, theia "\
 		+ "finds it  using the UNIX `whereis` command. If option '-c', "\
-		+ "'--no-CAD  is used, the FreeCAD search and import are skipped "\
+		+ "'--no-CAD'  is used, the FreeCAD search and import are skipped "\
 		+ "as a whole."
 
 welcome = u'''

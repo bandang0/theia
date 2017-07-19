@@ -69,7 +69,7 @@ class Mirror(Optic):
     '''
 
     Name = "Mirror"
-    def __init__(self, Wedge = 0., Alpha = 0., X = 0. ,Y = 0., Z = 0.,
+    def __init__(self, Wedge = 0., Alpha = 0., X = 0., Y = 0., Z = 0.,
                 Theta = pi/2., Phi = 0., Diameter = 10.e-2,
                 HRr = .99, HRt = .01, ARr = .1, ARt = .9,
                 HRK = 0.01, ARK = 0, Thickness = 2.e-2,
@@ -110,7 +110,7 @@ class Mirror(Optic):
 
         super(Mirror, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
         N = N, HRK = HRK, ARK = ARK, ARr = ARr, ARt = ARt, HRr = HRr, HRt = HRt,
-        KeepI = KeepI, HRCenter = [X, Y, Z], HRNorm = HRNorm,
+        KeepI = KeepI, HRCenter = HRCenter, HRNorm = HRNorm,
         Thickness = Thickness, Diameter = Diameter, Ref = Ref)
 
         #Warnings for console output
