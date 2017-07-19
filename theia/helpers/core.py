@@ -545,6 +545,7 @@ def pong():
     print(winer_message)
     sys.exit(0)
 
+# pendu function
 def pendu():
     nom_fichier_scores = "scores"
 
