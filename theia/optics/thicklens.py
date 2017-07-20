@@ -132,16 +132,15 @@ class ThickLens(Lens):
         '''Returns the list of lines necessary to print the object.
         '''
         ans = []
-        ans.append("ThickLens: " + self.Name + " (" + str(self.Ref) + ") {")
-        ans.append("Thick: " + str(self.Thick/cm) + "cm")
-        ans.append("Diameter: " + str(self.Dia/cm) + "cm")
-        ans.append("Center: " + str(self.HRCenter))
+        ans.append("ThickLens: %s{" %str(self.Ref))
+        ans.append("Thick: %scm" %str(self.Thick/cm))
+        ans.append("Diameter: %scm" %str(self.Dia/cm) )
+        ans.append("Center: %s" %str(self.HRCenter))
         sph = rectToSph(self.HRNorm)
-        ans.append("Norm: (" + str(sph[0]/deg) + ', ' \
-                + str(sph[1]/deg) + ')deg')
-        ans.append("Index: " + str(self.N))
-        ans.append("HRKurv, ARKurv: " + str(self.HRK) + ", " + str(self.ARK))
-        ans.append("R, T: " + str(self.HRr) + ", " + str(self.HRt) )
+        ans.append("Norm: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
+        ans.append("Index: %s" %str(self.N))
+        ans.append("HRKurv, ARKurv: %s, %s" %(str(self.HRK), str(self.ARK)))
+        ans.append("R, T: %s, %s" %(str(self.HRr),str(self.HRt)) )
         ans.append("}")
 
         return ans

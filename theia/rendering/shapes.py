@@ -21,7 +21,7 @@ def mirrorShape(mirror):
     Returns a shape for a CAD file object.
 
     '''
-    fact = 0.001    #factor for units in CAD
+    fact = settings.FCFactor    #factor for units in CAD
     return Part.makeCylinder((mirror.Dia/2.)/fact, mirror.Thick/fact,
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-mirror.HRNorm)))
@@ -34,7 +34,7 @@ def lensShape(lens):
     Returns a shape for a CAD file object.
 
     '''
-    fact = 0.001    #factor for units in CAD
+    fact = settings.FCFactor    #factor for units in CAD
     return Part.makeCylinder((lens.Dia/2.)/fact, max(lens.Thick/fact, 0.001),
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-lens.HRNorm)))
@@ -47,7 +47,7 @@ def beamDumpShape(beamDump):
     Returns a shape for a CAD file object.
 
     '''
-    fact = 0.001    #factor for units in CAD
+    fact = settings.FCFactor    #factor for units in CAD
     return Part.makeCylinder((beamDump.Dia/2.)/fact, beamDump.Thick/fact,
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-beamDump.HRNorm)))
@@ -60,7 +60,7 @@ def ghostShape(ghost):
     Returns a shape for a CAD file object.
 
     '''
-    fact = 0.001    #factor for units in CAD
+    fact = settings.FCFactor    #factor for units in CAD
     return Part.makeCylinder((ghost.Dia/2.)/fact, 0.01/fact,
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-ghost.HRNorm)))
@@ -73,7 +73,7 @@ def beamShape(beam):
     Returns a shape for a CAD file object.
 
     '''
-    fact = 0.001    #factor for units in CAD
+    fact = settings.FCFactor    #factor for units in CAD
     line = Part.Line()
     line.StartPoint = Base.Vector(0,0,0)
     zero = np.array([0., 0., 0.])

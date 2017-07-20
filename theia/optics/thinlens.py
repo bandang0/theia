@@ -116,14 +116,14 @@ class ThinLens(Lens):
         '''Returns the list of lines necessary to print the object.
         '''
         ans = []
-        ans.append("ThinLens: " + self.Name + " (" + str(self.Ref) + ") {")
-        ans.append("Diameter: " + str(self.Dia/cm) + "cm")
-        ans.append("Focal: " + str(self.Focal/mm) + "mm")
-        ans.append("Center: " + str(self.HRCenter))
+        ans.append("ThinLens: %s {" %str(self.Ref))
+        ans.append("Diameter: %scm" %str(self.Dia/cm))
+        ans.append("Focal: %smm" %str(self.Focal/mm))
+        ans.append("Center: %s" %str(self.HRCenter))
         sph = rectToSph(self.HRNorm)
-        ans.append("Norm: (" + str(sph[0]/deg) + ', ' \
-                + str(sph[1]/deg) + ')deg')
-        ans.append("R, T: " + str(self.HRr) + ", " + str(self.HRt) )
+        ans.append("Norm: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
+        ans.append("HRKurv, ARKurv: %s, %s" %(str(self.HRK), str(self.ARK)))
+        ans.append("R, T: %s, %s" %(str(self.HRr),str(self.HRt)) )
         ans.append("}")
 
         return ans

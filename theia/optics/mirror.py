@@ -118,22 +118,20 @@ class Mirror(Optic):
             self.geoCheck("mirror")
 
     def lines(self):
-        '''Returns the list of lines necessary to print the object.
-        '''
+        '''Returns the list of lines necessary to print the object.'''
         ans = []
-        ans.append("Mirror: " + self.Name + " (" + str(self.Ref) + ") {")
-        ans.append("Thick: " + str(self.Thick/cm) + "cm")
-        ans.append("Diameter: " + str(self.Dia/cm) + "cm")
-        ans.append("Wedge: " + str(self.Wedge/deg) + "deg")
-        ans.append("Alpha: " + str(self.Alpha/deg) + "deg")
-        ans.append("HRCenter: " + str(self.HRCenter))
+        ans.append("Mirror: %s {" %str(self.Ref))
+        ans.append("Thick: %scm" %str(self.Thick/cm))
+        ans.append("Diameter: %scm" %str(self.Dia/cm) )
+        ans.append("Wedge: %sdeg" %str(self.Wedge/deg) )
+        ans.append("Alpha: %sdeg" %str(self.Alpha/deg))
+        ans.append("HRCenter: %s" %str(self.HRCenter))
         sph = geometry.rectToSph(self.HRNorm)
-        ans.append("HRNorm: (" + str(sph[0]/deg) + ', ' \
-                + str(sph[1]/deg) + ')deg')
-        ans.append("Index: " + str(self.N))
-        ans.append("HRKurv, ARKurv: " + str(self.HRK) + ", " + str(self.ARK))
-        ans.append("HRr, HRt, ARr, ARt: " +str(self.HRr) + ", " + str(self.HRt)\
-            + ", " + str(self.ARr) + ", " + str(self.ARt) )
+        ans.append("HRNorm: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
+        ans.append("Index: %s" %str(self.N))
+        ans.append("HRKurv, ARKurv: %s, %s" %(str(self.HRK), str(self.ARK)))
+        ans.append("HRr, HRt, ARr, ARt: %s, %s, %s, %s" \
+            %(str(self.HRr), str(self.HRt), str(self.ARr), str(self.ARt)))
         ans.append("}")
 
         return ans
@@ -152,7 +150,7 @@ class Mirror(Optic):
             'intersection point': point in space where it is first hit.
                     [3D vector]
             'face': to indicate which face is first hit, can be 'HR', 'AR' or
-                'side'. [string]
+                'Side'. [string]
             'distance': geometrical distance from beam origin to impact. [float]
 
         '''
@@ -291,8 +289,8 @@ class Mirror(Optic):
 
         #warn on total reflection
         if dir2['TR'] and settings.info:
-            print "theia: Info: Total reflection of "  + beam.Ref + ' on HR of'\
-            + self.Name + " (" + self.Ref + ")."
+            print "theia: Info: Total reflection of %s on HR of %s." \
+                    %(beam.Ref, self.Ref)
 
         # if there is no refracted
         if beam.P * self.HRt < threshold or beam.StrayOrder + 1 > order\
@@ -306,8 +304,8 @@ class Mirror(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: Reached leaf of tree by interaction ("\
-                + beam.Ref + " on " + self.Ref + ', ' + 'HR).'
+                print "theia: Info: Reached leaf of tree by interaction"\
+                +" (%s on %s, HR)." %(beam.Ref, self.Ref)
             return ans
 
         # Calculate new basis
@@ -414,8 +412,8 @@ class Mirror(Optic):
 
         #warn on total reflection
         if dir2['TR'] and settings.info:
-            print "theia: Info: Total reflection of "  + beam.Ref + ' on AR of'\
-                + self.Name + " (" + self.Ref + ")."
+            print "theia: Info: Total reflection of %s on AR of %s." \
+                    %(beam.Ref, self.Ref)
 
         # if there is no refracted
         if beam.P * self.ARt < threshold or dir2['t'] is None:
@@ -428,8 +426,8 @@ class Mirror(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: Reached leaf of tree by interaction ("\
-                + beam.Ref + " on " + self.Ref + ', ' + 'AR).'
+                print "theia: Info: Reached leaf of tree by interaction"\
+                +" (%s on %s, HR)." %(beam.Ref, self.Ref)
             return ans
 
         # Calculate new basis

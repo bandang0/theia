@@ -65,15 +65,14 @@ def timer(func):
         func(*args, **kw)
         t2 = tm.time()
         dt = t2 -t1
-        st = "theia: Debug: " + str(func.__name__) + " exec with '" \
-                + str(*args) + "' in " + str(dt*1000.) + "ms."
+        st = "theia: Debug: %s exec with '%s' in %s ms." \
+                % (str(func.__name__), str(*args), str(dt*1000.))
         print st
 
     return wrapped
 
 def formatter(stringList):
-    '''Returns a formatted version of the text formed by the list of lines.
-    '''
+    '''Returns a formatted version of the text formed by the list of lines.'''
     count = 0   # counts '{' and '}'
     ans = ""
     for line in stringList:

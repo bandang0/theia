@@ -16,19 +16,24 @@ def init(dic):
     global cad
     global fname
     global fclib
+    global antiClip
+    global clipFactor   # portion of beam inside optic to determine whether
+                        # clipping has occured.
+    global FCFactor     # factor to compensate for FreeCAD units
 
     #geometry
     global zero #geometrical 0 distance (for seperation)
     global inf  # geometrical infinite
     global flatK    # curvature of a flat surface
 
-    #distionary of orders in which input is given in .tia
+    #dictionary of orders in which input is given in .tia
     global inOrder
 
     #geometry
     zero = 1.e-10
     inf = 1.e15
     flatK = 1.e-5
+    clipFactor = 2.
 
     #order of data in .tia
     inOrder = {}
@@ -56,3 +61,4 @@ def init(dic):
     cad = dic['cad']
     fname = dic['fname']
     fclib = dic['fclib']
+    antiClip = dic['antiClip']

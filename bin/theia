@@ -34,6 +34,10 @@ parser.add_option('-c', '--no-CAD',
 				help = 'do not generate .fcstd CAD file.',
 				action = 'store_false', dest = 'cad', default = True)
 
+parser.add_option('-a', '--anti-clipping',
+                help = 'include anti-clipping in simulation.',
+                action = 'store_true', dest = 'antiClip', default = False)
+
 parser.add_option('-v', '--version',
 				help = 'print verion of theia and exit.',
 				action = 'store_true', dest = 'askedVersion', default = False)

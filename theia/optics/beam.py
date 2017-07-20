@@ -104,29 +104,24 @@ class GaussianBeam(object):
 
         '''
         ans = []
-        ans.append("Beam: " + self.Name + " (" + self.Ref + ") " + "{")
-        ans.append("Power: " + str(self.P) + "W/"\
-        +"Index: " + str(self.N)\
-        +"/Wavelength: "+str(self.Wl/nm)+"nm/Length: " + str(self.Length) + "m")
-        ans.append("Order: " + str(self.StrayOrder))
-        ans.append("Origin: " + str(self.Pos))
+        ans.append("Beam: %s {" %self.Ref )
+        ans.append("Power: %sW/Index: %s/Wavelength: %snm/Length: %sm") \
+                %(str(self.P), str(self.N), str(self.Wl/nm), str(self.Length))
+        ans.append("Order: %s" %str(self.StrayOrder))
+        ans.append("Origin: %s" %str(self.Pos))
 
         sph = geometry.rectToSph(self.Dir)
-        ans.append("Direction: (" + str(sph[0]/deg) + ', ' \
-                + str(sph[1]/deg) + ')deg')
+        ans.append("Direction: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
 
         sphx = geometry.rectToSph(self.U[0])
-        ans.append("Ux: (" + str(sphx[0]/deg) + ', ' \
-                + str(sphx[1]/deg) + ')deg')
+        ans.append("Ux: (%s, %s)deg" %(str(sphx[0]/deg), str(sphx[1]/deg) ))
 
         sphy = geometry.rectToSph(self.U[1])
-        ans.append("Uy: (" + str(sphy[0]/deg) + ', ' \
-                + str(sphy[1]/deg) + ')deg')
-        ans.append("Waist Pos: " + str(self.waistPos()) + 'm')
-        ans.append("Waist Size: (" \
-            + str(self.waistSize()[0]/mm) + ', ' + str(self.waistSize()[1]/mm)\
-            + ')mm')
-        ans.append("Rayleigh: " + str(self.rayleigh()) + "m")
+        ans.append("Uy: (%s, %s)deg" %(str(sphy[0]/deg), str(sphy[1]/deg)))
+        ans.append("Waist Pos: %sm" % str(self.waistPos()) )
+        ans.append("Waist Size: (%s, %s)mm" \
+                    %(str(self.waistSize()[0]/mm), str(self.waistSize()[1]/mm)))
+        ans.append("Rayleigh: %sm" % str(self.rayleigh()) )
         ans.append("ROC: " + str(self.ROC()))
         ans.append("}")
 
@@ -138,7 +133,7 @@ class GaussianBeam(object):
         '''
         d = float(d)
         I = np.array([[1., 0.], [0., 1.]], dtype=np.float64)
-        return np.matmul(np.linalg.inv(I + d * self.QTens),self.QTens)
+        return np.matmul(np.linalg.inv(I + d * self.QTens), self.QTens)
 
     def QParam(self, d = 0.):
         '''Compute the complex parameters q1 and q2 and theta of beam.

@@ -68,12 +68,11 @@ class Ghost(SetupComponent):
         '''Return the list of lines needed to print the object.
         '''
         ans = []
-        ans.append("Ghost: " + self.Name + " (" + self.Ref + ") {")
-        ans.append("Diameter: " + str(self.Dia) + "m")
-        ans.append("Center: " + str(self.HRCenter))
+        ans.append("Ghost: {" %self.Ref)
+        ans.append("Diameter: %sm" %str(self.Dia))
+        ans.append("Center: %s" %str(self.HRCenter))
         sph = rectToSph(self.HRNorm)
-        ans.append("Norm: (" + str(sph[0]/deg) + ', ' \
-                + str(sph[1]/deg) + ')deg')
+        ans.append("Norm: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
         ans.append("}")
 
         return ans

@@ -103,13 +103,12 @@ class Optic(SetupComponent):
 
         '''
         if settings.info:
-            print "theia: Info: Reached leaf of tree by interaction ("\
-            + beam.Ref + " on " + self.Ref + ', ' + 'Side).'
+            print "theia: Info: Reached leaf of tree by interaction "\
+            +"(%s on %s, Side)." %(beam.Ref, self.Ref)
         return {'t': None, 'r': None}
 
     def apexes(self):
-        '''Returns the positions of the apexes of HR and AR as a tuple.
-        '''
+        '''Returns the positions of the apexes of HR and AR as a tuple.'''
         if self.HRK == 0.:
             apex1 = self.HRCenter
         else:
@@ -156,35 +155,31 @@ class Optic(SetupComponent):
         return np.dot(vec, self.HRNorm) > 0.
 
     def geoCheck(self, word):
-        '''Makes geometrical checks on surfaces and warns when necessary.
+        '''Makes geometrical checks on surfaces and warns when necessary.'''
 
-        '''
         if self.HRt + self.HRr > 1.:
-            print "theia: Warning: In " + word + " %s (%s) on HR, R + T > 1."\
-                    %(self.Name, self.Ref)
+            print "theia: Warning: In %s (%s) on HR, R + T > 1."\
+                    %(word, self.Ref)
 
         if self.ARt + self.ARr > 1.:
-            print "theia: Warning: In " + word + " %s (%s) on AR, R + T > 1."\
-                    %(self.Name, self.Ref)
+            print "theia: Warning: In %s (%s) on AR, R + T > 1."\
+                    %(word, self.Ref)
 
         if self.N < 1.:
-            print "theia: Warning: In " + word + " %s (%s), optical index < 1."\
-                    %(self.Name, self.Ref)
+            print "theia: Warning: In %s (%s), optical index < 1."\
+                    %(word, self.Ref)
 
         if self.HRK != 0. and np.abs(1./self.HRK) < self.Dia/2.:
-            print "theia: Warning: In " + word + " %s (%s), the diameter of " \
-                %(self.Name, self.Ref)\
-                +"the "+word+" exceeds the diameter of the HR surface."\
+            print "theia: Warning: In %s, the diameter of the %s exceeds the"\
+            + " diameter of the HR surface."%(self.Ref, word)
 
         if self.ARK != 0. and np.abs(1./self.ARK) < self.Dia/2.:
-            print "theia: Warning: In " + word + " %s (%s), the diameter of " \
-                %(self.Name, self.Ref)\
-                +"the "+word+" exceeds the diameter of the AR surface."\
+            print "theia: Warning: In %s, the diameter of the %s exceeds the"\
+            + " diameter of the AR surface."%(self.Ref, word)
 
         if self.collision():
-            print "theia: Warning: In " + word + " %s (%s), HR and AR surfaces"\
-                %(self.Name, self.Ref)\
-                +" intersect."
+            print "theia: Warning: In %s, HR and AR surfaces intersect."\
+            %self.Ref
 
     def translate(self, X = 0., Y = 0., Z = 0.):
         '''Move the optic to (current position + (X, Y, Z)).

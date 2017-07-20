@@ -67,13 +67,12 @@ class BeamDump(SetupComponent):
         '''Return the list of lines needed to print the object.
         '''
         ans = []
-        ans.append("BeamDump: " + self.Name + " (" + self.Ref + ") {")
-        ans.append("Thick: " + str(self.Thick) + "m")
-        ans.append("Diameter: " + str(self.Dia) + "m")
-        ans.append("Center: " + str(self.HRCenter))
+        ans.append("BeamDump: %s {" %self.Ref)
+        ans.append("Thick: %sm" %str(self.Thick))
+        ans.append("Diameter: %sm" %str(self.Dia))
+        ans.append("Center: %s" %str(self.HRCenter))
         sph = rectToSph(self.HRNorm)
-        ans.append("Norm: (" + str(sph[0]/deg) + ', ' \
-                + str(sph[1]/deg) + ')deg')
+        ans.append("Norm: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
         ans.append("}")
 
         return ans
@@ -160,7 +159,7 @@ class BeamDump(SetupComponent):
         beam.Length = dic['distance']
         beam.OptDist = beam.N * beam.Length
         if settings.info:
-            print "theia: Info: Reached beam stop (" + beam.Ref + ' on '\
-            + self.Ref + ').'
+            print "theia: Info: Reached beam stop (%s on %s)." \
+                    %(beam.Ref, self.Ref)
 
         return {'r': None, 't': None}

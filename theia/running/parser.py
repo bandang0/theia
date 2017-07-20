@@ -36,6 +36,9 @@ def readIn(name):
     Returns a list of tuples.
 
     '''
+
+    #error messages
+    malformed = "Malformed input in %s, line %s. Could not %s '%s'"
     ans = []
     j = 0   #counts lines
     with open(name, 'r') as inF:
@@ -52,26 +55,24 @@ def readIn(name):
                 try:
                     ans.append(('order', int(eval(word))))
                 except (SyntaxError, NameError):
-                    raise InputError("Malformed input in "\
-                            +fileName+", line "+ str(j)\
-                            +". Could not parse '" +word+"'.")
+                    raise InputError(malformed \
+                                    %(fileName, str(j), 'parse', word) + ".")
                 except TypeError:
-                    raise InputError("Malformed input in "\
-                            +fileName+", line "+ str(j)\
-                            +". Could not cast '" +word+"' to int.")
+                    raise InputError(malformed \
+                                    %(fileName, str(j), 'cast', word) \
+                                    + "to int.")
 
             elif line[0:9] == 'threshold':
                 word = line[10:line.find('\n')]
                 try:
                     ans.append(('threshold', float(eval(word))))
                 except (SyntaxError, NameError):
-                    raise InputError("Malformed input in "\
-                            +fileName+", line "+ str(j)\
-                            +". Could not parse '" +word+"'.")
+                    raise InputError(malformed \
+                                    %(fileName, str(j), 'parse', word) + ".")
                 except TypeError:
-                    raise InputError("Malformed input in "\
-                            +fileName+", line "+ str(j)\
-                            +". Could not cast '" +word+"' to float.")
+                    raise InputError(malformed \
+                                    %(fileName, str(j), 'cast', word) \
+                                    + "to float.")
 
             elif line[0:2] == 'bm':
                 ans.append(('bm',dicOf('bm',line[2:line.find('\n')],name,j)))
@@ -105,7 +106,8 @@ def dicOf(st, line, fileName, lineNumber):
 	Returns a dictionary ready for construction.
 
     '''
-
+    #error message
+    malformed = "Malformed input in %s, line %s, entry %s"
     ans = {}
 
     #allow empty constructor
@@ -120,42 +122,35 @@ def dicOf(st, line, fileName, lineNumber):
         try:
             ans[settings.inOrder[st][i]] = eval(words[i])
         except SyntaxError:
-            raise InputError("Malformed input in "\
-                    +fileName+", line " + str(lineNumber)+", entry "+ str(i+1)\
-                    +". Could not parse '" +words[i]+"'.")
+            raise InputError(malformed %(fileName, lineNumber, str(i+1))\
+                    + ". Could not parse '%s'." %words[i])
         except NameError:
-            raise InputError("Malformed input in "\
-                    +fileName+", line " + str(lineNumber)+", entry "+ str(i+1)\
-                    +". Did not recognize reference in '" +words[i]+"'.")
+            raise InputError(malformed %(fileName, lineNumber, str(i+1))\
+                    + ". Did not recognize reference in '%s'." %words[i])
         except IndexError:
-            raise InputError("Malformed input in "\
-                    +fileName+", line " + str(lineNumber)\
-                    +". To many arguments given.")
+            raise InputError(malformed %(fileName, lineNumber, str(i+1))\
+                    + ". To many arguments given.")
         i = i + 1
 
     while i < len(words):   #inputs with '='
         word = words[i]
         if word.find('=') == -1:
-            raise InputError("Malformed input in "\
-                    +fileName+", line " + str(lineNumber)+", entry "+ str(i+1)\
-                    +". Found non explicit entry '"+word\
-                    +"' among explicit entries.")
+            raise InputError(malformed %(fileName, lineNumber, str(i+1))\
+                    + ". Found non explicit entry '%s' among explicit entries."\
+                     %word)
         var = word[0:word.find('=')]
         if var not in settings.inOrder[st]:
-            raise InputError("Malformed input in "\
-                    +fileName+", line " + str(lineNumber)+", entry "+ str(i+1)\
-                    +". Unknown constructor parameter '" +var+"'.")
+            raise InputError(malformed %(fileName, lineNumber, str(i+1))\
+                    + ". Unknown constructor parameter '%s'." %var)
         val = word[word.find('=')+1:]
         try:
             ans[var] = eval(val)
         except SyntaxError:
-            raise InputError("Malformed input in "\
-                    +fileName+", line " + str(lineNumber)+", entry "+ str(i+1)\
-                    +". Could not parse '" +val+"'.")
+            raise InputError(malformed %(fileName, lineNumber, str(i+1))\
+                    + ". Could not parse '%s'." %val)
         except NameError:
-            raise InputError("Malformed input in "\
-                    +fileName+", line " + str(lineNumber)+", entry "+ str(i+1)\
-                    +". Did not recognize reference in '" +val+"'.")
+            raise InputError(malformed %(fileName, lineNumber, str(i+1))\
+                    + ". Did not recognize reference in '%s'." %val)
         i = i+1
 
     return ans

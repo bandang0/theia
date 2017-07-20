@@ -69,7 +69,7 @@ class Lens(Optic):
             'intersection point': point in space where it is first hit.
                     [3D vector]
             'face': to indicate which face is first hit, can be 'HR', 'AR' or
-                'side'. [string]
+                'Side'. [string]
             'distance': geometrical distance from beam origin to impact. [float]
 
         '''
@@ -222,9 +222,8 @@ class Lens(Optic):
 
         #warn on total reflection
         if dir2['TR'] and settings.info:
-            print "theia: Info: Total reflection of "  + beam.Ref + ' on '\
-            + faceTag +' of '\
-            + self.Name + " (" + self.Ref + ")."
+            print "theia: Info: Total reflection of  %s on (%s, %s)." \
+                %(beam.Ref, self.Ref, faceTag)
 
         # if there is no refracted
         if beam.P * self.HRt < threshold or dir2['t'] is None:
@@ -237,8 +236,8 @@ class Lens(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: Reached leaf of tree by interaction ("\
-                + beam.Ref + " on " + self.Ref + ', ' + faceTag + ').'
+                print "theia: Info: Reached leaf of tree by interaction "\
+                + "(%s on %s, %s)." %(beam.Ref, self.Ref, faceTag)
             return ans
 
         # Calculate new basis

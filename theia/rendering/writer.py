@@ -7,6 +7,7 @@
 import FreeCAD as App
 from FreeCAD import Base
 import Part
+from ..helpers import settings
 from .shapes import mirrorShape, lensShape, beamDumpShape, ghostShape, beamShape
 from .features import FCMirror, FCLens, FCBeamDump, FCBeam
 
@@ -32,7 +33,7 @@ def writeToCAD(component, doc):
 
     # here are some dics to refer to the right features and shapes for all
     # components
-    fact = 0.001    #factor for units in CAD
+    fact = settings.FCFactor    #factor for units in CAD
     FCDic = {'Mirror': FCMirror,
                 'ThickLens': FCLens,
                 'ThinLens': FCLens,
@@ -74,7 +75,7 @@ def writeTree(tree, doc):
     No return value.
 
     '''
-    fact = 0.001    #factor for units in CAD
+    fact = settings.FCFactor   #factor for units in CAD
 
     if tree.Root is not None:
         # write feature of beam

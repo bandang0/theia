@@ -67,11 +67,8 @@ class Simulation(object):
 
 
     def __str__(self):
-        '''String representation of the simulation, for print(simulation).
-
-        '''
-        sList = ["Simulation: " + str(self.LName) + " (" + str(self.FName)\
-                 + ".*) {"]
+        '''String representation of the simulation, for print(simulation).'''
+        sList = ["Simulation: %s (%s.*) {" %(str(self.LName), str(self.FName))]
         sList.append("OptList: {")
         for opt in self.OptList:
             sList = sList + opt.lines()
@@ -171,26 +168,24 @@ class Simulation(object):
             self.OptList, self.Order, self.Threshold ))
 
     def writeOut(self):
-        '''Write the results from the simulation in the .out file.
-        '''
+        '''Write the results from the simulation in the .out file.'''
         outList = []
         outList.append("########theia output file for simulation:########")
-        outList.append("\t\t\t" + self.LName + "\n")
+        outList.append("\t\t\t %s\n" %self.LName)
         outList.append('#'*10 + "META DATA" + '#'*10)
 
-        outList.append("Generated at: " + strftime("%c"))
-        outList.append("Input file: "+ self.FName + ".tia")
-        outList.append("Simulation Order: " + str(self.Order) )
-        outList.append("Simulation Threshold: "+ str(self.Threshold/mW) +'mW')
-        outList.append("Number of Components: " + str(len(self.OptList)))
-        outList.append("Number of Optics: " + str(self.numberOfOptics()) + '\n')
+        outList.append("Generated at: %s" %strftime("%c"))
+        outList.append("Input file: %s.tia" %self.FName)
+        outList.append("Simulation Order: %s" %str(self.Order) )
+        outList.append("Simulation Threshold: %smW" %str(self.Threshold/mW))
+        outList.append("Number of Components: %s" %str(len(self.OptList)))
+        outList.append("Number of Optics: %s\n" %str(self.numberOfOptics()))
         outList.append('#' *10 + 'SIMULATION DATA' + '#' * 10)
-        outList.append("Simulation: " + self.LName + " (" + self.FName\
-                 + ".*) {")
+        outList.append("Simulation: %s (%s.*) {" %(self.LName, self.FName))
         outList.append("Components: {")
 
         for opt in self.OptList:
-            outList.append(opt.Name + ' (' + opt.Ref + ') ' + str(opt.HRCenter))
+            outList.append("%s (%s) %s" %(opt.Name, opt.Ref, str(opt.HRCenter)))
         outList.append("}")
         outList.append("BeamTrees: {")
 
@@ -202,7 +197,7 @@ class Simulation(object):
         outList.append('#' * 10 + "BEAM LISTING" + '#' * 10)
 
         for tree in self.BeamTreeList:
-            outList.append("Tree: Root beam = " + str(tree.Root.Ref) + " {")
+            outList.append("Tree: Root beam = %s {" %str(tree.Root.Ref))
             outList = outList + tree.outputLines()
             outList.append("}")
 
@@ -210,9 +205,7 @@ class Simulation(object):
             outF.write(formatter(outList))
 
     def writeCAD(self):
-        '''Write the CAD .fcstd file by calling rendering functions.
-
-        '''
+        '''Write the CAD .fcstd file by calling rendering functions.'''
 
         # these two following import statements are here because they require
         # that the PYTHONPATH be updated, and thus they are not
