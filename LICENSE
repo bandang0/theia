@@ -1,4 +1,11 @@
-                    GNU GENERAL PUBLIC LICENSE
+    Note: The theia library and program are Copyright Raphaël 2017
+under the GNU GPLv3, a statement of which can be found here. The FreeCAD
+library to which theia links is Copyright by its authors under the
+(compatible) GNU  LGPL 2.1.
+
+-----------------------------------------------------------------------
+    
+                   GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
  Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
