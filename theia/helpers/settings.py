@@ -34,6 +34,8 @@ def init(dic):
     inf = 1.e15
     flatK = 1.e-5
     clipFactor = 2.
+    FCFactor = 0.001
+
 
     #order of data in .tia
     inOrder = {}

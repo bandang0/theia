@@ -11,6 +11,7 @@
 #       outputLines
 #   treeOfBeam
 
+import numpy as np
 from ..helpers import settings
 from ..helpers.units import mm, deg
 from ..helpers.tools import formatter
@@ -99,14 +100,14 @@ class BeamTree(object):
             if self.Root.Optic is not None:
                 if self.Root.Length > 0.:
                     if self.R is not None and self.R.Root is not None:
-                        sList = ['(%s, %s) %sm (%s, %s) {' \
+                        sList = ['(%s, %s) %sm (%s, %s) %s {' \
                         %(self.Root.Optic, self.Root.Face,
-                            str(self.Root.Length), self.R.Root.Optic, 
+                            str(self.Root.Length), self.R.Root.Optic,
                             self.R.Root.Face, self.Root.Ref)]
                     elif self.T is not None and self.T.Root is not None:
-                        sList = ['(%s, %s) %sm (%s, %s) {' \
+                        sList = ['(%s, %s) %sm (%s, %s) %s {' \
                         %(self.Root.Optic, self.Root.Face,
-                            str(self.Root.Length), self.T.Root.Optic, 
+                            str(self.Root.Length), self.T.Root.Optic,
                             self.T.Root.Face, self.Root.Ref)]
                     else:
                         sList = ['(%s, %s) [end] %s {' \
@@ -125,13 +126,13 @@ class BeamTree(object):
                         %(str(self.Root.Length), self.T.Root.Optic,
                             self.T.Root.Face, self.Root.Ref)]
                     else:
-                        sList = ['[InBeam] %s m [end] %s {' \
+                        sList = ['[InBeam] %sm [end] %s {' \
                             %(str(self.Root.Length), self.Root.Ref)]
                 else:
                     sList = ['[InBeam] [Open] %s {' %self.Root.Ref]
             sList.append("Waist Pos: %sm" %str(self.Root.waistPos()))
             sList.append("Waist Size: (%s, %s)mm" \
-                %(str(self.Root.waistSize()[0]/mm), 
+                %(str(self.Root.waistSize()[0]/mm),
                     str(self.Root.waistSize()[1]/mm)))
             sph = rectToSph(self.Root.Dir)
             sList.append("Direction: (%s, %s)deg" %(str(sph[0]/deg),
@@ -194,10 +195,9 @@ def treeOfBeam(srcBeam, optList, order, threshold):
                             opt.ARCenter, opt.ARNorm,
                             opt.Dia + 2 * settings.clipFactor * waist)
                 if HClipDic['isHit'] and HClipDic['distance'] < dist \
-                    or AClipDic['isHit'] and AClipDic['distance']:
-                    print "theia: Warning: Anti-Clipping of beam %s on "\
-                        + "(%s, %s)." \
-                            %(srcBeam.Ref, finalOpt.Ref, finalisHit['face'])
+                    or AClipDic['isHit'] and AClipDic['distance'] < dist:
+                    print "theia: Warning: Anti-Clipping of beam %s on %s."\
+                                        %(srcBeam.Ref, opt.Ref)
 
 
     if finalOpt is None:

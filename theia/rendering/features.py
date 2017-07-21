@@ -9,7 +9,7 @@
 
 import Part
 from FreeCAD import Base
-from ..helpers import FCFactor
+from ..helpers import settings
 
 class FCObject(object):
     '''Mother class for all FeaturePython objects.
@@ -19,7 +19,7 @@ class FCObject(object):
 
     fact: Factor to compensate for unit difference with FreeCAD. [float]
     '''
-    fact = settings.FCFactor    #factor for units in CAD
+    fact = 0.001#settings.FCFactor    #factor for units in CAD
     def __init__(self, obj):
         '''Custom properties of the object.
         '''

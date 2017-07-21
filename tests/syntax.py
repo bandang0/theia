@@ -8,21 +8,21 @@ THEIAPATH = '/home/dev0/theia'    # path to access modules of theia
 FREECADPATH = '/usr/lib/freecad/lib'	# and freecad
 sys.path.insert(0, THEIAPATH)
 sys.path.append(FREECADPATH)
-
-#import theia
-#import theia.optics
-#import theia.optics.thinlens
-#import theia.optics.mirror
-#import theia.optics.ghost
-#import theia.optics.thicklens
-#import theia.optics.beam
-#import theia.optics.optic
-#import theia.optics.beamdump
-#import theia.optics.__init__
-#import theia.optics.component
-#import theia.optics.lens
-#import theia.rendering
-#import theia.rendering.__init__
+#import FreeCAD
+import theia
+import theia.optics
+import theia.optics.thinlens
+import theia.optics.mirror
+import theia.optics.ghost
+import theia.optics.thicklens
+import theia.optics.beam
+import theia.optics.optic
+import theia.optics.beamdump
+import theia.optics.__init__
+import theia.optics.component
+import theia.optics.lens
+import theia.rendering
+import theia.rendering.__init__
 import theia.rendering.features
 import theia.rendering.writer
 import theia.rendering.shapes
