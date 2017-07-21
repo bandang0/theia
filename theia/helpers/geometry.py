@@ -328,7 +328,7 @@ def rotMatrix(a,b):
 
     a,b: unit 3D vectors. [3D np.arrays]
 
-    Returns an np.array such that np.matmul(M,a) == b.
+    Returns an np.array such that np.dot(M,a) == b.
 
     '''
 
@@ -341,7 +341,7 @@ def rotMatrix(a,b):
                     dtype=np.float64)
 
     return np.array([1., 0., 0.], [0., 1., 0.], [0., 0., 1.], dtype=np.float64)\
-            + vx + (1.0/(1.0 + np.dot(a,b)))*np.matmul(vx,vx)
+            + vx + (1.0/(1.0 + np.dot(a,b)))*np.dot(vx,vx)
 
 def basis(a):
     '''Returns two vectors u and v such that (a, u, v) is a direct ON basis.

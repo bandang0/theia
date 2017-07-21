@@ -257,7 +257,7 @@ class Lens(Optic):
                         [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
         Qi = beam.Q(d)
         Kit = np.transpose(Ki)
-        Xi = np.matmul(np.matmul(Kit, Qi), Ki)
+        Xi = np.dot(np.dot(Kit, Qi), Ki)
 
         if not 't' in ans:
             Kt = np.array([[np.dot(Uxt, Lx), np.dot(Uxt, Ly)],
@@ -266,7 +266,7 @@ class Lens(Optic):
             Ktinv = np.linalg.inv(Kt)
             Kttinv = np.linalg.inv(Ktt)
             Xt = (np.dot(localNorm, beam.Dir) -n2*np.dot(localNorm, Uzt)/n1) * C
-            Qt = n1*np.matmul(np.matmul(Kttinv, Xi - Xt), Ktinv)/n2
+            Qt = n1*np.dot(np.dot(Kttinv, Xi - Xt), Ktinv)/n2
 
         if not 'r' in ans:
             Kr = np.array([[np.dot(Uxr, Lx), np.dot(Uxr, Ly)],
@@ -275,7 +275,7 @@ class Lens(Optic):
             Krinv = np.linalg.inv(Kr)
             Krtinv = np.linalg.inv(Krt)
             Xr = (np.dot(localNorm, beam.Dir) - np.dot(localNorm, Uzr)) * C
-            Qr = np.matmul(np.matmul(Krtinv, Xi - Xr), Krinv)
+            Qr = np.dot(np.dot(Krtinv, Xi - Xr), Krinv)
 
         # Create new beams
         if not 'r' in ans:

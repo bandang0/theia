@@ -12,7 +12,7 @@ setup(
 
 	#Requires and entries
     packages = find_packages(exclude='tests'),
-    install_requires = ['numpy>=1.12.0'],
+    install_requires = ['numpy>=1.7.0'],
 	scripts = ['bin/theia'],
 
 	#Metadata

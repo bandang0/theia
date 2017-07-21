@@ -1,6 +1,6 @@
 Installing theia requires:
     python [>2.7]
-    numpy [>1.12]
+    numpy [>1.7]
 
 Compiling the documentation requires:
     pdflatex

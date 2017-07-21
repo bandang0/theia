@@ -133,7 +133,7 @@ class GaussianBeam(object):
         '''
         d = float(d)
         I = np.array([[1., 0.], [0., 1.]], dtype=np.float64)
-        return np.matmul(np.linalg.inv(I + d * self.QTens), self.QTens)
+        return np.dot(np.linalg.inv(I + d * self.QTens), self.QTens)
 
     def QParam(self, d = 0.):
         '''Compute the complex parameters q1 and q2 and theta of beam.
