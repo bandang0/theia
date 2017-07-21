@@ -1,3 +1,8 @@
+theia 0.1.2:
+    clipping and anti-clipping warnings
+    loosened requirements and compatibility with numpy 1.7.1
+
+-----------
 theia 0.1.1:
     low-level graphics
     CAD export info on beams and optics (.fcstd file)
