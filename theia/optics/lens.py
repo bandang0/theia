@@ -236,8 +236,8 @@ class Lens(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: Reached leaf of tree by interaction "\
-                + "(%s on %s, %s)." %(beam.Ref, self.Ref, faceTag)
+                print ("theia: Info: Reached leaf of tree by interaction "\
+                + "(%s on %s, %s).") %(beam.Ref, self.Ref, faceTag)
             return ans
 
         # Calculate new basis

@@ -7,13 +7,14 @@ FREECADPATH = '/usr/lib/freecad/lib'	# and freecad
 sys.path.insert(0, THEIAPATH)
 
 import theia
-from theia.helpers import settings
+from theia.helpers import settings, tools
 from theia.helpers.units import *
 from theia.optics import beam, beamdump, thinlens, thicklens, mirror
+from theia.running import simulation
 
 # initialize globals
 dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
-        'fname': 'test_optics', 'fclib': FREECADPATH}
+        'fname': 'test_simulation', 'fclib': FREECADPATH, 'antiClip': True}
 
 settings.init(dic)
 
@@ -22,15 +23,15 @@ settings.init(dic)
 simu = simulation.Simulation(FName = 'devTest')
 
 # test functions
-@timer
+@tools.timer
 def loader():
     simu.load()
 
-@timer
+@tools.timer
 def runner():
     simu.run()
 
-@timer
+@tools.timer
 def writer():
 	simu.writeOut()
 

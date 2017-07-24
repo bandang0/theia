@@ -24,7 +24,8 @@ from theia.optics import thinlens, beam
 
 # initialize globals (necessary to use theia in library form)
 dic = {'info': False, 'warning': True, 'text': True, 'cad': True,
-		'fname': 'optimization', 'fclib' : '/usr/local/lib/freecad/lib'}
+		'fname': 'optimization', 'fclib' : '/usr/lib/freecad/lib',
+        'antiClip': True}
 settings.init(dic)
 
 #simulation object

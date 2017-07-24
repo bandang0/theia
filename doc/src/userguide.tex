@@ -163,11 +163,19 @@ The general usage of \tt{theia} is: \tt{theia [options] FNAME}, where:
 \hline
 \tt{-c, --no-CAD} & after the simulation, do not write the CAD file\\
 \hline
+\tt{-a, --anti-clipping} & include anti-clipping in simulation (see next paragraph) \\
+\hline
+\tt{-v, --version} & print version of \tt{theia} and exit\\
+\hline
 \end{tabular}
 \end{center}
 \caption{Command lines options of \tt{theia}.}
 \label{option}
 \end{table}
+
+\paragraph{Note on anti-clipping.}Anti-clipping in when a beam passes near an optic without formally interacting but its axis is within 2 waists of the optic. This leads to power losses and diffused light. It is the opposite of clipping, in which the beam is not completely included in the optic it is interacting with.
+
+Warnings are always issued when clipping occurs (except if the \tt{-w, --no-warn} option is used), but calculations for anti-clipping are heavier (they add approximately half more tracing calculations), and are only done if the \tt{-a, --anti-clipping} option is used. If it is, then corresponding warnings are issued.
 
 \paragraph{Note on the \tt{FreeCAD} libraries.}\tt{theia} writes the 3D visualization information for the simulation to a CAD file to be read by \tt{FreeCAD}. If you do not wish to write the CAD file or or if you do not have the \tt{FreeCAD} libraries installed, you may use the \tt{-c} command line option.
 
@@ -302,8 +310,9 @@ The \tt{theia} CLI tool uses a certain number of global variables in order to ke
 from theia.helpers.settings import init
 
 # initialize globals in a dictionary
-dic = {'info': False, 'warning': False, 'text': False, 'cad': False,
-		'fname': 'test_optics', 'fclib': '/usr/lib/freecad/lib'}
+dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
+		'fname': 'theiasimulation', 'fclib': '/usr/lib/freecad/lib',
+		'antiClip': True}
 
 init(dic)
 
@@ -332,6 +341,7 @@ init(dic)
 & \tt{running.simulation.Simulation.run} \\ \hline
 
 \tt{text, cad, fname, fclib} & \tt{main.main} \\ \hline
+\tt{antiClip} & \tt{tree.beamtree.treeOfBeam} \\ \hline
 
 \end{tabular}
 \caption{The global variables of theia and the functions who use them}

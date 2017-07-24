@@ -103,8 +103,8 @@ class Optic(SetupComponent):
 
         '''
         if settings.info:
-            print "theia: Info: Reached leaf of tree by interaction "\
-            +"(%s on %s, Side)." %(beam.Ref, self.Ref)
+            print ("theia: Info: Reached leaf of tree by interaction "\
+            +"(%s on %s, Side).") %(beam.Ref, self.Ref)
         return {'t': None, 'r': None}
 
     def apexes(self):
@@ -117,7 +117,7 @@ class Optic(SetupComponent):
             except FloatingPointError:
             #if it fails then the whole semisphere is in the mirror and apex
             # is a radius away from Center.
-                theta = np.pi/2.
+                theta1 = np.pi/2.
             apex1 = self.HRCenter - (1-np.cos(theta1))*self.HRNorm/self.HRK
 
         if self.ARK == 0.:
@@ -158,24 +158,22 @@ class Optic(SetupComponent):
         '''Makes geometrical checks on surfaces and warns when necessary.'''
 
         if self.HRt + self.HRr > 1.:
-            print "theia: Warning: In %s (%s) on HR, R + T > 1."\
-                    %(word, self.Ref)
+            print "theia: Warning: In %s %s on HR, R + T > 1." %(word, self.Ref)
 
         if self.ARt + self.ARr > 1.:
-            print "theia: Warning: In %s (%s) on AR, R + T > 1."\
-                    %(word, self.Ref)
+            print "theia: Warning: In %s %s on AR, R + T > 1." %(word, self.Ref)
 
         if self.N < 1.:
-            print "theia: Warning: In %s (%s), optical index < 1."\
+            print "theia: Warning: In %s %s, optical index < 1."\
                     %(word, self.Ref)
 
         if self.HRK != 0. and np.abs(1./self.HRK) < self.Dia/2.:
-            print "theia: Warning: In %s, the diameter of the %s exceeds the"\
-            + " diameter of the HR surface."%(self.Ref, word)
+            print ("theia: Warning: In %s, the diameter of the %s exceeds the"\
+            + " diameter of the HR surface.") %( self.Ref, word)
 
         if self.ARK != 0. and np.abs(1./self.ARK) < self.Dia/2.:
-            print "theia: Warning: In %s, the diameter of the %s exceeds the"\
-            + " diameter of the AR surface."%(self.Ref, word)
+            print ("theia: Warning: In %s, the diameter of the %s exceeds the"\
+            + " diameter of the AR surface.") %(self.Ref, word)
 
         if self.collision():
             print "theia: Warning: In %s, HR and AR surfaces intersect."\

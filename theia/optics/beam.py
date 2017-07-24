@@ -105,8 +105,8 @@ class GaussianBeam(object):
         '''
         ans = []
         ans.append("Beam: %s {" %self.Ref )
-        ans.append("Power: %sW/Index: %s/Wavelength: %snm/Length: %sm") \
-                %(str(self.P), str(self.N), str(self.Wl/nm), str(self.Length))
+        ans.append("Power: %sW/Index: %s/Wavelength: %snm/Length: %sm" \
+                %(str(self.P), str(self.N), str(self.Wl/nm), str(self.Length)))
         ans.append("Order: %s" %str(self.StrayOrder))
         ans.append("Origin: %s" %str(self.Pos))
 

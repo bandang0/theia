@@ -304,8 +304,8 @@ class Mirror(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: Reached leaf of tree by interaction"\
-                +" (%s on %s, HR)." %(beam.Ref, self.Ref)
+                print ("theia: Info: Reached leaf of tree by interaction"\
+                +" (%s on %s, HR).") %(beam.Ref, self.Ref)
             return ans
 
         # Calculate new basis
@@ -426,8 +426,8 @@ class Mirror(Optic):
         # we're done if there are two Nones
         if len(ans) == 2:
             if settings.info:
-                print "theia: Info: Reached leaf of tree by interaction"\
-                +" (%s on %s, HR)." %(beam.Ref, self.Ref)
+                print ("theia: Info: Reached leaf of tree by interaction"\
+                +" (%s on %s, HR).") %(beam.Ref, self.Ref)
             return ans
 
         # Calculate new basis

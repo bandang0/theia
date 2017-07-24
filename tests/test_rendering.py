@@ -12,13 +12,7 @@ from theia.helpers import settings
 from theia.running import simulation
 # initialize globals
 dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
-        'fname': 'test_optics', 'fclib': FREECADPATH}
-
-settings.init(dic)
-
-# initialize globals
-dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
-        'fname': 'test_rendering', 'fclib': '/usr/lib/freecad/lib'}
+        'fname': 'test_rendering', 'fclib': FREECADPATH, 'antiClip': True}
 
 settings.init(dic)
 
