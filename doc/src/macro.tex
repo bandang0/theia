@@ -1,8 +1,6 @@
 \usepackage{graphicx} % Allows including images
-\usepackage{stackengine}
-\usepackage{scalerel}
+
 \usepackage{xcolor, soul}
-\sethlcolor{lightgray}
 \usepackage{geometry}
 \usepackage{multicol}
 \usepackage{listings}
@@ -12,17 +10,9 @@
 \graphicspath{{./../img/}}
 \renewcommand{\abstractname}{}
 \renewcommand{\tt}[1]{\texttt{#1}}
-\newcommand{\ttt}[1]{\hl{\texttt{#1}}}
-\newcommand\dangersign[1][2ex]{%
-  \renewcommand\stacktype{L}%
-  \scaleto{\stackon[1.3pt]{\color{red}$\triangle$}{\tiny !}}{#1}%
-}
+\newcommand*{\mybox}[2]{\colorbox{#1!30}{\parbox{1.0\linewidth}{#2}}}
 
-\newcommand{\warn}[1]{\begin{center}
-\begin{tabular}{ c  p{12cm} }
-\dangersign[22pt] & \vspace{-0.6cm} #1
-\end{tabular}
-\end{center}}
+\newcommand{\warn}[1]{\quad \\ \mybox{red}{ #1 }}
 
 \geometry{
  a4paper,
