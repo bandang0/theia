@@ -1,0 +1,12 @@
+# Advanced Virgo Core configuration file for the theia tool.
+# Data from `Position and Orientation of the Optics and Benches to Deal with 
+# the Vertical Wdges`, Degallaix, Genin, Gouaty, Chiummo, Paoli -- VIR-0267B-15
+# (https://tds.virgo-gw.eu/?content=3&r=12051)
+
+# Optics:
+#   Beam Splitter (BS)
+#   West Input (WI)
+#   North Input (NI)
+#   West Compensation Plate (CPW)
+#   North Compensation Plate (CPN)
+#   Pick Off Plate (POP)

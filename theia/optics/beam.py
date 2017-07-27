@@ -138,6 +138,9 @@ class GaussianBeam(object):
     def QParam(self, d = 0.):
         '''Compute the complex parameters q1 and q2 and theta of beam.
 
+        What is implemented here is a straightforward calculation to extract
+        the q1, q2, and theta of the normal form of Q.
+
             Returns a dictionary with keys:
             '1': q1 [complex]
             '2': q2 [complex]
@@ -147,25 +150,22 @@ class GaussianBeam(object):
 
         a = self.Q(d)[0][0]
         b = self.Q(d)[0][1]
-        d = self.Q(d)[1][1]
+        c = self.Q(d)[1][1]
 
-        q1inv = .5*(a + d + np.sqrt((a - d)**2. + 4.*b**2.))
-        q2inv = .5*(a + d - np.sqrt((a - d)**2. + 4.*b**2.))
+        if a == c:
+            theta = pi/4.
+            qxinv = (a + b)
+            qyinv = (a - b)
 
-        if q1inv == q2inv:
-            theta = 0.
         else:
-            theta = .5*np.arcsin(2.*b/(q1inv - q2inv))
+            theta = .5*np.arctan(2*b/(a-c))
+            qxinv = 0.5*(a + c + (a - c)/np.cos(2 *theta))
+            qyinv = 0.5*(a + c - (a - c)/np.cos(2 *theta))
 
-        try:
-            a = 1/q1inv
-        except ZeroDivisionError:
-            a = np.inf
-        try:
-            b = 1/q2inv
-        except ZeroDivisionError:
-            b = np.inf
-        return {'1': a, '2': b, 'theta':theta}
+        q1 = np.inf if qxinv == 0. else 1./qxinv
+        q2 = np.inf if qyinv == 0. else 1./qyinv
+
+        return {'1': q1, '2': q2, 'theta':theta}
 
     def ROC(self, dist = 0.):
         '''Return the tuple of ROC of the beam.

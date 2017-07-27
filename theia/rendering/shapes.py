@@ -9,9 +9,9 @@
 
 import numpy as np
 import Part
-import FreeCAD as App
 from FreeCAD import Base
 from ..helpers import settings
+from ..helpers.units import deg
 
 def mirrorShape(mirror):
     '''Computes the 3D representation of the beam, a shape for a CAD file obj.
@@ -52,19 +52,6 @@ def beamDumpShape(beamDump):
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-beamDump.HRNorm)))
 
-def ghostShape(ghost):
-    '''Computes the 3D representation of the beam, a shape for a CAD file obj.
-
-    beam: beam to represent. [GaussianBeam]
-
-    Returns a shape for a CAD file object.
-
-    '''
-    fact = settings.FCFactor    #factor for units in CAD
-    return Part.makeCylinder((ghost.Dia/2.)/fact, 0.01/fact,
-                                Base.Vector(0,0,0),
-                                Base.Vector(tuple(-ghost.HRNorm)))
-
 def beamShape(beam):
     '''Computes the 3D representation of the beam, a shape for a CAD file obj.
 
@@ -73,13 +60,55 @@ def beamShape(beam):
     Returns a shape for a CAD file object.
 
     '''
-    fact = settings.FCFactor    #factor for units in CAD
-    line = Part.Line()
-    line.StartPoint = Base.Vector(0,0,0)
-    zero = np.array([0., 0., 0.])
-    if beam.Length > 0.:
-        line.EndPoint = Base.Vector(tuple(zero + beam.Length/fact * beam.Dir))
-    else:
-        line.EndPoint = Base.Vector(tuple(zero + 1.e7/fact * beam.Dir))
+    fact = settings.FCFactor
+    L = beam.Length if beam.Length > 0. else 1.e7
 
-    return line.toShape()
+    #geometrical data of the beam envelope
+    theta = np.real(beam.QParam()['theta'])
+    W = beam.waistSize()
+    Wx = W[0]
+    Wy = W[1]
+
+    D = beam.waistPos()
+    DWx = D[0]
+    DWy = D[1]
+    Ux0 = beam.U[0]
+    Uy0 = beam.U[1]
+
+    #rotate vectors to find eigendirections of Q:
+    Ux = np.cos(theta)*Ux0 + np.sin(theta)*Uy0
+    Uy = -np.sin(theta)*Ux0 + np.cos(theta)*Uy0
+
+    #make shape by using points
+    Xalpha = (beam.Wl/beam.N)/(np.pi * Wx)
+    Xc = np.tan(Xalpha/2.)
+    XE2 =  L * beam.Dir
+    XA1 = Base.Vector(tuple( - DWx * Xc * Ux/fact))
+    XB1 = Base.Vector(tuple( DWx * Xc * Ux/fact ))
+    XA2 = Base.Vector(tuple( (L - DWx) * Xc * Ux/fact))
+    XB2 = Base.Vector(tuple( - (L - DWx) * Xc * Ux/fact))
+
+    Yalpha = (beam.Wl/beam.N)/(np.pi * Wy)
+    Yc = np.tan(Yalpha/2.)
+    YE2 =  L * beam.Dir
+    YA1 = Base.Vector(tuple(- DWy * Yc * Uy/fact))
+    YB1 = Base.Vector(tuple( DWy * Yc * Uy/fact ))
+    YA2 = Base.Vector(tuple( (L - DWy) * Yc * Uy/fact))
+    YB2 = Base.Vector(tuple( - (L - DWy) * Yc * Uy/fact))
+
+    XCone = [Part.Line(XA1, XB1),
+            Part.Line(XB1, XB2),
+            Part.Line(XB2, XA2),
+            Part.Line(XA1, XA2)]
+    print XA1, XB1, XB2, XA2
+
+    YCone = [Part.Line(YA1, YB1),
+            Part.Line(YB1, YB2),
+            Part.Line(YA2, YB2),
+            Part.Line(YA1, YA2)]
+
+    shape1 = Part.Face(Part.Wire(Part.Shape(YCone).Edges))
+    shape2 = Part.Face(Part.Wire(Part.Shape(XCone).Edges))
+    finalShape = shape1.fuse(shape2)
+    print Xalpha/deg
+    return finalShape
