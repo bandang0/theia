@@ -1,28 +1,33 @@
 # This is a test file for development testing
 # Here, first line without a comment, has the longname
-Development Rendering Simulation
+Development Simulation
 
 #Threshold and order each on their own line
-order = 1
+order = 0
 threshold = 1.*mW
 
 # input beam
-#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Ref
-bm 0.5*mm, 0.5*mm, 0.,	0,	1064*nm,	1*W, Y = 0*m, Z = 0., Phi = 0, Ref = 'TB'
+#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
+bm 0.045*mm, 0.094*mm, -43.0*mm,	-45.0*mm,	1064*nm,	1*W, Y = 0*m, Z = 0., Phi = 0, Ref = 'TB'
+
+# thin lens (X,Y,Z is the center of the thin lens)
+#th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Name	Ref
+th 11*cm, 0, 0, 90 * deg, arccos(-1.), sqrt(144)*cm, 5*cm, 0.1, 0.9, True, Ref = 'L1'
+th 53*cm, -15*cm, 0, 90*deg, 180 * deg, -150*mm, 5*cm, Ref = 'L2'
+th 90*cm, -15*cm, 0, 90*deg, 180 * deg, 300*mm, 5*cm, Ref = 'L3'
 
 # mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
-#mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Ref
-mr X = 40*cm, Phi = -3.1*pi/4., HRK = 0.e-2, ARK = 0, Wedge = 0*deg, Diameter = 5*cm, Thickness = 1*cm, Alpha = 0*deg, N= 1.1,  Ref = 'M1'
-
-# thin lens (X, Y,Z is the center of the thin lens)
-#th	X	Y	Z		Theta	Phi		Focal	Diameter	R	T	KeepI	Ref
-th 10*cm, 0, 0, 90 * deg, 185. *deg, 10*cm, 3*cm, 0.1, 0.9, True, Ref = 'L1'
-
-# thick lens (X,Y,Z is the apex of the HR face)
-#tk	X	Y	Z	Theta		Phi	K1	K2	Diameter	Thickness	N	R	T	KeepI	Ref
-tk 0*cm, 	0, 	0, 	360*deg/4., 180.*deg, K1 = -1, K2 = -1, Thickness = 1*cm, Diameter = 3*cm, KeepI = False, Ref = 'L2'
+#mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
+mr X = 13*cm, Phi = -3.*pi/4., HRK = 0, ARK = 0, Wedge = 0*deg, Diameter = 5*cm, Thickness = 5*mm, Alpha = 0*deg, N= 1.1,  Ref = 'M1'
+mr X = 13*cm, Y = -15*cm, Phi = pi/4., HRK = 0, ARK = 0, Wedge = 0*deg, Diameter = 5*cm, Thickness = 5*mm, Alpha = 0*deg, N= 1.1,  Ref = 'M2'
+mr X = 110*cm, Y = -15*cm, Phi = -3.*pi/4., HRK = 0, ARK = 0, Wedge = 0*deg, Diameter = 5*cm, Thickness = 5*mm, Alpha = 0*deg, N= 1.1,  Ref = 'M3'
+mr X = 110*cm, Y = -39*cm, Phi = 3.*pi/4., HRK = 0, ARK = 0, Wedge = 0*deg, Diameter = 5*cm, Thickness = 5*mm, Alpha = 0*deg, N= 1.1,  Ref = 'M4'
 
 #beamdump (X,Y,Z is the center of the principal face)
-#bd	X	Y	Z	Theta	Phi	Dia	Thickness Ref
-bd 40.*cm, -.05, 0., 90*deg, -90*deg, 5*cm, Thickness = 2*mm, Ref = 'BD1'
+#bd	X	Y	Z	Theta	Phi	Dia	Thickness Name Ref
+bd 13.*cm, -39*cm, 0., 90*deg, -0*deg, 3*cm, Thickness = 2*mm, Ref = 'BD'
+
+#ghost surfaces
+gh X = 72*cm, Y = -39*cm, Phi = 0, Diameter = 5*cm,  Ref = 'G1'
+gh X = 40*cm, Y = -39*cm, Phi = 0, Diameter = 5*cm,  Ref = 'G2'
 

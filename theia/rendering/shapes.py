@@ -76,13 +76,13 @@ def beamShape(beam):
     Uy0 = beam.U[1]
 
     #rotate vectors to find eigendirections of Q:
-    Ux = np.cos(theta)*Ux0 + np.sin(theta)*Uy0
-    Uy = -np.sin(theta)*Ux0 + np.cos(theta)*Uy0
+    Ux = np.cos(theta) * Ux0 + np.sin(theta) * Uy0
+    Uy = -np.sin(theta) * Ux0 + np.cos(theta) * Uy0
 
     #make shape by using points
     Xalpha = (beam.Wl/beam.N)/(np.pi * Wx)
     Xc = np.tan(Xalpha/2.)
-    XE2 =  L * beam.Dir
+    XE2 =  L * beam.Dir/fact
     XA1 = Base.Vector(tuple( - DWx * Xc * Ux/fact))
     XB1 = Base.Vector(tuple( DWx * Xc * Ux/fact ))
     XA2 = Base.Vector(tuple( (L - DWx) * Xc * Ux/fact))
@@ -90,11 +90,11 @@ def beamShape(beam):
 
     Yalpha = (beam.Wl/beam.N)/(np.pi * Wy)
     Yc = np.tan(Yalpha/2.)
-    YE2 =  L * beam.Dir
-    YA1 = Base.Vector(tuple(- DWy * Yc * Uy/fact))
-    YB1 = Base.Vector(tuple( DWy * Yc * Uy/fact ))
-    YA2 = Base.Vector(tuple( (L - DWy) * Yc * Uy/fact))
-    YB2 = Base.Vector(tuple( - (L - DWy) * Yc * Uy/fact))
+    YE2 =  L * beam.Dir/fact
+    YA1 = Base.Vector(tuple(YE2 - DWy * Yc * Uy/fact))
+    YB1 = Base.Vector(tuple(YE2 +  DWy * Yc * Uy/fact ))
+    YA2 = Base.Vector(tuple(YE2 + (L - DWy) * Yc * Uy/fact))
+    YB2 = Base.Vector(tuple(YE2 - (L - DWy) * Yc * Uy/fact))
 
     XCone = [Part.Line(XA1, XB1),
             Part.Line(XB1, XB2),
@@ -107,8 +107,8 @@ def beamShape(beam):
             Part.Line(YA2, YB2),
             Part.Line(YA1, YA2)]
 
-    shape1 = Part.Face(Part.Wire(Part.Shape(YCone).Edges))
-    shape2 = Part.Face(Part.Wire(Part.Shape(XCone).Edges))
+    shape1 = Part.Shape(YCone)
+    shape2 = Part.Shape(XCone)
     finalShape = shape1.fuse(shape2)
     print Xalpha/deg
     return finalShape

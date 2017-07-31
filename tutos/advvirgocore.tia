@@ -1,12 +1,39 @@
 # Advanced Virgo Core configuration file for the theia tool.
 # Data from `Position and Orientation of the Optics and Benches to Deal with 
-# the Vertical Wdges`, Degallaix, Genin, Gouaty, Chiummo, Paoli -- VIR-0267B-15
+# the Vertical Wedges`, Degallaix, Genin, Gouaty, Chiummo, Paoli -- VIR-0267B-15
 # (https://tds.virgo-gw.eu/?content=3&r=12051)
 
 # Optics:
 #   Beam Splitter (BS)
 #   West Input (WI)
 #   North Input (NI)
+#   West End (WE)
+#   North End (NE)
 #   West Compensation Plate (CPW)
 #   North Compensation Plate (CPN)
 #   Pick Off Plate (POP)
+
+#Beam Splitter
+mr -20.5*mm, 0., -3.*mm, pi/2., -135.*deg, 380.e-6, 180.*deg, 0., 0., 55.*cm, 65.5*mm, N = 1.44963, HRr = .5, HRt = .5, ARr = 50.*ppm, ARt = 1-50.*ppm,  Ref = 'BS'
+
+#West Input
+mr -5.7033, 0., -7.4e-3, (90. + 0.0423)*deg, (90. - 0.0006)*deg, 0., 0., 1./1420, 1./1420, 35.*cm, 20.*cm, HRt = 0.014, N = 1.44963, HRr = 0.986, ARr = 300*ppm, ARt = 1 - 300*ppm, Ref = 'WI'
+
+#West End
+Diameter = 35.*cm, Thickness = 20.*cm, N = 1.44963, HRt = 1*ppm, HRr = 1-1*ppm, ARr = 50*ppm, ARt = 1 - 50*ppm, Ref = 'WE'
+
+#North Input
+Diameter = 35.*cm, Thickness = 20.*cm, N = 1.44963, HRt = 0.014, HRr = 0.986, ARr = 300*ppm, ARt = 1 - 300*ppm, Ref = 'NI'
+
+#North End
+Diameter = 35.*cm, Thickness = 20.*cm, N = 1.44963, HRt = 1*ppm, HRr = 1-1*ppm, ARr = 50*ppm, ARt = 1 - 50*ppm, Ref = 'NE'
+
+#West Compensation Plate
+Diameter = 35.*cm, Thickness = 35.*mm, N = 1.44963, HRt = 1-1*ppm, HRr = 1*ppm, ARr = 1*ppm, ARt = 1 - 1*ppm, Ref = 'CPW'
+
+#North Compensation Plate
+Diameter = 35.*cm, Thickness = 35.*mm, N = 1.44963, HRt = 1-1*ppm, HRr = 1*ppm, ARr = 1*ppm, ARt = 1 - 1*ppm, Ref = 'CPN'
+
+
+#Pick Off Plate 
+Diameter = 35.*cm, Thickness = 35.*mm, N = 1.44963, HRr = 300*ppm, HRr = 1-300*ppm, ARr = 50*ppm, ARt = 1-50*ppm, Ref = 'POP'

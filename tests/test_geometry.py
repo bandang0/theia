@@ -27,7 +27,7 @@ simu = simulation.Simulation(dic['fname'])
 simu.Threshold = 0.5*uW
 simu.Order = 0
 simu.InBeams = [TBeam]
-simu.OptList = [mirror.Mirror(X = 12.*m, Theta = 45*deg, Phi = pi, HRK = 0, HRr = 0.1, HRt = 0.1)]
+simu.OptList = []#mirror.Mirror(X = 12.*m, Theta = 45*deg, Phi = pi, HRK = 0, HRr = 0.1, HRt = 0.1)]
 #inspect beam data
 print TBeam.QParam()
 print TBeam.U[0]
