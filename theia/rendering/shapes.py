@@ -35,7 +35,7 @@ def lensShape(lens):
 
     '''
     fact = settings.FCFactor    #factor for units in CAD
-    return Part.makeCylinder((lens.Dia/2.)/fact, max(lens.Thick/fact, 0.001),
+    return Part.makeCylinder((lens.Dia/2.)/fact, max(lens.Thick/fact,0.001),
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-lens.HRNorm)))
 
@@ -82,33 +82,28 @@ def beamShape(beam):
     #make shape by using points
     Xalpha = (beam.Wl/beam.N)/(np.pi * Wx)
     Xc = np.tan(Xalpha/2.)
-    XE2 =  L * beam.Dir/fact
-    XA1 = Base.Vector(tuple( - DWx * Xc * Ux/fact))
-    XB1 = Base.Vector(tuple( DWx * Xc * Ux/fact ))
-    XA2 = Base.Vector(tuple( (L - DWx) * Xc * Ux/fact))
-    XB2 = Base.Vector(tuple( - (L - DWx) * Xc * Ux/fact))
-
     Yalpha = (beam.Wl/beam.N)/(np.pi * Wy)
     Yc = np.tan(Yalpha/2.)
-    YE2 =  L * beam.Dir/fact
-    YA1 = Base.Vector(tuple(YE2 - DWy * Yc * Uy/fact))
-    YB1 = Base.Vector(tuple(YE2 +  DWy * Yc * Uy/fact ))
-    YA2 = Base.Vector(tuple(YE2 + (L - DWy) * Yc * Uy/fact))
-    YB2 = Base.Vector(tuple(YE2 - (L - DWy) * Yc * Uy/fact))
+    E2 =  L * beam.Dir/fact
 
-    XCone = [Part.Line(XA1, XB1),
-            Part.Line(XB1, XB2),
-            Part.Line(XB2, XA2),
-            Part.Line(XA1, XA2)]
-    print XA1, XB1, XB2, XA2
+    XA1 = Base.Vector(tuple( - DWx * Xc * Ux/fact))
+    XB1 = Base.Vector(tuple(DWx * Xc * Ux/fact ))
+    XA2 = Base.Vector(tuple(E2 + (L - DWx) * Xc * Ux/fact))
+    XB2 = Base.Vector(tuple(E2 - (L - DWx) * Xc * Ux/fact))
 
-    YCone = [Part.Line(YA1, YB1),
-            Part.Line(YB1, YB2),
-            Part.Line(YA2, YB2),
-            Part.Line(YA1, YA2)]
+    YA1 = Base.Vector(tuple( - DWy * Yc * Uy/fact))
+    YB1 = Base.Vector(tuple( + DWy * Yc * Uy/fact ))
+    YA2 = Base.Vector(tuple(E2 + (L - DWy) * Yc * Uy/fact))
+    YB2 = Base.Vector(tuple(E2 - (L - DWy) * Yc * Uy/fact))
 
-    shape1 = Part.Shape(YCone)
-    shape2 = Part.Shape(XCone)
-    finalShape = shape1.fuse(shape2)
-    print Xalpha/deg
-    return finalShape
+    S1 = Part.Face(Part.Wire([Part.Line(XA1, XB1).toShape(),
+    Part.Line(XB1, XB2).toShape(),
+    Part.Line(XB2, XA2).toShape(),
+    Part.Line(XA1, XA2).toShape()]))
+
+    S2 = Part.Face(Part.Wire([Part.Line(YA1, YB1).toShape(),
+    Part.Line(YB1, YB2).toShape(),
+    Part.Line(YA2, YB2).toShape(),
+    Part.Line(YA1, YA2).toShape()]))
+
+    return S1.fuse(S2)
