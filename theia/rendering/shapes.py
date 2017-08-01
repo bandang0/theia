@@ -35,9 +35,33 @@ def lensShape(lens):
 
     '''
     fact = settings.FCFactor    #factor for units in CAD
-    return Part.makeCylinder((lens.Dia/2.)/fact, max(lens.Thick/fact,0.001),
-                                Base.Vector(0,0,0),
-                                Base.Vector(tuple(-lens.HRNorm)))
+    ap = lens.apexes()
+    Cyl = Part.makeCylinder((lens.Dia/2.)/fact, lens.Thick/fact,
+                                 Base.Vector(0,0,0),
+                                 Base.Vector(tuple(-lens.HRNorm)))
+
+    Cone1 = Part.makeCone(lens.Dia/2./fact, 0.,
+                            np.linalg.norm(ap[0] - lens.HRCenter)/fact,
+                            Base.Vector(0., 0., 0.),
+                            Base.Vector(tuple(lens.HRCenter)))
+
+    Cone2 = Part.makeCone(lens.Dia/2./fact, 0.,
+                            np.linalg.norm(ap[1] - lens.ARCenter)/fact,
+                            Base.Vector(tuple(lens.ARCenter/fact \
+                                - lens.HRCenter/fact)),
+                            Base.Vector(tuple(lens.ARCenter)))
+
+    if lens.HRK > 0.:
+        rtn =  Cyl.cut(Cone1)
+    else:
+        rtn = Cyl.fuse(Cone1)
+
+    if lens.ARK > 0.:
+        return rtn.cut(Cone2)
+    else:
+        return rtn.fuse(Cone2)
+
+    return rtn
 
 def beamDumpShape(beamDump):
     '''Computes the 3D representation of the beam, a shape for a CAD file obj.
@@ -61,7 +85,7 @@ def beamShape(beam):
 
     '''
     fact = settings.FCFactor
-    L = beam.Length if beam.Length > 0. else 1.e7
+    L = beam.Length if beam.Length > 0. else 1.e6
 
     #geometrical data of the beam envelope
     theta = np.real(beam.QParam()['theta'])

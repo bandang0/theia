@@ -6,9 +6,6 @@ Development Simulation
 order = 0
 threshold = 1.*mW
 
-# input beam
-#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Name	Ref
-bm 0.0045*mm, 0.0094*mm, -43.0*mm,	-45.0*mm,	1064*nm,	1*W, Y = 0*m, Z = 0., Phi = 0, Ref = 'TB'
 
 # thin lens (X,Y,Z is the center of the thin lens)
 #th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Name	Ref
@@ -27,7 +24,4 @@ mr X = 110*cm, Y = -39*cm, Phi = 3.*pi/4., HRK = 0, ARK = 0, Wedge = 0*deg, Diam
 #bd	X	Y	Z	Theta	Phi	Dia	Thickness Name Ref
 bd 13.*cm, -39*cm, 0., 90*deg, -0*deg, 3*cm, Thickness = 2*mm, Ref = 'BD'
 
-#ghost surfaces
-gh X = 72*cm, Y = -39*cm, Phi = 0, Diameter = 5*cm,  Ref = 'G1'
-gh X = 40*cm, Y = -39*cm, Phi = 0, Diameter = 5*cm,  Ref = 'G2'
 

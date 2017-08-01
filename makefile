@@ -68,6 +68,9 @@ test-syntax:
 test-geo:
 	@cd tests ; python test_geometry.py
 
+test-plain:
+	@cd tests ; python test_plain.py
+
 #compile pdf (do it twice for all the refs to fall into place)
 compile-pdf:
 	-cd doc/src ; $(PDFLATEXCMD) primer.tex

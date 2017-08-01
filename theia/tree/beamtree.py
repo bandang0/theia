@@ -166,7 +166,7 @@ def treeOfBeam(srcBeam, optList, order, threshold):
         return BeamTree()
 
     # stuff used for clipping
-    clippingOpts = ["Mirror", "ThinLens", "ThickLens"]
+    clippingOpts = ["Mirror", "ThinLens", "ThickLens", "BeamDump"]
     width = srcBeam.width(srcBeam.Length)
     waist = max(width[0],
                 width[1])
@@ -185,17 +185,26 @@ def treeOfBeam(srcBeam, optList, order, threshold):
     # anti-clipping calculations!
     if settings.antiClip:
         for opt in optList:
-            if opt.Name in clippingOpts:
+            if opt.Name in clippingOpts and not opt is finalOpt:
                 # determine intersection with larger optic
                 HClipDic = linePlaneInter(srcBeam.Pos, srcBeam.Dir,
                             opt.HRCenter, opt.HRNorm,
                             opt.Dia + 2 * settings.clipFactor * waist)
 
-                AClipDic = linePlaneInter(srcBeam.Pos, srcBeam.Dir,
+                AClipDic = {'isHit':False} if opt.Name == "BeamDump"\
+                            else linePlaneInter(srcBeam.Pos, srcBeam.Dir,
                             opt.ARCenter, opt.ARNorm,
                             opt.Dia + 2 * settings.clipFactor * waist)
-                if HClipDic['isHit'] and HClipDic['distance'] < dist \
-                    or AClipDic['isHit'] and AClipDic['distance'] < dist:
+
+                # it hit the enlarged surface but is outside
+                Hif = HClipDic['isHit'] and HClipDic['distance'] < dist \
+                        and np.linalg.norm(HClipDic['intersection point'] \
+                            - opt.HRCenter) > opt.Dia/2.
+
+                Aif = AClipDic['isHit'] and AClipDic['distance'] < dist \
+                        and np.linalg.norm(AClipDic['intersection point'] \
+                            - opt.HRCenter) > opt.Dia/2.
+                if Hif or Aif:
                     print "theia: Warning: Anti-Clipping of beam %s on %s."\
                                         %(srcBeam.Ref, opt.Ref)
 
