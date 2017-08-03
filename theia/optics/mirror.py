@@ -230,6 +230,11 @@ class Mirror(Optic):
         dic = self.isHit(beam)
         beam.Length = dic['distance']
         beam.OptDist = beam.N * beam.Length
+        beam.TargetOptic = self.Ref
+        beam.TargetFace = dic['face']
+        endSize = beam.width(beam.Length)
+        beam.TWx = endSize[0]
+        beam.TWy = endSize[1]
 
         if dic['face'] == 'HR':
             return self.hitHR(beam, dic['intersection point'], order, threshold)

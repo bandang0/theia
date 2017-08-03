@@ -13,7 +13,6 @@ from theia.optics import beam, beamdump, thinlens, thicklens, mirror
 
 # initialize globals
 dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
-        'fname': 'test_optics', 'fclib': FREECADPATH, 'antiClip': True}
+        'fname': 'test_tree', 'fclib': FREECADPATH, 'antiClip': True}
 
 settings.init(dic)
-

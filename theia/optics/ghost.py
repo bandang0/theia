@@ -130,6 +130,11 @@ class Ghost(SetupComponent):
         dic = self.isHit(beam)
         beam.Length = dic['distance']
         beam.OptDist = beam.N * beam.Length
+        beam.TargetOptic = self.Ref
+        beam.TargetFace = dic['face']
+        endSize = beam.width(beam.Length)
+        beam.TWx = endSize[0]
+        beam.TWy = endSize[1]
 
         # get interaction point as origin of new beam
         interactionPoint = dic['intersection point']

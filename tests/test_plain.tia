@@ -6,22 +6,9 @@ Development Simulation
 order = 0
 threshold = 1.*mW
 
-
 # thin lens (X,Y,Z is the center of the thin lens)
 #th	X	Y	Z	Theta	Phi	Focal	Diameter	R	T	KeepI	Name	Ref
-th 11*cm, 0, 0, 90 * deg, arccos(-1.), sqrt(144)*cm, 5*cm, 0.1, 0.9, True, Ref = 'L1'
-th 53*cm, -15*cm, 0, 90*deg, 180 * deg, -150*mm, 5*cm, Ref = 'L2'
-th 90*cm, -12.5*cm, 0, 90*deg, 180 * deg, 300*mm, 5*cm, Ref = 'L3'
 
-# mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
-#mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Name	Ref
-mr X = 13*cm, Phi = -3.*pi/4., HRK = 0, ARK = 0, Wedge = 0*deg, Diameter = 5*cm, Thickness = 5*mm, Alpha = 0*deg, N= 1.1,  Ref = 'M1'
-mr X = 13*cm, Y = -15*cm, Phi = pi/4., HRK = 0, ARK = 0, Wedge = 0*deg, Diameter = 5*cm, Thickness = 5*mm, Alpha = 0*deg, N= 1.1,  Ref = 'M2'
-mr X = 110*cm, Y = -15*cm, Phi = -3.*pi/4., HRK = 0, ARK = 0, Wedge = 0*deg, Diameter = 5*cm, Thickness = 5*mm, Alpha = 0*deg, N= 1.1,  Ref = 'M3'
-mr X = 110*cm, Y = -39*cm, Phi = 3.*pi/4., HRK = 0, ARK = 0, Wedge = 0*deg, Diameter = 5*cm, Thickness = 5*mm, Alpha = 0*deg, N= 1.1,  Ref = 'M4'
+#tk 0*cm, 0*cm, 0, 90*deg, 180 * deg, Thickness = 5*cm, K1 = 2, K2 = 2, Diameter = 15*cm, Ref = 'L2'
 
-#beamdump (X,Y,Z is the center of the principal face)
-#bd	X	Y	Z	Theta	Phi	Dia	Thickness Name Ref
-bd 13.*cm, -39*cm, 0., 90*deg, -0*deg, 3*cm, Thickness = 2*mm, Ref = 'BD'
-
-
+th 0*cm, 0, 0, 90*deg, 180*deg, Focal = 15*cm, Ref = 'L3'

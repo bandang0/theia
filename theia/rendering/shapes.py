@@ -35,33 +35,9 @@ def lensShape(lens):
 
     '''
     fact = settings.FCFactor    #factor for units in CAD
-    ap = lens.apexes()
-    Cyl = Part.makeCylinder((lens.Dia/2.)/fact, lens.Thick/fact,
-                                 Base.Vector(0,0,0),
-                                 Base.Vector(tuple(-lens.HRNorm)))
-
-    Cone1 = Part.makeCone(lens.Dia/2./fact, 0.,
-                            np.linalg.norm(ap[0] - lens.HRCenter)/fact,
-                            Base.Vector(0., 0., 0.),
-                            Base.Vector(tuple(lens.HRCenter)))
-
-    Cone2 = Part.makeCone(lens.Dia/2./fact, 0.,
-                            np.linalg.norm(ap[1] - lens.ARCenter)/fact,
-                            Base.Vector(tuple(lens.ARCenter/fact \
-                                - lens.HRCenter/fact)),
-                            Base.Vector(tuple(lens.ARCenter)))
-
-    if lens.HRK > 0.:
-        rtn =  Cyl.cut(Cone1)
-    else:
-        rtn = Cyl.fuse(Cone1)
-
-    if lens.ARK > 0.:
-        return rtn.cut(Cone2)
-    else:
-        return rtn.fuse(Cone2)
-
-    return rtn
+    return Part.makeCylinder((lens.Dia/2.)/fact, max(lens.Thick/fact,0.01/fact),
+                                Base.Vector(0,0,0),
+                                Base.Vector(tuple(-lens.HRNorm)))
 
 def beamDumpShape(beamDump):
     '''Computes the 3D representation of the beam, a shape for a CAD file obj.
@@ -89,13 +65,11 @@ def beamShape(beam):
 
     #geometrical data of the beam envelope
     theta = np.real(beam.QParam()['theta'])
-    W = beam.waistSize()
-    Wx = W[0]
-    Wy = W[1]
+    Wx = beam.Wx
+    Wy = beam.Wy
 
-    D = beam.waistPos()
-    DWx = D[0]
-    DWy = D[1]
+    DWx = beam.DWx
+    DWy = beam.DWy
     Ux0 = beam.U[0]
     Uy0 = beam.U[1]
 

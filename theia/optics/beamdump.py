@@ -158,6 +158,12 @@ class BeamDump(SetupComponent):
         dic = self.isHit(beam)
         beam.Length = dic['distance']
         beam.OptDist = beam.N * beam.Length
+        beam.TargetOptic = self.Ref
+        beam.TargetFace = dic['face']
+        endSize = beam.width(beam.Length)
+        beam.TWx = endSize[0]
+        beam.TWy = endSize[1]
+
         if settings.info:
             print "theia: Info: Reached beam stop (%s on %s)." \
                     %(beam.Ref, self.Ref)

@@ -3,7 +3,7 @@
 Development Simulation
 
 #Threshold and order each on their own line
-order = 0
+order = 1
 threshold = 1.*mW
 
 # input beam

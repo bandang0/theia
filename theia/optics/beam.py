@@ -51,7 +51,18 @@ class GaussianBeam(object):
         surface, then its StrayOrder is the StrayOrder of the parent beam + 1.
         [integer]
     Optic: Ref of optic where the beam departs from (None if laser). [string]
-    Face: face of the optic where the beam departs from. [string]
+    Face: Face of the optic where the beam departs from. [string]
+    TargetOptic: Ref of the optic where te beam terminates (None if open
+        beam). [string]
+    TargetFace: Face of the target optic where the beam terminates. [string]
+    DWx: Distance of waist on X. [float]
+    DWy: Distance of waist on Y. [float]
+    Wx: Waist on X. [float]
+    Wy: Waist on Y. [float]
+    IWx: Width of beam on X at origin. [float]
+    IWy: Width of beam on Y at origin. [float]
+    TWx: Width of beam on X at target surface (None if open beam). [float]
+    TWy: Width of beam on Y at target surface (None if open beam).
 
     '''
     BeamCount = 0   # counts beams
@@ -62,7 +73,7 @@ class GaussianBeam(object):
         '''Beam initializer.
 
         This is the initializer used internally for beam creation, for user
-        inputed beams, see class method userGaussianBeam.
+        inputed beams, see function userGaussianBeam.
 
         Returns a Gaussian beam with attributes as the parameters.
 
@@ -91,6 +102,15 @@ class GaussianBeam(object):
         self.Optic = Optic
         self.Face = Face
 
+        # target optics
+        self.TargetOptic = None
+        self.TargetFace = None
+
+        # initialize gaussian data
+        self.initGaussianData()
+        self.TWx = None
+        self.TWy = None
+
         self.__class__.BeamCount = self.__class__.BeamCount + 1
 
     def __str__(self):
@@ -118,9 +138,9 @@ class GaussianBeam(object):
 
         sphy = geometry.rectToSph(self.U[1])
         ans.append("Uy: (%s, %s)deg" %(str(sphy[0]/deg), str(sphy[1]/deg)))
-        ans.append("Waist Pos: %sm" % str(self.waistPos()) )
+        ans.append("Waist Pos: (%s, %s)m" %( str(self.DWx), str(self.DWy) ))
         ans.append("Waist Size: (%s, %s)mm" \
-                    %(str(self.waistSize()[0]/mm), str(self.waistSize()[1]/mm)))
+                    %(str(self.Wx/mm), str(self.Wy/mm)))
         ans.append("Rayleigh: %sm" % str(self.rayleigh()) )
         ans.append("ROC: " + str(self.ROC()))
         ans.append("}")
@@ -226,6 +246,23 @@ class GaussianBeam(object):
         WDist = self.waistPos()
         return (np.arctan((d-WDist[0])/zR[0]),
                 np.arctan((d-WDist[1])/zR[1]))
+
+    def initGaussianData(self):
+        '''Writes the relevant DW, W, IW data with Q.
+
+        Is called upon construction to write the data of waist position and
+        size, initial widths once and for all.
+
+        '''
+        dist = self.waistPos()
+        size = self.waistSize()
+        initWidth = self.width(0.)
+        self.DWx = dist[0]
+        self.DWy = dist[1]
+        self.Wx = size[0]
+        self.Wy = size[1]
+        self.IWx = initWidth[0]
+        self.IWy = initWidth[1]
 
     def translate(self, X = 0., Y = 0., Z = 0.):
         '''Move the beam to (current position + (X, Y, Z)).
