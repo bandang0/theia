@@ -308,9 +308,9 @@ def userGaussianBeam(Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
                         dtype = np.complex64)
 
     if Ref is None:
-        Ref = "Beam" + str(GaussianBeam.BeamCount)
+        Ref = "Beam%s-" %str(GaussianBeam.BeamCount)
     else:
-        Ref = Ref
+        Ref = Ref + '-'
 
     return GaussianBeam(Q = QTens, N = 1., Wl = Wl, P = P,
         Pos = Pos, Dir = Dir,

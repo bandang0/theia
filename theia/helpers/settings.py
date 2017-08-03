@@ -17,6 +17,7 @@ def init(dic):
     global fname
     global fclib
     global antiClip
+    global short
     global clipFactor   # portion of beam inside optic to determine whether
                         # clipping has occured.
     global FCFactor     # factor to compensate for FreeCAD units
@@ -35,7 +36,6 @@ def init(dic):
     flatK = 1.e-5
     clipFactor = 2.
     FCFactor = 0.001
-
 
     #order of data in .tia
     inOrder = {}
@@ -64,3 +64,4 @@ def init(dic):
     fname = dic['fname']
     fclib = dic['fclib']
     antiClip = dic['antiClip']
+    short = dic['short']

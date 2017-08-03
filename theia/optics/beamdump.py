@@ -11,6 +11,7 @@ import numpy as np
 from ..helpers import settings
 from ..helpers.geometry import rectToSph, linePlaneInter, lineCylInter
 from ..helpers.units import deg, pi
+from ..helpers.tools import shortRef
 from .component import SetupComponent
 
 class BeamDump(SetupComponent):
@@ -57,11 +58,12 @@ class BeamDump(SetupComponent):
                         np.cos(Theta)], dtype = np.float64)
 
         HRCenter = np.array([X, Y, Z], dtype = np.float64)
+        ARCenter = HRCenter - Thickness * Norm
 
         # initialize from base initializer
         super(BeamDump, self).__init__(Ref = Ref,
                 Diameter = Diameter, HRCenter = HRCenter, HRNorm = Norm,
-                Thickness = Thickness)
+                Thickness = Thickness, ARCenter = ARCenter)
 
     def lines(self):
         '''Return the list of lines needed to print the object.
@@ -164,8 +166,9 @@ class BeamDump(SetupComponent):
         beam.TWx = endSize[0]
         beam.TWy = endSize[1]
 
-        if settings.info:
+        if settings.info and (beam.N == 1. or not settings.short):
             print "theia: Info: Reached beam stop (%s on %s)." \
-                    %(beam.Ref, self.Ref)
+                    %(beam.Ref if not settings.short else shortRef(beam.Ref),
+                        self.Ref)
 
         return {'r': None, 't': None}

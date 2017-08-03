@@ -14,7 +14,7 @@
 import numpy as np
 from ..helpers import settings
 from ..helpers.units import mm, deg
-from ..helpers.tools import formatter
+from ..helpers.tools import formatter, shortRef
 from ..helpers.geometry import rectToSph, linePlaneInter
 
 class BeamTree(object):
@@ -51,7 +51,8 @@ class BeamTree(object):
         '''Returns the list of lines necessary to print the object.'''
         ans = []
         ans.append("Tree: {")
-        ans.append("Root beam: %s" %str(self.Root.Ref))
+        ans.append("Root beam: %s" %(self.Root.Ref \
+            if not settings.short else shortRef(self.Root.Ref)))
         ans.append("Number of beams: %s" %str(self.numberOfBeams()))
         ans.append("}")
 
@@ -97,47 +98,50 @@ class BeamTree(object):
         '''Return the list of lines to write the output of simulation.'''
         sList = []
         if self.Root is not None:
-            if self.Root.Optic is not None:
-                if self.Root.Length > 0.:
-                    if self.R is not None and self.R.Root is not None:
-                        sList = ['(%s, %s) %sm (%s, %s) %s {' \
-                        %(self.Root.Optic, self.Root.Face,
-                            str(self.Root.Length), self.R.Root.Optic,
-                            self.R.Root.Face, self.Root.Ref)]
-                    elif self.T is not None and self.T.Root is not None:
-                        sList = ['(%s, %s) %sm (%s, %s) %s {' \
-                        %(self.Root.Optic, self.Root.Face,
-                            str(self.Root.Length), self.T.Root.Optic,
-                            self.T.Root.Face, self.Root.Ref)]
+            if self.Root.N == 1. or not settings.short:
+                Ref = self.Root.Ref\
+                    if not settings.short else shortRef(self.Root.Ref)
+                if self.Root.Optic is not None:
+                    if self.Root.Length > 0.:
+                        if self.R is not None and self.R.Root is not None:
+                            sList = ['(%s, %s) %sm (%s, %s) %s {' \
+                            %(self.Root.Optic, self.Root.Face,
+                                str(self.Root.Length), self.R.Root.Optic,
+                                self.R.Root.Face, Ref)]
+                        elif self.T is not None and self.T.Root is not None:
+                            sList = ['(%s, %s) %sm (%s, %s) %s {' \
+                            %(self.Root.Optic, self.Root.Face,
+                                str(self.Root.Length), self.T.Root.Optic,
+                                self.T.Root.Face, Ref)]
+                        else:
+                            sList = ['(%s, %s) [end] %s {' \
+                            %(self.Root.Optic, self.Root.Face, Ref)]
                     else:
-                        sList = ['(%s, %s) [end] %s {' \
-                        %(self.Root.Optic, self.Root.Face, self.Root.Ref)]
+                        sList = ['(%s, %s) [open] %s {' \
+                            %(self.Root.Optic, self.Root.Face, Ref)]
                 else:
-                    sList = ['(%s, %s) [open] %s {' \
-                        %(self.Root.Optic, self.Root.Face, self.Root.Ref)]
-            else:
-                if self.Root.Length > 0.:
-                    if self.R is not None and self.R.Root is not None:
-                        sList = ['[InBeam] %sm (%s, %s) %s {' \
-                        %(str(self.Root.Length), self.R.Root.Optic,
-                            self.R.Root.Face, self.Root.Ref)]
-                    elif self.T is not None and self.T.Root is not None:
-                         sList = ['[InBeam] %sm (%s, %s) %s {' \
-                        %(str(self.Root.Length), self.T.Root.Optic,
-                            self.T.Root.Face, self.Root.Ref)]
+                    if self.Root.Length > 0.:
+                        if self.R is not None and self.R.Root is not None:
+                            sList = ['[InBeam] %sm (%s, %s) %s {' \
+                            %(str(self.Root.Length), self.R.Root.Optic,
+                                self.R.Root.Face, Ref)]
+                        elif self.T is not None and self.T.Root is not None:
+                             sList = ['[InBeam] %sm (%s, %s) %s {' \
+                            %(str(self.Root.Length), self.T.Root.Optic,
+                                self.T.Root.Face, Ref)]
+                        else:
+                            sList = ['[InBeam] %sm [end] %s {' \
+                                %(str(self.Root.Length), Ref)]
                     else:
-                        sList = ['[InBeam] %sm [end] %s {' \
-                            %(str(self.Root.Length), self.Root.Ref)]
-                else:
-                    sList = ['[InBeam] [Open] %s {' %self.Root.Ref]
-            sList.append("Waist Pos: %sm" %str(self.Root.waistPos()))
-            sList.append("Waist Size: (%s, %s)mm" \
-                %(str(self.Root.waistSize()[0]/mm),
-                    str(self.Root.waistSize()[1]/mm)))
-            sph = rectToSph(self.Root.Dir)
-            sList.append("Direction: (%s, %s)deg" %(str(sph[0]/deg),
-                                                str(sph[1]/deg)))
-            sList.append('}')
+                        sList = ['[InBeam] [Open] %s {' %Ref]
+                sList.append("Waist Pos: %sm" %str(self.Root.waistPos()))
+                sList.append("Waist Size: (%s, %s)mm" \
+                    %(str(self.Root.waistSize()[0]/mm),
+                        str(self.Root.waistSize()[1]/mm)))
+                sph = rectToSph(self.Root.Dir)
+                sList.append("Direction: (%s, %s)deg" %(str(sph[0]/deg),
+                                                    str(sph[1]/deg)))
+                sList.append('}')
             if self.R is not None:
                 sList = sList + self.R.outputLines()
             if self.T is not None:
@@ -167,9 +171,8 @@ def treeOfBeam(srcBeam, optList, order, threshold):
 
     # stuff used for clipping
     clippingOpts = ["Mirror", "ThinLens", "ThickLens", "BeamDump"]
-    width = srcBeam.width(srcBeam.Length)
-    waist = max(width[0],
-                width[1])
+    waist = max(srcBeam.IWx,
+                srcBeam.IWy)
 
     # initialize
     dist = settings.inf
@@ -191,9 +194,8 @@ def treeOfBeam(srcBeam, optList, order, threshold):
                             opt.HRCenter, opt.HRNorm,
                             opt.Dia + 2 * settings.clipFactor * waist)
 
-                AClipDic = {'isHit':False} if opt.Name == "BeamDump"\
-                            else linePlaneInter(srcBeam.Pos, srcBeam.Dir,
-                            opt.ARCenter, opt.ARNorm,
+                AClipDic = linePlaneInter(srcBeam.Pos, srcBeam.Dir,
+                            opt.ARCenter, - opt.HRNorm,
                             opt.Dia + 2 * settings.clipFactor * waist)
 
                 # it hit the enlarged surface but is outside
@@ -203,23 +205,26 @@ def treeOfBeam(srcBeam, optList, order, threshold):
 
                 Aif = AClipDic['isHit'] and AClipDic['distance'] < dist \
                         and np.linalg.norm(AClipDic['intersection point'] \
-                            - opt.HRCenter) > opt.Dia/2.
-                if Hif or Aif:
-                    print "theia: Warning: Anti-Clipping of beam %s on %s."\
-                                        %(srcBeam.Ref, opt.Ref)
-
+                            - opt.ARCenter) > opt.Dia/2.
+                if Hif or Aif \
+                    and (srcBeam.N == 1. or not settings.short):
+                    print "theia: Warning: Anti-clipping of beam %s on %s."\
+                                        %(srcBeam.Ref\
+                    if not settings.short else shortRef(srcBeam.Ref), opt.Ref)
 
     if finalOpt is None:
         # no interaction
-        if settings.info:
-            print "theia: Info: Reached open beam %s." %srcBeam.Ref
+        if settings.info  \
+                and (srcBeam.N == 1. or not settings.short):
+            print "theia: Info: Reached open beam %s." %(srcBeam.Ref\
+                if not settings.short else shortRef(srcBeam.Ref))
         return BeamTree(Root = srcBeam)
 
     # get parameters of this closest impact
     finalisHit = finalOpt.isHit(srcBeam)
     finalHit = finalOpt.hit(srcBeam, order = order, threshold = threshold)
 
-    # determine is there was clipping
+    # determine if there was clipping
     isClipped = False   # if there is clipping during the interaction
     if not finalisHit['face'] == 'Side' and finalOpt.Name in clippingOpts:
         center = finalOpt.HRCenter if finalisHit['face'] == 'HR'\
@@ -228,9 +233,11 @@ def treeOfBeam(srcBeam, optList, order, threshold):
         isClipped = distance + settings.clipFactor * waist > finalOpt.Dia/2.
 
     #warn for clipping
-    if isClipped and settings.warning:
+    if isClipped and settings.warning \
+        and (srcBeam.N == 1. or not settings.short):
         print "theia: Warning: Clipping of beam %s on (%s, %s)."\
-        %(srcBeam.Ref, finalOpt.Ref, finalisHit['face'])
+        %(srcBeam.Ref if not settings.short else shortRef(srcBeam.Ref),
+            finalOpt.Ref, finalisHit['face'])
 
     return BeamTree(Root = srcBeam,
             T = treeOfBeam(finalHit['t'], optList, order, threshold),

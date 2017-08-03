@@ -24,6 +24,7 @@ def main(options, args):
     dic['fname'] = os.path.splitext(args[1])[0] #relative path without '.tia'
     dic['fclib'] = options.fclib
     dic['antiClip'] = options.antiClip
+    dic['short'] = options.short
 
     # initiate globals
     settings.init(dic)
@@ -56,7 +57,7 @@ def main(options, args):
         simu.run()
     except RuntimeError:
         print "theia: Error: Maximum recursion depth reached.%s\nAborting." \
-                                                            %errorRecursion 
+                                                            %errorRecursion
         sys.exit(1)
     print "theia: Run: Done."
 

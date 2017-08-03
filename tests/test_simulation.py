@@ -14,7 +14,8 @@ from theia.running import simulation
 
 # initialize globals
 dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
-        'fname': 'test_simulation', 'fclib': FREECADPATH, 'antiClip': True}
+        'fname': 'test_simulation', 'fclib': FREECADPATH, 'antiClip': True,
+        'short': False}
 
 settings.init(dic)
 

@@ -9,6 +9,15 @@ FREECADPATH = '/usr/lib/freecad/lib'	# and freecad
 sys.path.insert(0, THEIAPATH)
 sys.path.append(FREECADPATH)
 
+from theia.helpers import settings
+from theia.running import simulation
+# initialize globals
+dic = {'info': True, 'warning': True, 'text': True, 'cad': True,
+        'fname': 'test_rendering', 'fclib': FREECADPATH, 'antiClip': True,
+        'short': False}
+
+settings.init(dic)
+
 import theia
 import theia.optics
 import theia.optics.thinlens

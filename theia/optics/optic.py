@@ -11,6 +11,7 @@
 
 import numpy as np
 from ..helpers import settings
+from ..helpers.tools import shortRef
 from .component import SetupComponent
 
 class Optic(SetupComponent):
@@ -75,7 +76,6 @@ class Optic(SetupComponent):
             Ref = "Opt" + str(Optic.OptCount)
 
         # initialize with input data
-        self.ARCenter = ARCenter
         self.ARNorm = ARNorm
         self.N = N
         self.HRK = HRK
@@ -89,7 +89,7 @@ class Optic(SetupComponent):
         #call mother initializer
         super(Optic, self).__init__(HRCenter = HRCenter, HRNorm = HRNorm,
                 Ref = Ref, Thickness = Thickness,
-                Diameter = Diameter)
+                Diameter = Diameter, ARCenter = ARCenter)
         Optic.OptCount = Optic.OptCount + 1
 
     def hitSide(self, beam):
@@ -102,9 +102,11 @@ class Optic(SetupComponent):
         Returns {'t': None, 'r': None}
 
         '''
-        if settings.info:
+        if settings.info  \
+                and (beam.N == 1. or not settings.short):
             print ("theia: Info: Reached leaf of tree by interaction "\
-            +"(%s on %s, Side).") %(beam.Ref, self.Ref)
+            +"(%s on %s, Side).") %(beam.Ref\
+                if not settings.short else shortRef(beam.Ref), self.Ref)
         return {'t': None, 'r': None}
 
     def apexes(self):

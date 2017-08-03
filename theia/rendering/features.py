@@ -80,10 +80,13 @@ class FCBeam(FCObject):
         #general
         obj.addProperty("App::PropertyString", "Order", "Beam",
                 "Order of the beam").Order = str(beam.StrayOrder)
+        obj.addProperty("App::PropertyString", "Ref", "Beam",
+                "Full Reference of the beam").Ref = str(beam.Ref)
         obj.addProperty("App::PropertyString", "P", "Beam",
                 "Power of the beam").P = str(beam.P/0.001) + 'mW'
         obj.addProperty("App::PropertyString", "L", "Beam",
-                "Length of beam").L = str(beam.Length) + 'm'
+                "Length of beam").L = str(beam.Length) + 'm'\
+                                    if beam.Length > 0. else 'open'
         obj.addProperty("App::PropertyString", "WDx", "Beam",
                 "Waist distance X").WDx = str(beam.DWx) + 'm'
         obj.addProperty("App::PropertyString", "WDy", "Beam",

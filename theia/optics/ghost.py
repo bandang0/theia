@@ -41,7 +41,7 @@ class Ghost(SetupComponent):
     '''
     Name = "Ghost"
     def __init__(self, X = 0., Y = 0., Z = 0., Theta = pi/2., Phi = 0.,
-                Ref = None, Diameter = 5.e-2):
+                Ref = None, Diameter = 50.e-2):
         '''Ghost initializer.
 
         Parameters are the attributes.
@@ -62,7 +62,7 @@ class Ghost(SetupComponent):
         # initialize from base initializer
         super(Ghost, self).__init__(Ref = Ref,
                 Diameter = Diameter, HRCenter = HRCenter, HRNorm = Norm,
-                Thickness = 0.)
+                Thickness = 0., ARCenter = HRCenter)
 
     def lines(self):
         '''Return the list of lines needed to print the object.

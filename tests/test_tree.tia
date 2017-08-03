@@ -1,6 +1,6 @@
 # This is a test file for development testing
 # Here, first line without a comment, has the longname
-Development Tree Simulation
+Tree Test
 
 #Threshold and order each on their own line
 order = 0

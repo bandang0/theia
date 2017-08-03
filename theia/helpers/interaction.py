@@ -10,15 +10,19 @@
 #	errorUnknown
 
 usage = "Usage: theia [options] FNAME\n\nArguments:\n"\
-	+ "  FNAME\t\t .tia format input file name."
+        + "  FNAME\t\t .tia format input file name."
 
 lhelp = "specify the FreeCAD library location. If none is specified, theia "\
-		+ "finds it  using the UNIX `whereis` command. If option '-c', "\
+		+ "finds it using the UNIX `whereis` command. If option '-c', "\
 		+ "'--no-CAD'  is used, the FreeCAD search and import are skipped "\
 		+ "as a whole."
 
+shelp = 'Exclude beams propagating inside optics from text output, terminal'\
+        + ' output and CAD rendering files. This also changes the way beams'\
+        + ' are referenced to in these files and in the terminal output.'
+
 welcome = u'''
-\ttheia Copyright (C) 2017 Rapha\u00EBl Duque
+\ttheia (C) 2017 Rapha\u00EBl Duque
 \tLicense: GNU GPLv3+ <http://gnu.org/licenses/gpl.html>
 \tThis is free software: you are free to change and redistribute it.
 \tThere is ABSOLUTELY NO WARRANTY, to the extent permitted by law.

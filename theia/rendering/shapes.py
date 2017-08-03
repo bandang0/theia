@@ -85,23 +85,40 @@ def beamShape(beam):
     E2 =  L * beam.Dir/fact
 
     XA1 = Base.Vector(tuple( - DWx * Xc * Ux/fact))
-    XB1 = Base.Vector(tuple(DWx * Xc * Ux/fact ))
+    XB1 = Base.Vector(tuple(DWx * Xc * Ux/fact \
+                                + (0.01 * Ux if DWx == 0. else 0.)))
     XA2 = Base.Vector(tuple(E2 + (L - DWx) * Xc * Ux/fact))
-    XB2 = Base.Vector(tuple(E2 - (L - DWx) * Xc * Ux/fact))
+    XB2 = Base.Vector(tuple(E2 - (L - DWx) * Xc * Ux/fact \
+                                +(0.01 * Ux if (L -DWx) == 0. else 0.)))
 
     YA1 = Base.Vector(tuple( - DWy * Yc * Uy/fact))
-    YB1 = Base.Vector(tuple( + DWy * Yc * Uy/fact ))
+    YB1 = Base.Vector(tuple( + DWy * Yc * Uy/fact \
+                                + (0.01 * Ux if DWx == 0. else 0.)))
     YA2 = Base.Vector(tuple(E2 + (L - DWy) * Yc * Uy/fact))
-    YB2 = Base.Vector(tuple(E2 - (L - DWy) * Yc * Uy/fact))
+    YB2 = Base.Vector(tuple(E2 - (L - DWy) * Yc * Uy/fact \
+                                +(0.01 * Ux if (L -DWx) == 0. else 0.)))
 
-    S1 = Part.Face(Part.Wire([Part.Line(XA1, XB1).toShape(),
-    Part.Line(XB1, XB2).toShape(),
-    Part.Line(XB2, XA2).toShape(),
-    Part.Line(XA1, XA2).toShape()]))
+    L1 = Part.Line(XA1, XB1).toShape()
+    L2 = Part.Line(XB1, XB2).toShape()
+    L3 = Part.Line(XB2, XA2).toShape()
+    L4 = Part.Line(XA1, XA2).toShape()
+    L5 = Part.Line(YA1, YB1).toShape()
+    L6 = Part.Line(YB1, YB2).toShape()
+    L7 = Part.Line(YA2, YB2).toShape()
+    L8 = Part.Line(YA1, YA2).toShape()
 
-    S2 = Part.Face(Part.Wire([Part.Line(YA1, YB1).toShape(),
-    Part.Line(YB1, YB2).toShape(),
-    Part.Line(YA2, YB2).toShape(),
-    Part.Line(YA1, YA2).toShape()]))
+    try:
+        S1 = Part.Face(Part.Wire([L1, L2, L3, L4]))
+    except Part.OCCError:
+        S1 = L1.fuse(L2).fuse(L3).fuse(L4)
 
-    return S1.fuse(S2)
+    try:
+        S2 = Part.Face(Part.Wire([L5, L6, L7, L8]))
+    except Part.OCCError:
+        S2 = L5.fuse(L6).fuse(L7).fuse(L8)
+
+    try:
+        return S1.fuse(S2)
+    except Part.OCCError:
+        return Part.makeLine(Base.Vector(0., 0., 0.),
+                                Base.Vector(tuple(L * beam.Dir/fact)))

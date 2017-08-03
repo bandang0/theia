@@ -31,6 +31,8 @@ class SetupComponent(object):
         HRNorm. [float]
     Dia: diameter of the component. [float]
     Name: name of the component. [string]
+    InBeams: list of all beams incident on the component. [list of GaussianBeam]
+    OutBeams: list of all beams out
     Ref: reference string (for keeping track with the lab). [string]
 
 
@@ -40,7 +42,7 @@ class SetupComponent(object):
     SetupCount = 0   #counts the setup components
     Name = "SetupComponent"
 
-    def __init__(self, HRCenter, HRNorm, Ref, Thickness, Diameter):
+    def __init__(self, HRCenter, HRNorm, Ref, Thickness, Diameter, ARCenter):
         '''SetupComponent initializer.
 
         Parameters are the attributes of the object to construct.
@@ -53,6 +55,7 @@ class SetupComponent(object):
             Ref = "Set%s" %str(SetupComponent.SetupCount)
         # initialize data
         self.HRCenter = HRCenter
+        self.ARCenter = ARCenter
         self.HRNorm = HRNorm
         self.Thick = Thickness
         self.Dia = Diameter

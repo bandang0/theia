@@ -12,9 +12,10 @@
 
 import numpy as np
 from time import strftime
+from ..__init__ import __version__
 from ..helpers import settings
 from ..helpers.units import mW
-from ..helpers.tools import formatter
+from ..helpers.tools import formatter, shortRef
 from ..optics.optic import Optic
 from ..optics.beam import userGaussianBeam
 from ..optics.beamdump import BeamDump
@@ -24,7 +25,6 @@ from ..optics.mirror import Mirror
 from ..optics.ghost import Ghost
 from ..tree import beamtree
 from . import parser
-
 
 class Simulation(object):
     '''
@@ -64,7 +64,6 @@ class Simulation(object):
         self.Order = np.inf
         self.Threshold = -1.*mW
         self.Date = strftime("%c")
-
 
     def __str__(self):
         '''String representation of the simulation, for print(simulation).'''
@@ -170,17 +169,22 @@ class Simulation(object):
     def writeOut(self):
         '''Write the results from the simulation in the .out file.'''
         outList = []
-        outList.append("########theia output file for simulation:########")
+        outList.append("######## theia output file for simulation: ########")
         outList.append("\t\t\t %s\n" %self.LName)
-        outList.append('#'*10 + "META DATA" + '#'*10)
-
+        outList.append('#'*10 + " META DATA " + '#'*10)
         outList.append("Generated at: %s" %strftime("%c"))
+        outList.append("theia version: %s" %__version__)
+        outList.append("Options: {")
         outList.append("Input file: %s.tia" %self.FName)
+        outList.append("Anti-clipping: %s" %str(settings.antiClip))
+        outList.append("Short output: %s" %str(settings.short))
+        outList.append("}\n")
+
+        outList.append('#' *10 + ' SIMULATION DATA ' + '#' * 10)
         outList.append("Simulation Order: %s" %str(self.Order) )
         outList.append("Simulation Threshold: %smW" %str(self.Threshold/mW))
         outList.append("Number of Components: %s" %str(len(self.OptList)))
         outList.append("Number of Optics: %s\n" %str(self.numberOfOptics()))
-        outList.append('#' *10 + 'SIMULATION DATA' + '#' * 10)
         outList.append("Simulation: %s (%s.*) {" %(self.LName, self.FName))
         outList.append("Components: {")
 
@@ -194,10 +198,11 @@ class Simulation(object):
 
         outList.append("}")
         outList.append("}\n")
-        outList.append('#' * 10 + "BEAM LISTING" + '#' * 10)
 
+        outList.append('#' * 10 + " BEAM LISTING " + '#' * 10)
         for tree in self.BeamTreeList:
-            outList.append("Tree: Root beam = %s {" %str(tree.Root.Ref))
+            outList.append("Tree: Root beam = %s {" % (tree.Root.Ref\
+                if not settings.short else shortRef(tree.Root.Ref)))
             outList = outList + tree.outputLines()
             outList.append("}")
 

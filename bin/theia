@@ -5,7 +5,7 @@ import sys
 from optparse import OptionParser
 from theia import __version__
 from theia.main import main
-from theia.helpers.interaction import usage, lhelp
+from theia.helpers.interaction import usage, lhelp, shelp
 from theia.helpers.core import gbeamInit
 
 # handle Gaussian beam initialization
@@ -19,27 +19,31 @@ parser.add_option('-l', '--FreeCAD-lib',
 				action = 'store', type = 'string', dest = 'fclib')
 
 parser.add_option('-i', '--no-info',
-				help = 'do not output tracing information to stdout.',
+				help = 'Do not output tracing information to stdout.',
 				action = 'store_false', dest = 'info', default = True)
 
 parser.add_option('-w', '--no-warn',
-				help = 'do not output warnings to stdout.',
+				help = 'Do not output warnings to stdout.',
 				action = 'store_false', dest = 'warning', default = True)
 
 parser.add_option('-t', '--no-text',
-				help = 'do not write .out output file.',
+				help = 'Do not write .out output file.',
 				action = 'store_false', dest = 'text', default = True)
 
 parser.add_option('-c', '--no-CAD',
-				help = 'do not generate .fcstd CAD file.',
+				help = 'Do not generate .fcstd CAD file.',
 				action = 'store_false', dest = 'cad', default = True)
 
 parser.add_option('-a', '--anti-clipping',
-                help = 'include anti-clipping in simulation.',
+                help = 'Include anti-clipping in simulation.',
                 action = 'store_true', dest = 'antiClip', default = False)
 
+parser.add_option('-s', '--short-ouput',
+                help = shelp,
+                action = 'store_true', dest = 'short', default = False)
+
 parser.add_option('-v', '--version',
-				help = 'print verion of theia and exit.',
+				help = 'Print verion of theia and exit.',
 				action = 'store_true', dest = 'askedVersion', default = False)
 
 (options, args) = parser.parse_args(sys.argv)

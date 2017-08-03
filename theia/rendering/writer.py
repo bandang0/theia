@@ -7,6 +7,7 @@
 from FreeCAD import Base
 import Part
 from ..helpers import settings
+from ..helpers.tools import shortRef
 from .features import FCMirror, FCLens, FCBeamDump, FCBeam
 
 def writeToCAD(component, doc):
@@ -58,18 +59,20 @@ def writeTree(tree, doc):
     fact = settings.FCFactor   #factor for units in CAD
 
     if tree.Root is not None:
-        # write FreeCAD object of beam
-        FCBeam(doc.addObject("Part::FeaturePython", tree.Root.Ref), tree.Root)
+        # write FreeCAD object of beam according to short option
+        if tree.Root.N == 1. or not settings.short:
+            FCBeam(doc.addObject("Part::FeaturePython", tree.Root.Ref\
+                if not settings.short else shortRef(tree.Root.Ref)), tree.Root)
 
-        # add laser object if input beam
-        if 't' not in tree.Root.Ref and 'r' not in tree.Root.Ref:
-            laserObj = doc.addObject("Part::Feature", 'laser')
-            laserObj.Shape = Part.makeCylinder(0.01/fact, 0.1/fact,
-                                            Base.Vector(0,0,0),
-                                            Base.Vector(tuple(-tree.Root.Dir)))
-            laserObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos/fact))
+            # add laser object if input beam
+            if 't' not in tree.Root.Ref and 'r' not in tree.Root.Ref:
+                laserObj = doc.addObject("Part::FeaturePython", 'laser')
+                laserObj.Shape = Part.makeCylinder(0.01/fact, 0.1/fact,
+                                                Base.Vector(0,0,0),
+                                                Base.Vector(tuple(-tree.Root.Dir)))
+                laserObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos/fact))
 
-        #recursively for daughter beams
+            #recursively for daughter beams
         if tree.T is not None:
             writeTree(tree.T, doc)
         if tree.R is not None:

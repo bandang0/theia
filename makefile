@@ -63,7 +63,7 @@ test-running:
 	@cd tests ; python test_simulation.py
 
 test-syntax:
-	@cd tests ; python syntax.py
+	@cd tests ; python test_syntax.py
 
 test-geo:
 	@cd tests ; python test_geometry.py
@@ -71,6 +71,8 @@ test-geo:
 test-plain:
 	@cd tests ; python test_plain.py
 
+test-regex:
+	@cd tests ; python test_regex.py
 #compile pdf (do it twice for all the refs to fall into place)
 compile-pdf:
 	-cd doc/src ; $(PDFLATEXCMD) primer.tex

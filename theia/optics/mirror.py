@@ -12,6 +12,7 @@
 import numpy as np
 from ..helpers import geometry, settings
 from ..helpers.units import deg, cm, pi
+from ..helpers.tools import shortRef
 from .optic import Optic
 from .beam import GaussianBeam
 
@@ -293,9 +294,10 @@ class Mirror(Optic):
         dir2 = geometry.newDir(beam.Dir, localNorm, n1, n2)
 
         #warn on total reflection
-        if dir2['TR'] and settings.info:
+        if dir2['TR'] and settings.info \
+                and (beam.N == 1. or not settings.short):
             print "theia: Info: Total reflection of %s on HR of %s." \
-                    %(beam.Ref, self.Ref)
+                    %(beam.Ref if not settings.short else shortRef(beam.Ref), self.Ref)
 
         # if there is no refracted
         if beam.P * self.HRt < threshold or beam.StrayOrder + 1 > order\
@@ -308,9 +310,11 @@ class Mirror(Optic):
 
         # we're done if there are two Nones
         if len(ans) == 2:
-            if settings.info:
+            if settings.info  \
+                    and (beam.N == 1. or not settings.short):
                 print ("theia: Info: Reached leaf of tree by interaction"\
-                +" (%s on %s, HR).") %(beam.Ref, self.Ref)
+                +" (%s on %s, HR).") %(beam.Ref\
+                    if not settings.short else shortRef(beam.Ref), self.Ref)
             return ans
 
         # Calculate new basis
@@ -416,9 +420,10 @@ class Mirror(Optic):
         dir2 = geometry.newDir(beam.Dir, localNorm, n1, n2)
 
         #warn on total reflection
-        if dir2['TR'] and settings.info:
+        if dir2['TR'] and settings.info \
+                and (beam.N == 1. or not settings.short):
             print "theia: Info: Total reflection of %s on AR of %s." \
-                    %(beam.Ref, self.Ref)
+                    %(beam.Ref if not settings.short else shortRef(beam.Ref), self.Ref)
 
         # if there is no refracted
         if beam.P * self.ARt < threshold or dir2['t'] is None:
@@ -430,9 +435,11 @@ class Mirror(Optic):
 
         # we're done if there are two Nones
         if len(ans) == 2:
-            if settings.info:
+            if settings.info  \
+                    and (beam.N == 1. or not settings.short):
                 print ("theia: Info: Reached leaf of tree by interaction"\
-                +" (%s on %s, HR).") %(beam.Ref, self.Ref)
+                +" (%s on %s, HR).") %(beam.Ref\
+                    if not settings.short else shortRef(beam.Ref), self.Ref)
             return ans
 
         # Calculate new basis
