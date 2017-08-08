@@ -8,7 +8,7 @@ from FreeCAD import Base
 import Part
 from ..helpers import settings
 from ..helpers.tools import shortRef
-from .features import FCMirror, FCLens, FCBeamDump, FCBeam
+from .features import FCMirror, FCBeamSplitter, FCLens, FCBeamDump, FCBeam
 
 def writeToCAD(component, doc):
     '''Write the relevant FreeCAD objects of components in CAD file.
@@ -33,10 +33,12 @@ def writeToCAD(component, doc):
     FCDic = {'Mirror': FCMirror,
                 'ThickLens': FCLens,
                 'ThinLens': FCLens,
-                'BeamDump': FCBeamDump}
+                'BeamDump': FCBeamDump,
+                'BeamSplitter': FCBeamSplitter}
 
     #First take care of optics
-    if component.Name in ['Mirror', 'ThickLens', 'ThinLens', 'BeamDump']:
+    if component.Name \
+        in ['Mirror', 'ThickLens', 'ThinLens', 'BeamDump', 'BeamSplitter']:
         FCDic[component.Name](doc.addObject("Part::FeaturePython",
                             component.Ref), component)
 

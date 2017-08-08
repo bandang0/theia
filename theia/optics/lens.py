@@ -165,7 +165,7 @@ class Lens(Optic):
     def hitActive(self, beam, point, faceTag, order, threshold):
         '''Compute the daughter beams after interaction on HR or AR at point.
 
-        AR andHr are the 'active' surfaces of the lens.
+        AR and HR are the 'active' surfaces of the lens.
         This function is valid for all types of lenses.
 
         beam: incident beam. [GaussianBeam]

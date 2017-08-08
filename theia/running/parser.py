@@ -78,6 +78,8 @@ def readIn(name):
                 ans.append(('bm',dicOf('bm',line[2:line.find('\n')],name,j)))
             elif line[0:2] == 'mr':
                 ans.append(('mr',dicOf('mr',line[2:line.find('\n')],name,j)))
+            elif line[0:2] == 'bs':
+                ans.append(('bs',dicOf('bs',line[2:line.find('\n')],name,j)))
             elif line[0:2] == 'th':
                 ans.append(('th',dicOf('th',line[2:line.find('\n')],name,j)))
             elif line[0:2] == 'tk':

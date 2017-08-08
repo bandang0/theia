@@ -1,7 +1,7 @@
-'''Defines the Mirror class for theia.'''
+'''Defines the BeamSplitter class for theia.'''
 
 # Provides:
-#   class Mirror
+#   class BeamSplitter
 #       __init__
 #       lines
 #       isHit
@@ -16,15 +16,19 @@ from ..helpers.tools import shortRef
 from .optic import Optic
 from .beam import GaussianBeam
 
-class Mirror(Optic):
+class BeamSplitter(Optic):
     '''
 
-    Mirror class.
+    Beamsplitter class.
 
-    This class represents semi reflective mirrors composed of two faces (HR, AR)
+    This class represents beam splitters composed of two faces (HR, AR)
     and with a wedge angle. These are the objects with which the beams will
     interact during the ray tracing. Please see the documentation for details
-    on the geometric construction of these mirrors.
+    on the geometric construction of these optics.
+
+    Beam Splitters behave exactly like mirrors, except that:
+        * The default values for transmitances and reflectivities are different
+        * Beam splitter never increase the order upon interaction of beams.
 
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
@@ -47,10 +51,12 @@ class Mirror(Optic):
     coefficients of the HR and AR surfaces. [float]
     KeepI (inherited): whether of not to keep data of rays for interference
     calculations on the HR. [boolean]
-    Wedge: wedge angle of the mirror, please refer to the documentation for
-        detailed on the geometry of mirrors and their implementation here.
+    Wedge: wedge angle of the beam splitter,
+        please refer to the documentation for
+        details on the geometry of beam splitters and their implementation here.
         [float]
-    Alpha: rotation angle used in the geometrical construction of the mirror
+    Alpha: rotation angle used in the geometrical construction of the beam
+        splitter
         (see doc, it is the amgle between the projection of Ex on the AR plane
         and the vector from ARCenter to the point where the cylinder and the AR
         face meet). [float]
@@ -69,18 +75,18 @@ class Mirror(Optic):
 
     '''
 
-    Name = "Mirror"
+    Name = "BeamSplitter"
     def __init__(self, Wedge = 0., Alpha = 0., X = 0., Y = 0., Z = 0.,
                 Theta = pi/2., Phi = 0., Diameter = 10.e-2,
-                HRr = .99, HRt = .01, ARr = .1, ARt = .9,
+                HRr = .5, HRt = .5, ARr = .1, ARt = .9,
                 HRK = 0.01, ARK = 0, Thickness = 2.e-2,
                 N = 1.4585, KeepI = False,  Ref = None):
-        '''Mirror initializer.
+        '''BeamSplitter initializer.
 
         Parameters are the attributes and the angles theta and phi are spherical
         coordinates of HRNorm.
 
-        Returns a mirror.
+        Returns a beam splitter.
 
         '''
         # Initialize input data
@@ -109,19 +115,19 @@ class Mirror(Optic):
                         + np.sin(self.Wedge)*(np.cos(self.Alpha) * a\
                                             + np.sin(self.Alpha) * b)
 
-        super(Mirror, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
+        super(BeamSplitter, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
         N = N, HRK = HRK, ARK = ARK, ARr = ARr, ARt = ARt, HRr = HRr, HRt = HRt,
         KeepI = KeepI, HRCenter = HRCenter, HRNorm = HRNorm,
         Thickness = Thickness, Diameter = Diameter, Ref = Ref)
 
         #Warnings for console output
         if settings.warning:
-            self.geoCheck("mirror")
+            self.geoCheck("beam splitter")
 
     def lines(self):
         '''Returns the list of lines necessary to print the object.'''
         ans = []
-        ans.append("Mirror: %s {" %str(self.Ref))
+        ans.append("BeamSplitter: %s {" %str(self.Ref))
         ans.append("Thick: %scm" %str(self.Thick/cm))
         ans.append("Diameter: %scm" %str(self.Dia/cm) )
         ans.append("Wedge: %sdeg" %str(self.Wedge/deg) )
@@ -140,9 +146,9 @@ class Mirror(Optic):
     def isHit(self, beam):
         '''Determine if a beam hits the Optic.
 
-        This is a function for mirrors, using their geometrical
+        This is a function for beam splitters, using their geometrical
         attributes. This uses the line***Inter functions from the geometry
-        module to find characteristics of impact of beams on mirrors.
+        module to find characteristics of impact of beams on beam splitters.
 
         beam: incoming beam. [GaussianBeam]
 
@@ -301,8 +307,7 @@ class Mirror(Optic):
                     %(beam.Ref if not settings.short else shortRef(beam.Ref), self.Ref)
 
         # if there is no refracted
-        if beam.P * self.HRt < threshold or beam.StrayOrder + 1 > order\
-                                        or dir2['t'] is None:
+        if beam.P * self.HRt < threshold or dir2['t'] is None:
             ans['t'] = None
 
         # if there is no reflected
@@ -367,7 +372,7 @@ class Mirror(Optic):
         if not 't' in ans:
             ans['t'] = GaussianBeam(Q = Qt, Pos = point,
                 Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
-                P = beam.P * self.HRt, StrayOrder = beam.StrayOrder + 1,
+                P = beam.P * self.HRt, StrayOrder = beam.StrayOrder,
                 Ref = beam.Ref + 't', Optic = self.Ref, Face = 'HR',
                 Length = 0., OptDist = 0.)
 
@@ -431,7 +436,7 @@ class Mirror(Optic):
             ans['t'] = None
 
         # if there is no reflected
-        if beam.P * self.ARr < threshold or beam.StrayOrder + 1 > order:
+        if beam.P * self.ARr < threshold:
             ans['r'] = None
 
         # we're done if there are two Nones
@@ -485,7 +490,7 @@ class Mirror(Optic):
             ans['r'] = GaussianBeam(Q = Qr,
                     Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
                     N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
-                    StrayOrder = beam.StrayOrder + 1, Ref = beam.Ref + 'r',
+                    StrayOrder = beam.StrayOrder, Ref = beam.Ref + 'r',
                     Optic = self.Ref, Face = 'AR',
                     Length = 0., OptDist = 0.)
 

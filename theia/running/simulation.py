@@ -22,6 +22,7 @@ from ..optics.beamdump import BeamDump
 from ..optics.thinlens import ThinLens
 from ..optics.thicklens import ThickLens
 from ..optics.mirror import Mirror
+from ..optics.beamsplitter import BeamSplitter
 from ..optics.ghost import Ghost
 from ..tree import beamtree
 from . import parser
@@ -127,6 +128,9 @@ class Simulation(object):
                 self.InBeams[len(self.InBeams)-1].translate(**translateDic)
             elif uple[0] == 'mr':
                 self.OptList.append(Mirror(**uple[1]))
+                self.OptList[len(self.OptList)-1].translate(**translateDic)
+            elif uple[0] == 'bs':
+                self.OptList.append(BeamSplitter(**uple[1]))
                 self.OptList[len(self.OptList)-1].translate(**translateDic)
             elif uple[0] == 'th':
                 self.OptList.append(ThinLens(**uple[1]))

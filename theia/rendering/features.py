@@ -3,6 +3,7 @@
 # Provides:
 #   class FCObject
 #   class FCMirror
+#   class FCBeamSplitter
 #   class FCLens
 #   class FCBeamDump
 #   class FCBeam
@@ -11,6 +12,7 @@ from FreeCAD import Base
 from ..helpers import settings
 from ..helpers.units import deg
 from .shapes import mirrorShape, lensShape, beamDumpShape, beamShape
+from .shapes import beamSplitterShape
 
 class FCObject(object):
     '''Mother class for all FreeCAD objects.
@@ -40,6 +42,25 @@ class FCMirror(FCObject):
         obj.addProperty("App::PropertyDistance", "Dia", "Mirror",
                 "Diameter").Dia = mirror.Dia/.001
         obj.Placement.Base = Base.Vector(tuple(mirror.HRCenter/self.fact))
+
+class FCBeamSplitter(FCObject):
+    def __init__(self, obj, beamSplitter):
+        super(FCBeamSplitter, self).__init__(obj)
+        obj.Shape = beamSplitterShape(beamSplitter)
+        obj.addProperty("App::PropertyString", "Wedge", "BeamSplitter",
+            "Wedge of the beam splitter").Wedge = str(beamSplitter.Wedge/deg) \
+            + ' deg'
+        obj.addProperty("App::PropertyString", "HRK", "BeamSplitter",
+            "HR curvature").HRK = str(beamSplitter.HRK) + ' m^-1'
+        obj.addProperty("App::PropertyString", "ARK", "BeamSplitter",
+            "AR curvature").ARK = str(beamSplitter.ARK) + ' m^-1'
+        obj.addProperty("App::PropertyDistance", "Thick", "BeamSplitter",
+            "Thickness of beam splitter").Thick = beamSplitter.Thick/self.fact
+        obj.addProperty("App::PropertyString", "N", "BeamSplitter",
+            "Optical index").N = str(beamSplitter.N)
+        obj.addProperty("App::PropertyDistance", "Dia", "BeamSplitter",
+            "Diameter").Dia = beamSplitter.Dia/.001
+        obj.Placement.Base = Base.Vector(tuple(beamSplitter.HRCenter/self.fact))
 
 class FCLens(FCObject):
     def __init__(self, obj, lens):

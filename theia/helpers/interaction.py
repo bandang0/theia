@@ -3,6 +3,7 @@
 # Provides:
 #	usage
 #	lhelp
+#   shelp
 #	welcome
 #	errorRecursion
 #	errorAtSpecifiedLocation

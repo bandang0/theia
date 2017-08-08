@@ -2,6 +2,7 @@
 
 # Provides:
 #   mirrorShape
+#   beamSplitterShape
 #   lensShape
 #   beamDumpShape
 #   ghostShape
@@ -14,7 +15,7 @@ from ..helpers import settings
 from ..helpers.units import deg
 
 def mirrorShape(mirror):
-    '''Computes the 3D representation of the beam, a shape for a CAD file obj.
+    '''Computes the 3D representation of the mirror, a shape for a CAD file obj.
 
     beam: beam to represent. [GaussianBeam]
 
@@ -25,6 +26,20 @@ def mirrorShape(mirror):
     return Part.makeCylinder((mirror.Dia/2.)/fact, mirror.Thick/fact,
                                 Base.Vector(0,0,0),
                                 Base.Vector(tuple(-mirror.HRNorm)))
+
+def beamSplitterShape(bs):
+    '''Computes the 3D representation of the beamsplitter, for a CAD file obj.
+
+    beam: beam to represent. [GaussianBeam]
+
+    Returns a shape for a CAD file object.
+
+    '''
+    fact = settings.FCFactor    #factor for units in CAD
+    return Part.makeCylinder((bs.Dia/2.)/fact, bs.Thick/fact,
+                                Base.Vector(0,0,0),
+                                Base.Vector(tuple(-bs.HRNorm)))
+
 
 def lensShape(lens):
     '''Computes the 3D representation of the lens, a shape for a CAD file obj.
@@ -40,7 +55,7 @@ def lensShape(lens):
                                 Base.Vector(tuple(-lens.HRNorm)))
 
 def beamDumpShape(beamDump):
-    '''Computes the 3D representation of the beam, a shape for a CAD file obj.
+    '''Computes the 3D representation of the beamdump, for a CAD file obj.
 
     beam: beam to represent. [GaussianBeam]
 

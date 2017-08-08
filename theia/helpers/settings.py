@@ -46,6 +46,10 @@ def init(dic):
             'HRK','ARK','Diameter','Thickness','N','HRr','HRt','ARr','ARt',
             'KeepI', 'Ref']
 
+    inOrder['bs'] = ['X','Y','Z','Theta','Phi','Wedge','Alpha',
+            'HRK','ARK','Diameter','Thickness','N','HRr','HRt','ARr','ARt',
+            'KeepI', 'Ref']
+
     inOrder['th'] = ['X','Y','Z','Theta','Phi','Focal','Diameter',
             'R','T','KeepI','Ref']
 
