@@ -19,12 +19,12 @@
 #   Pick Off Plate (POP)
 
 #Simulation parameters
-order = 0
+order = 1
 threshold = 0.5*mW
 
 #mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Ref
 #Beam Splitter
-mr -20.5*mm, 0., -3.*mm, pi/2., -135.*deg, 380.e-6, 180.*deg, 0., 0., 55.*cm, 65.5*mm, 1.44963, .5, .5, 50.*ppm, 1-50.*ppm, Ref = 'BS'
+bs -20.5*mm, 0., -3.*mm, pi/2., -135.*deg, 380.e-6, 180.*deg, 0., 0., 55.*cm, 65.5*mm, 1.44963, .5, .5, 50.*ppm, 1-50.*ppm, Ref = 'BS'
 
 #West Input
 mr -5.7033, 0., -7.4e-3, (90. + 0.0423)*deg, (180. + 0.0006)*deg, 0., 0., 1./1420, 1./1420, 35.*cm, 20.*cm, 1.44963, 0.986 , 0.014, 300*ppm, 1. - 300*ppm, Ref = 'WI'
@@ -39,10 +39,13 @@ mr 0., 5.8777, -.0049, (90. + 0.0171)*deg, (90. + 0.0002)*deg, 0., 0., 1./1420, 
 mr 0., 3000., 0., 90.*deg, -90.*deg, 0., 0., 1./1650, 0., 35.*cm, 20.*cm, 1.44963, 1-1*ppm, 1*ppm, 50*ppm, 1 - 50*ppm, Ref = 'NE'
 
 #West Compensation Plate
-mr -5.3033, 0., -.0074, (90. + 0.0209)*deg, (180. + 0.0372)*deg, 0., 0., 0., 0., 35.*cm, 35.*mm, 1.44963, 1*ppm, 1-1*ppm, 1*ppm, 1 - 1*ppm, Ref = 'CPW'
+tk -5.3033, 0., -.0074, (90. + 0.0209)*deg, (180. + 0.0372)*deg, 0., 0., 35.*cm, 35.*mm, 1.44963, 1*ppm, 1 - 1*ppm, Ref = 'CPW'
 
 #North Compensation Plate
-mr 0., 5.4777, -0.0049, (90. - 0.0044)*deg, (90. - 0.0372)*deg, 0., 0., 0., 0., 35.*cm, 35.*mm, 1.44963, 1*ppm, 1-1*ppm, 1*ppm, 1 - 1*ppm, Ref = 'CPN'
+tk 0., 5.4777, -0.0049, (90. - 0.0044)*deg, (90. - 0.0372)*deg, 0., 0., 35.*cm, 35.*mm, 1.44963, 1*ppm, 1 - 1*ppm, Ref = 'CPN'
 
 #Pick Off Plate
-mr -0.0204, -5.9399, 0., 89.8*deg, 94.*deg, 1000.e-6, 0., 0., 0., 35.*cm, 35.*mm, 1.44963, 300*ppm, 1-300*ppm, 50*ppm, 1-50*ppm, Ref = 'POP'
+mr -0.0204, -5.9399, 0., 89.8*deg, 94.*deg, 1000.e-6, 0., 0., 0., 35.*cm, 35.*mm, 1.44963, 300*ppm, 1-300*ppm, 50*ppm, 1.-50*ppm, Ref = 'POP'
+
+#Input beam
+bm 1.*mm, 1.*mm, 0., 0., 1064*nm, 13.*W,  -20.5*mm, -7.0, 0., 90.*deg, 90.*deg, Ref = 'In' 
