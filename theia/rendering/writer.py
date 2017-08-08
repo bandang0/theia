@@ -9,6 +9,7 @@ import Part
 from ..helpers import settings
 from ..helpers.tools import shortRef
 from .features import FCMirror, FCBeamSplitter, FCLens, FCBeamDump, FCBeam
+from .features import FCSpecial
 
 def writeToCAD(component, doc):
     '''Write the relevant FreeCAD objects of components in CAD file.
@@ -34,11 +35,13 @@ def writeToCAD(component, doc):
                 'ThickLens': FCLens,
                 'ThinLens': FCLens,
                 'BeamDump': FCBeamDump,
-                'BeamSplitter': FCBeamSplitter}
+                'BeamSplitter': FCBeamSplitter,
+                'Special': FCSpecial}
 
     #First take care of optics
     if component.Name \
-        in ['Mirror', 'ThickLens', 'ThinLens', 'BeamDump', 'BeamSplitter']:
+        in ['Mirror', 'ThickLens', 'ThinLens', 'BeamDump', 'BeamSplitter',
+            'Special']:
         FCDic[component.Name](doc.addObject("Part::FeaturePython",
                             component.Ref), component)
 
@@ -70,8 +73,8 @@ def writeTree(tree, doc):
             if 't' not in tree.Root.Ref and 'r' not in tree.Root.Ref:
                 laserObj = doc.addObject("Part::FeaturePython", 'laser')
                 laserObj.Shape = Part.makeCylinder(0.01/fact, 0.1/fact,
-                                                Base.Vector(0,0,0),
-                                                Base.Vector(tuple(-tree.Root.Dir)))
+                                            Base.Vector(0,0,0),
+                                            Base.Vector(tuple(-tree.Root.Dir)))
                 laserObj.Placement.Base = Base.Vector(tuple(tree.Root.Pos/fact))
 
             #recursively for daughter beams

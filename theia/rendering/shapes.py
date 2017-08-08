@@ -5,7 +5,6 @@
 #   beamSplitterShape
 #   lensShape
 #   beamDumpShape
-#   ghostShape
 #   beamShape
 
 import numpy as np

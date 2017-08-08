@@ -9,9 +9,9 @@ import numpy as np
 from ..helpers import settings
 from ..helpers.geometry import rectToSph
 from ..helpers.units import cm, deg, pi
-from .lens import Lens
+from .optic import Optic
 
-class ThickLens(Lens):
+class ThickLens(Optic):
     '''
 
     ThickLens class.
@@ -19,27 +19,19 @@ class ThickLens(Lens):
     This class represents thick lenses, specified by curvatures and thickness
     instead of focal length.
 
-    *=== Attributes ===*
-    SetupCount (inherited): class attribute, counts all setup components.
-        [integer]
-    OptCount (inherited): class attribute, counts optical components. [integer]
-    Name: class attribute. [string]
-    HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
-    HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
-        towards the outside of the component). [3D vector]
-    Thick (inherited): thickness of the optic, counted in opposite direction to
-        HRNorm. [float]
-    Dia (inherited): diameter of the component. [float]
-    Ref (inherited): reference string (for keeping track with the lab). [string]
-    ARCenter (inherited): center of the 'chord' of the AR surface. [3D vector]
-    ARNorm (inherited): unitary normal to the 'chord' of the AR (always pointing
-        towards the outside of the component). [3D vector]
-    N (inherited): refraction index of the material. [float]
-    HRK, ARK (inherited): curvature of the HR, AR surfaces. [float]
-    HRr, HRt, ARr, ARt (inherited): power reflectance and transmission
-        coefficients of the HR and AR surfaces. [float]
-    KeepI (inherited): whether of not to keep data of rays for interference
-        calculations on the HR. [boolean]
+    Actions:
+        * T on HR: 0
+        * R on HR: + 1
+        * T on AR: 0
+        * R on AR: + 1
+
+    *=== Additional attributes with respect to the Optic class ===*
+
+    None
+
+    *=== Name ===*
+
+    ThickLens
 
     **Note**: the curvature of any surface is positive for a concave surface
     (coating inside the sphere).
@@ -74,6 +66,12 @@ class ThickLens(Lens):
         Returns a ThickLens.
 
         '''
+        # actions
+        TonHR = 0
+        RonHR = 1
+        TonAR = 0
+        RonAR = 1
+
         #check input
         K1 = float(K1)
         K2 = float(K2)
@@ -84,9 +82,12 @@ class ThickLens(Lens):
         Diameter = float(Diameter)
         R = float(R)
         T = float(T)
+        Wedge = 0.
+        Alpha = 0.
 
         # prepare for mother initializer
-        HRNorm = np.array([np.sin(Theta)*np.cos(Phi), np.sin(Theta) * np.sin(Phi),
+        HRNorm = np.array([np.sin(Theta)*np.cos(Phi),
+                        np.sin(Theta)*np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
         Apex1 = np.array([X, Y, Z], dtype = np.float64)
 
@@ -118,15 +119,18 @@ class ThickLens(Lens):
             ARCenter = Apex2
 
         # initialize with base initializer
-        super(Lens, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm, N = N,
+        super(ThickLens, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
+                N = N,
                 HRK = K1, ARK = K2,
                 ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
                 HRCenter = HRCenter, HRNorm = HRNorm, Thickness = Thickness,
-                Diameter = Diameter, Ref = Ref)
+                Diameter = Diameter, Wedge = Wedge, Alpha = Alpha,
+                TonHR = TonHR, RonHR = RonHR, TonAR = TonAR, RonAR = RonAR,
+                Ref = Ref)
 
         #Warnings for console output
         if settings.warning:
-            self.geoCheck("thicklens")
+            self.geoCheck("thick lens")
 
     def lines(self):
         '''Returns the list of lines necessary to print the object.

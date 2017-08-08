@@ -29,7 +29,7 @@ import theia.optics.optic
 import theia.optics.beamdump
 import theia.optics.__init__
 import theia.optics.component
-import theia.optics.lens
+import theia.optics.special
 import theia.rendering
 import theia.rendering.__init__
 import theia.rendering.features

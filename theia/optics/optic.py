@@ -3,6 +3,11 @@
 # Provides:
 #   class Optic
 #       __init__
+#       isHitDics
+#       isHit
+#       hit
+#       hitHR
+#       hitAR
 #       hitSide
 #       apexes
 #       collision
@@ -10,9 +15,10 @@
 #       translate
 
 import numpy as np
-from ..helpers import settings
+from ..helpers import settings, geometry
 from ..helpers.tools import shortRef
 from .component import SetupComponent
+from .beam import GaussianBeam
 
 class Optic(SetupComponent):
     '''
@@ -22,6 +28,17 @@ class Optic(SetupComponent):
     This class is a base class for optics which may interact with Gaussian
     beams and return transmitted and reflected beams (mirrors, lenses, etc.)
 
+    The way an optic interacts with a beam (if it adds to the order of a beam
+    upon reflection or transmission on HR or AR etc) is specified by the
+    action integers RonHR, TonHR, RonAR, TonAR of the optic. A beam which
+    reflects on HR will have its order increased by RonHR, etc.
+
+    All the optics which transmit or reflect beams (beam splitters, mirrors,
+    thin and thick lenses and special optics) inherit from this class. A
+    particular type of optic is characterized by its action integers and by the
+    inputs provided to the constuctors by the users. Everything else of the
+    optics follow the shape of this Optic class.
+
 
     *=== Attributes ===*
     SetupCount (inherited): class attribute, counts all setup components.
@@ -29,13 +46,13 @@ class Optic(SetupComponent):
     OptCount: class attribute, counts optical components. [integer]
     Name: class attribute. [string]
     HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
+    ARCenter (inherited): center of the 'chord' of the AR surface. [3D vector]
     HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
      towards the outside of the component). [3D vector]
     Thick (inherited): thickness of the optic, counted in opposite direction to
         HRNorm. [float]
     Dia (inherited): diameter of the component. [float]
     Ref (inherited): reference string (for keeping track with the lab). [string]
-    ARCenter: center of the 'chord' of the AR surface. [3D vector]
     ARNorm: unitary normal to the 'chord' of the AR (always pointing
      towards the outside of the component). [3D vector]
     N: refraction index of the material. [float]
@@ -44,6 +61,13 @@ class Optic(SetupComponent):
         the HR and AR surfaces. [float]
     KeepI: whether of not to keep data of rays for interference calculations
             on the HR. [boolean]
+    Wedge: wedge angle on the optic. [float]
+    Alpha: angle of the rotation to describe the orientation of the wedge.
+        See the documentation for details on this angle. [float]
+    TonHR, RonHR, TonAR, RonAR: amount by which the orders of the beams will
+        be increased upon relfection or transmission on AR or HR surfaces.
+        These are the principal parameters which distinguish mirrors and lenses
+        and beamsplitters, etc.
 
     **Note**: the curvature of any surface is positive for a concave surface
     (coating inside the sphere).
@@ -62,8 +86,9 @@ class Optic(SetupComponent):
     OptCount = 0   #counts the setup components
     Name = "Optic"
 
-    def __init__(self, ARCenter, ARNorm, N, HRK, ARK, ARr, ARt, HRr,
-                HRt, KeepI, HRCenter, HRNorm, Thickness, Diameter, Ref):
+    def __init__(self, ARCenter, HRCenter, HRNorm, ARNorm, N, HRK, ARK, ARr,
+                ARt, HRr, HRt, KeepI, Thickness, Diameter, Wedge, Alpha,
+                RonHR, TonHR, RonAR, TonAR, Ref):
         '''Optic base initializer.
 
         Parameters are the attributes of the object to construct.
@@ -85,12 +110,414 @@ class Optic(SetupComponent):
         self.ARr = ARr
         self.ARt = ARt
         self.KeepI = KeepI
+        self.Wedge = Wedge
+        self.Alpha = Alpha
+        self.RonHR = RonHR
+        self.TonHR = TonHR
+        self.RonAR = RonAR
+        self.TonAR = TonAR
 
         #call mother initializer
         super(Optic, self).__init__(HRCenter = HRCenter, HRNorm = HRNorm,
                 Ref = Ref, Thickness = Thickness,
                 Diameter = Diameter, ARCenter = ARCenter)
         Optic.OptCount = Optic.OptCount + 1
+
+    def isHitDics(self, beam):
+        '''Determine the dictionaries to evaluate if a beam hits the optic.
+
+        Uses the line***Inter functions from the geometry module to calculate
+        the dictionaries of data on interaction with HR and AR and side of
+        optics.
+
+        Returns a tuple of 3 dictionaries with keys:
+            'isHit': whether the optic is hit by the beam. [bool]
+            'intersection point': 3D point where the beam impacts.
+                [3D np-array]
+            'distance': distance from beam origin to interaction point. [float]
+        '''
+
+        # get impact parameters on HR, AR and side:
+        if np.abs(self.HRK) > 0.:
+            HRDict = geometry.lineSurfInter(beam.Pos,
+                                        beam.Dir, self.HRCenter,
+                                        self.HRK*self.HRNorm/np.abs(self.HRK),
+                                        np.abs(self.HRK),
+                                        self.Dia)
+        else:
+            HRDict = geometry.linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
+                                        self.HRNorm, self.Dia)
+
+        if np.abs(self.ARK) > 0.:
+            ARDict = geometry.lineSurfInter(beam.Pos,
+                                        beam.Dir, self.ARCenter,
+                                        self.ARK*self.ARNorm/np.abs(self.ARK),
+                                        np.abs(self.ARK),
+                                        self.Dia/np.cos(self.Wedge))
+        else:
+            ARDict = geometry.linePlaneInter(beam.Pos, beam.Dir, self.ARCenter,
+                                        self.ARNorm,
+                                        self.Dia/np.cos(self.Wedge))
+
+        SideDict = geometry.lineCylInter(beam.Pos, beam.Dir,
+                                    self.HRCenter, self.HRNorm,
+                                    self.Thick, self.Dia)
+
+        return (HRDict, ARDict, SideDict)
+
+    def isHit(self, beam):
+        '''Determine if a beam hits the Optic.
+
+        This is a function uses the dictionaries provided by isHitDics to
+        find the closest face hit by the beam.
+
+        beam: incoming beam. [GaussianBeam]
+
+        Returns a dictionary with keys:
+            'isHit': whether the beam hits the optic. [boolean]
+            'intersection point': point in space where it is first hit.
+                    [3D vector]
+            'face': to indicate which face is first hit, can be 'HR', 'AR' or
+                'Side'. [string]
+            'distance': geometrical distance from beam origin to impact. [float]
+
+        '''
+        noInterDict = {'isHit': False,
+                        'intersection point': np.array([0., 0., 0.],
+                                                    dtype=np.float64),
+                        'face': None,
+                        'distance': 0.}
+
+        # Get isHit dictionaries
+        Dics = self.isHitDics(beam)
+        HRDict = Dics[0]
+        ARDict = Dics[1]
+        SideDict = Dics[2]
+
+        # face tags
+        HRDict['face'] = 'HR'
+        ARDict['face'] = 'AR'
+        SideDict['face'] = 'Side'
+
+        # determine first hit
+        hitFaces = filter(lambda dic: dic['isHit'], [HRDict, ARDict, SideDict])
+
+        if len(hitFaces) == 0:
+            return noInterDict
+
+        dist = hitFaces[0]['distance']
+        j=0
+
+        for i in range(len(hitFaces)):
+            if hitFaces[i]['distance'] < dist:
+                dist = hitFaces[i]['distance']
+                j=i
+
+        return {'isHit': True,
+                'intersection point': hitFaces[j]['intersection point'],
+                'face': hitFaces[j]['face'],
+                'distance': hitFaces[j]['distance']
+                }
+
+    def hit(self, beam, order, threshold):
+        '''Compute the refracted and reflected beams after interaction.
+
+        The beams returned are those selected after the order and threshold
+        criterion.
+
+        beam: incident beam. [GaussianBeam]
+        order: maximum strayness of daughter beams, which are not returned if
+            their strayness is over this order. [integer]
+        threshold: idem for the power of the daughter beams. [float]
+
+        Returns a dictionary of beams with keys:
+            't': refracted beam. [GaussianBeam]
+            'r': reflected beam. [GaussianBeam]
+
+        '''
+        # get impact parameters and update beam
+        dic = self.isHit(beam)
+        beam.Length = dic['distance']
+        beam.OptDist = beam.N * beam.Length
+        beam.TargetOptic = self.Ref
+        beam.TargetFace = dic['face']
+        endSize = beam.width(beam.Length)
+        beam.TWx = endSize[0]
+        beam.TWy = endSize[1]
+
+        if dic['face'] == 'HR':
+            return self.hitHR(beam, dic['intersection point'], order, threshold)
+        elif dic['face'] == 'AR':
+            return self.hitAR(beam, dic['intersection point'], order, threshold)
+        else:
+            return self.hitSide(beam)
+
+    def hitHR(self, beam, point, order, threshold):
+        '''Compute the daughter beams after interaction on HR at point.
+
+        beam: incident beam. [GaussianBeam]
+        point: point in space of interaction. [3D vector]
+        order: maximum strayness of daughter beams, which are not returned if
+            their strayness is over this order. [integer]
+        threshold: idem for the power of the daughter beams. [float]
+
+        Returns a dictionary of beams with keys:
+            't': refracted beam. [GaussianBeam]
+            'r': reflected beam. [GaussianBeam]
+
+        '''
+
+        ans = {}
+        d = np.linalg.norm(point - beam.Pos)
+        # Calculate the local normal in opposite direction
+        if self.HRK == 0.:
+            localNorm = self.HRNorm
+        else:
+            try:
+                theta = np.arcsin(self.Dia * self.HRK/2.)   #undertending angle
+            except FloatingPointError:
+                theta = pi/2.
+
+            sphereC = self.HRCenter + np.cos(theta)*self.HRNorm/self.HRK
+            localNorm = sphereC - point
+            localNorm = localNorm/np.linalg.norm(localNorm)
+
+        if np.dot(beam.Dir, localNorm) > 0.:
+            localNorm = - localNorm
+            K = np.abs(self.HRK)
+        else:
+            K = -np.abs(self.HRK)
+
+        # determine whether we're entering or exiting the substrate
+        if np.dot(beam.Dir, self.HRNorm) < 0.:
+            #entering
+            n1 = beam.N
+            n2 = self.N
+        else:
+            #exiting
+            n1 = self.N
+            n2 = 1.
+
+        # daughter directions
+        dir2 = geometry.newDir(beam.Dir, localNorm, n1, n2)
+
+        #warn on total reflection
+        if dir2['TR'] and settings.info \
+                and (beam.N == 1. or not settings.short):
+            print "theia: Info: Total reflection of %s on HR of %s." \
+                    %(beam.Ref if not settings.short else shortRef(beam.Ref),
+                                                                    self.Ref)
+
+        # if there is no refracted
+        if beam.P * self.HRt < threshold\
+            or beam.StrayOrder + self.TonHR > order\
+            or dir2['t'] is None:
+            ans['t'] = None
+
+        # if there is no reflected
+        if beam.P * self.HRr < threshold\
+            or beam.StrayOrder + self.RonHR > order:
+            ans['r'] = None
+
+        # we're done if there are two Nones
+        if len(ans) == 2:
+            #warn if its due to power
+            if settings.info\
+                and (beam.P * self.HRt < threshold\
+                    or beam.P * self.HRr < threshold)\
+                and (beam.N == 1. or not settings.short):
+                print ("theia: Info: Reached power threshold by interaction"\
+                +" (%s on %s, HR).") %(beam.Ref\
+                    if not settings.short else shortRef(beam.Ref), self.Ref)
+            return ans
+
+        # Calculate new basis
+        if not 'r' in ans:   # for reflected
+            Uxr, Uyr = geometry.basis(dir2['r'])
+            Uzr = dir2['r']
+
+        if not 't' in ans:   # for refracted
+            Uxt, Uyt = geometry.basis(dir2['t'])
+            Uzt = dir2['t']
+
+        Lx, Ly = geometry.basis(localNorm)
+
+        # Calculate daughter curv tensors
+        C = np.array([[K, 0.], [0, K]])
+        Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
+                        [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
+        Qi = beam.Q(d)
+        Kit = np.transpose(Ki)
+        Xi = np.dot(np.dot(Kit, Qi), Ki)
+
+        if not 't' in ans:
+            Kt = np.array([[np.dot(Uxt, Lx), np.dot(Uxt, Ly)],
+                        [np.dot(Uyt, Lx), np.dot(Uyt, Ly)]])
+            Ktt = np.transpose(Kt)
+            Ktinv = np.linalg.inv(Kt)
+            Kttinv = np.linalg.inv(Ktt)
+            Xt = (np.dot(localNorm, beam.Dir) -n2*np.dot(localNorm, Uzt)/n1) * C
+            Qt = n1*np.dot(np.dot(Kttinv, Xi - Xt), Ktinv)/n2
+
+        if not 'r' in ans:
+            Kr = np.array([[np.dot(Uxr, Lx), np.dot(Uxr, Ly)],
+                        [np.dot(Uyr, Lx), np.dot(Uyr, Ly)]])
+            Krt = np.transpose(Kr)
+            Krinv = np.linalg.inv(Kr)
+            Krtinv = np.linalg.inv(Krt)
+            Xr = (np.dot(localNorm, beam.Dir) - np.dot(localNorm, Uzr)) * C
+            Qr = np.dot(np.dot(Krtinv, Xi - Xr), Krinv)
+
+        # Create new beams
+        if not 'r' in ans:
+            ans['r'] = GaussianBeam(Q = Qr,
+                    Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
+                    N = n1, Wl = beam.Wl, P = beam.P * self.HRr,
+                    StrayOrder = beam.StrayOrder + self.RonHR,
+                    Ref = beam.Ref + 'r',
+                    Optic = self.Ref, Face = 'HR',
+                    Length = 0., OptDist = 0.)
+
+        if not 't' in ans:
+            ans['t'] = GaussianBeam(Q = Qt, Pos = point,
+                Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
+                P = beam.P * self.HRt,
+                StrayOrder = beam.StrayOrder + self.TonHR,
+                Ref = beam.Ref + 't', Optic = self.Ref, Face = 'HR',
+                Length = 0., OptDist = 0.)
+
+        return ans
+
+    def hitAR(self, beam, point, order, threshold):
+        '''Compute the daughter beams after interaction on AR at point.
+
+        beam: incident beam. [GaussianBeam]
+        point: point in space of interaction. [3D vector]
+        order: maximum strayness of daughter beams, which are not returned if
+            their strayness is over this order. [integer]
+        threshold: idem for the power of the daughter beams. [float]
+
+        Returns a dictionary of beams with keys:
+            't': refracted beam. [GaussianBeam]
+            'r': reflected beam. [GaussianBeam]
+
+        '''
+
+        ans = {}
+        d = np.linalg.norm(point - beam.Pos)
+        # Calculate the local normal
+        if self.ARK == 0.:
+            localNorm = self.ARNorm
+        else:
+            try:
+                theta = np.arcsin(self.Dia * self.ARK/2.)   #undertending angle
+            except FloatingPointError:
+                theta = pi/2.
+            sphereC = self.ARCenter + np.cos(theta)*self.ARNorm/self.ARK
+            localNorm = sphereC - point
+            localNorm = localNorm/np.linalg.norm(localNorm)
+
+        if np.dot(beam.Dir, localNorm) > 0.:
+            localNorm = - localNorm
+            K = np.abs(self.ARK)
+        else:
+            K = - np.abs(self.ARK)
+        # determine whether we're entering or exiting the substrate
+        if np.dot(beam.Dir, self.ARNorm) < 0.:
+            #entering
+            n1 = beam.N
+            n2 = self.N
+        else:
+            #exiting
+            n1 = self.N
+            n2 = 1.
+
+        # daughter directions
+        dir2 = geometry.newDir(beam.Dir, localNorm, n1, n2)
+
+        #warn on total reflection
+        if dir2['TR'] and settings.info \
+                and (beam.N == 1. or not settings.short):
+            print "theia: Info: Total reflection of %s on AR of %s." \
+                    %(beam.Ref if not settings.short else shortRef(beam.Ref),
+                                                                    self.Ref)
+
+        # if there is no refracted
+        if beam.P * self.ARt < threshold\
+            or beam.StrayOrder + self.TonAR > order\
+            or dir2['t'] is None:
+            ans['t'] = None
+
+        # if there is no reflected
+        if beam.P * self.ARr < threshold\
+            or beam.StrayOrder + self.RonAR > order:
+            ans['r'] = None
+
+        # we're done if there are two Nones
+        if len(ans) == 2:
+            if settings.info  \
+                    and (beam.N == 1. or not settings.short):
+                print ("theia: Info: Reached leaf of tree by interaction"\
+                +" (%s on %s, HR).") %(beam.Ref\
+                    if not settings.short else shortRef(beam.Ref), self.Ref)
+            return ans
+
+        # Calculate new basis
+        if not 'r' in ans:   # for reflected
+            Uxr, Uyr = geometry.basis(dir2['r'])
+            Uzr = dir2['r']
+
+        if not 't' in ans:   # for refracted
+            Uxt, Uyt = geometry.basis(dir2['t'])
+            Uzt = dir2['t']
+
+        Lx, Ly = geometry.basis(localNorm)
+
+        # Calculate daughter curv tensors
+        C = np.array([[K, 0.], [0, K]])
+        Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
+                        [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
+        Qi = beam.Q(d)
+        Kit = np.transpose(Ki)
+        Xi = np.dot(np.dot(Kit, Qi), Ki)
+
+        if not 't' in ans:
+            Kt = np.array([[np.dot(Uxt, Lx), np.dot(Uxt, Ly)],
+                            [np.dot(Uyt, Lx), np.dot(Uyt, Ly)]])
+            Ktt = np.transpose(Kt)
+            Ktinv = np.linalg.inv(Kt)
+            Kttinv = np.linalg.inv(Ktt)
+            Xt = (np.dot(localNorm, beam.Dir) -n2*np.dot(localNorm, Uzt)/n1) * C
+            Qt = n1*np.dot(np.dot(Kttinv, Xi - Xt), Ktinv)/n2
+
+        if not 'r' in ans:
+            Kr = np.array([[np.dot(Uxr, Lx), np.dot(Uxr, Ly)],
+                            [np.dot(Uyr, Lx), np.dot(Uyr, Ly)]])
+            Krt = np.transpose(Kr)
+            Krinv = np.linalg.inv(Kr)
+            Krtinv = np.linalg.inv(Krt)
+            Xr = (np.dot(localNorm, beam.Dir) - np.dot(localNorm, Uzr)) * C
+            Qr = np.dot(np.dot(Krtinv, Xi - Xr), Krinv)
+
+        # Create new beams
+        if not 'r' in ans:
+            ans['r'] = GaussianBeam(Q = Qr,
+                    Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
+                    N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
+                    StrayOrder = beam.StrayOrder + self.RonAR,
+                    Ref = beam.Ref + 'r',
+                    Optic = self.Ref, Face = 'AR',
+                    Length = 0., OptDist = 0.)
+
+        if not 't' in ans:
+            ans['t'] = GaussianBeam(Q = Qt, Pos = point,
+                Dir = Uzt, Ux = Uxt, Uy = Uyt, N = n2, Wl = beam.Wl,
+                P = beam.P * self.ARt,
+                StrayOrder = beam.StrayOrder + self.TonAR,
+                Ref = beam.Ref + 't', Optic = self.Ref, Face = 'AR',
+                Length = 0., OptDist = 0.)
+
+        return ans
 
     def hitSide(self, beam):
         '''Compute the daughter beams after interaction on Side at point.
@@ -125,13 +552,8 @@ class Optic(SetupComponent):
         if self.ARK == 0.:
             apex2 = self.ARCenter
         else:
-            if self.Name == 'Mirror':
-                #ARdiameter different if wedge!
-                wedge = self.Wedge
-            else:
-                wedge = 0.
             try:    #same
-                theta2 = np.arcsin(self.Dia * self.ARK/(2.*np.cos(wedge)))
+                theta2 = np.arcsin(self.Dia * self.ARK/(2.*np.cos(self.Wedge)))
             except FloatingPointError:
                 theta2 = np.pi/2.
             apex2 = self.ARCenter - (1-np.cos(theta2))*self.ARNorm/self.ARK

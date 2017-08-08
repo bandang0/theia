@@ -25,6 +25,8 @@ class SetupComponent(object):
     SetupCount: class attribute, counts setup components. [integer]
     HRCenter: center of the principal face of the component in space.
         [3D vector]
+    ARCenter: center of the secondary face of the component in space.
+        [3D vector]
     HRNorm: normal unitary vector the this principal face, supposed to point
         outside the media. [3D vector]
     Thick: thickness of the component, counted in opposite direction to

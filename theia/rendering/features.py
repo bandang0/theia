@@ -3,6 +3,7 @@
 # Provides:
 #   class FCObject
 #   class FCMirror
+#   class FCSpecial
 #   class FCBeamSplitter
 #   class FCLens
 #   class FCBeamDump
@@ -42,6 +43,32 @@ class FCMirror(FCObject):
         obj.addProperty("App::PropertyDistance", "Dia", "Mirror",
                 "Diameter").Dia = mirror.Dia/.001
         obj.Placement.Base = Base.Vector(tuple(mirror.HRCenter/self.fact))
+
+class FCSpecial(FCObject):
+    def __init__(self, obj, opt):
+        super(FCSpecial, self).__init__(obj)
+        obj.Shape = mirrorShape(opt)
+        obj.addProperty("App::PropertyString", "Wedge", "Special",
+                "Wedge of the optic").Wedge = str(opt.Wedge/deg) + ' deg'
+        obj.addProperty("App::PropertyString", "HRK", "Special",
+                "HR curvature").HRK = str(opt.HRK) + ' m^-1'
+        obj.addProperty("App::PropertyString", "ARK", "Special",
+                "AR curvature").ARK = str(opt.ARK) + ' m^-1'
+        obj.addProperty("App::PropertyDistance", "Thick", "Special",
+                "Thickness of optic").Thick = opt.Thick/self.fact
+        obj.addProperty("App::PropertyString", "N", "Special",
+                "Optical index").N = str(opt.N)
+        obj.addProperty("App::PropertyDistance", "Dia", "Special",
+                "Diameter").Dia = opt.Dia/.001
+        obj.addProperty("App::PropertyString", "TonHR", "Action",
+                "Action for T on HR").TonHR = '+' + str(opt.TonHR)
+        obj.addProperty("App::PropertyString", "RonHR", "Action",
+                "Action for R on HR").RonHR = '+' + str(opt.RonHR)
+        obj.addProperty("App::PropertyString", "TonAR", "Action",
+                "Action for T on AR").TonAR = '+' + str(opt.TonAR)
+        obj.addProperty("App::PropertyString", "RonAR", "Action",
+                "Action for R on AR").RonAR = '+' + str(opt.RonAR)
+        obj.Placement.Base = Base.Vector(tuple(opt.HRCenter/self.fact))
 
 class FCBeamSplitter(FCObject):
     def __init__(self, obj, beamSplitter):

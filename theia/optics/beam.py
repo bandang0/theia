@@ -13,6 +13,7 @@
 #       width
 #       waistSize
 #       gouy
+#       initGaussianData
 #       translate
 #   userGaussianBeam
 

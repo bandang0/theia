@@ -23,6 +23,7 @@ from ..optics.thinlens import ThinLens
 from ..optics.thicklens import ThickLens
 from ..optics.mirror import Mirror
 from ..optics.beamsplitter import BeamSplitter
+from ..optics.special import Special
 from ..optics.ghost import Ghost
 from ..tree import beamtree
 from . import parser
@@ -129,6 +130,9 @@ class Simulation(object):
             elif uple[0] == 'mr':
                 self.OptList.append(Mirror(**uple[1]))
                 self.OptList[len(self.OptList)-1].translate(**translateDic)
+            elif uple[0] == 'sp':
+                self.OptList.append(Special(**uple[1]))
+                self.OptList[len(self.OptList)-1].translate(**translateDic)
             elif uple[0] == 'bs':
                 self.OptList.append(BeamSplitter(**uple[1]))
                 self.OptList[len(self.OptList)-1].translate(**translateDic)
@@ -155,7 +159,7 @@ class Simulation(object):
         No return value.
         '''
         #warn if threshold is negative or order is inf
-        if settings.warning and self.Threshold < 0.:
+        if settings.warning and self.Threshold <= 0.:
             print "theia: Warning: Running simulation with negative threshold,"\
             + " termination not guaranteed."
 

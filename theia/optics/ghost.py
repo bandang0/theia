@@ -31,6 +31,8 @@ class Ghost(SetupComponent):
     Name: class attribute. [string]
     HRCenter (inherited): center of the principal face of the Ghost in space.
         [3D vector]
+    ARCenter (inherited): center of the secondary face of the Ghost in space.
+        [3D vector]
     HRnorm (inherited): normal unitary vector the this principal face,
         supposed to point outside the media. [3D vector]
     Thick (inherited): thickness of the dump, counted in opposite direction to
@@ -53,7 +55,7 @@ class Ghost(SetupComponent):
         Diameter = float(Diameter)
 
         # prepare for mother initializer
-        Norm = np.array([np.sin(Theta)*np.cos(Phi),
+        Norm = np.array([np.sin(Theta) * np.cos(Phi),
                         np.sin(Theta) * np.sin(Phi),
                         np.cos(Theta)], dtype = np.float64)
 

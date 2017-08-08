@@ -232,10 +232,10 @@ def hang():
         print "\nHere's the word so far: %s" % toPrint
 
     rules = """
-        This is hangman! I'm going to pick a word and you're going to have %d tries
-        to guess the letters in the word. You can also try to guess the entire
-        word. Along the way I'll show you the letters you've already tried and the
-        letters you've already guessed in the word.
+    This is hangman! I'm going to pick a word and you're going to have %d tries
+    to guess the letters in the word. You can also try to guess the entire
+    word. Along the way I'll show you the letters you've already tried and the
+    letters you've already guessed in the word.
         """ % maxTries
 
     # welcome
@@ -367,7 +367,8 @@ def pong():
             if self.body[-1][0] == HEIGHT-2 :
                 self.body.insert(len(self.body), [1, self.body[-1][1]])
             else:
-                self.body.insert(len(self.body), [self.body[-1][0]+1, self.body[-1][1]])
+                self.body.insert(len(self.body),
+                [self.body[-1][0]+1,self.body[-1][1]])
             self.update_bounce()
             #win.addch(self.body[-1][0], self.body[-1][1], '|')
 
@@ -535,7 +536,8 @@ def pong():
                 continue
         else:
             win.addch(ball.position[0], ball.position[1], ' ')
-            ball.position = [ball.position[0]+ball.coef, ball.position[1]+ball.dir]
+            ball.position = [ball.position[0]+ball.coef,
+            ball.position[1]+ball.dir]
             if ball.position[0] < 1:
                 ball.position[0] = 1
             elif ball.position[0] > HEIGHT-2:
@@ -549,13 +551,16 @@ def pong():
         if player1.hit_score == score_max-1:
             winer = player1
             looser = player2
-            winer_message = '{} has defeated {} {}-{}'.format(winer.name, looser.name,
-                                                    winer.hit_score+1, looser.hit_score)
+            winer_message = '{} has defeated {} {}-{}'.format(winer.name,
+                    looser.name,
+                    winer.hit_score+1, looser.hit_score)
         elif player2.hit_score == score_max-1:
             winer = player2
             looser = player1
-            winer_message = '{} has defeated {} {}-{}'.format(winer.name, looser.name,
-                                                    winer.hit_score+1, looser.hit_score)
+            winer_message =\
+            '{} has defeated{}{}-{}'.format(winer.name,looser.name,
+                                                    winer.hit_score+1,
+                                                    looser.hit_score)
 
     curses.endwin()
     print('---------------------------')
@@ -832,7 +837,7 @@ def pendu():
 
         elif choix == afficheScores:
             afficher_scores(scores)
-            supprimer_score = raw_input("Would like to delete a score? (y/N) : ")
+            supprimer_score = raw_input("Would like to delete a score? (y/N): ")
             supprimer_score = supprimer_score.lower()
             if supprimer_score == 'y':
                 utilisateur_a_supprimer = raw_input(

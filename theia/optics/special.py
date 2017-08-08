@@ -1,34 +1,32 @@
-'''Defines the BeamSplitter class for theia.'''
+'''Defines the Special class for theia.'''
 
 # Provides:
-#   class BeamSplitter
+#   class Special
 #       __init__
 #       lines
 
 import numpy as np
-from ..helpers import settings
+from ..helpers import geometry, settings
 from ..helpers.units import deg, cm, pi
 from .optic import Optic
 
-class BeamSplitter(Optic):
+class Special(Optic):
     '''
 
-    Beamsplitter class.
+    Special class.
 
-    This class represents beam splitters composed of two faces (HR, AR)
-    and with a wedge angle. These are the objects with which the beams will
-    interact during the ray tracing. Please see the documentation for details
-    on the geometric construction of these optics.
-
-    Beam Splitters behave exactly like mirrors, except that:
-        * The default values for transmittances and reflectivities are different
-        * Beam splitters never increase the order upon interaction of beams.
+    This class represents general optics, as their actions on R and T are left
+    to the user to input. They are useful for special optics which are neither
+    reflective nor transmissive.
 
     Actions:
-        * T on HR: 0
-        * R on HR: 0
-        * T on AR: 0
-        * R on AR: 0
+        * T on HR: user input
+        * R on HR: user input
+        * T on AR: user input
+        * R on AR: user input
+
+    **Note**: by default the actions of these objects are those of
+    beamsplitters (0, 0, 0, 0)
 
     *=== Additional attributes with respect to the Optic class ===*
 
@@ -36,7 +34,7 @@ class BeamSplitter(Optic):
 
     *=== Name ===*
 
-    BeamSplitter
+    Special
 
     **Note**: the curvature of any surface is positive for a concave surface
     (coating inside the sphere).
@@ -52,25 +50,26 @@ class BeamSplitter(Optic):
 
     '''
 
-    Name = "BeamSplitter"
+    Name = "Special"
     def __init__(self, Wedge = 0., Alpha = 0., X = 0., Y = 0., Z = 0.,
                 Theta = pi/2., Phi = 0., Diameter = 10.e-2,
-                HRr = .5, HRt = .5, ARr = .1, ARt = .9,
-                HRK = 0., ARK = 0, Thickness = 2.e-2,
-                N = 1.4585, KeepI = False,  Ref = None):
-        '''BeamSplitter initializer.
+                HRr = .99, HRt = .01, ARr = .1, ARt = .9,
+                HRK = 0.01, ARK = 0, Thickness = 2.e-2,
+                N = 1.4585, KeepI = False,
+                RonHR = 0, TonHR = 0, RonAR = 0, TonAR = 0,
+                Ref = None):
+        '''Special optic initializer.
 
         Parameters are the attributes.
 
-        Returns a beam splitter.
+        Returns a special optic.
 
         '''
-
         # actions
-        TonHR = 0
-        RonHR = 0
-        TonAR = 0
-        RonAR = 0
+        TonHR = int(TonHR)
+        RonHR = int(RonHR)
+        TonAR = int(TonAR)
+        RonAR = int(RonAR)
 
         # Initialize input data
         N = float(N)
@@ -103,7 +102,7 @@ class BeamSplitter(Optic):
                         + np.sin(Wedge) * (np.cos(Alpha) * a\
                                             + np.sin(Alpha) * b)
 
-        super(BeamSplitter, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
+        super(Special, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
         N = N, HRK = HRK, ARK = ARK, ARr = ARr, ARt = ARt, HRr = HRr, HRt = HRt,
         KeepI = KeepI, HRCenter = HRCenter, HRNorm = HRNorm,
         Thickness = Thickness, Diameter = Diameter,
@@ -113,12 +112,14 @@ class BeamSplitter(Optic):
 
         #Warnings for console output
         if settings.warning:
-            self.geoCheck("beam splitter")
+            self.geoCheck("mirror")
 
     def lines(self):
         '''Returns the list of lines necessary to print the object.'''
         ans = []
-        ans.append("BeamSplitter: %s {" %str(self.Ref))
+        ans.append("Special: %s {" %str(self.Ref))
+        ans.append("TonHR, RonHR: %s, %s" %(str(self.TonHR), str(self.RonHR)))
+        ans.append("TonAR, RonAR: %s, %s" %(str(self.TonAR), str(self.RonAR)))
         ans.append("Thick: %scm" %str(self.Thick/cm))
         ans.append("Diameter: %scm" %str(self.Dia/cm) )
         ans.append("Wedge: %sdeg" %str(self.Wedge/deg) )

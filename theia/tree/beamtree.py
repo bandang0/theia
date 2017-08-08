@@ -1,7 +1,7 @@
 '''Defines the BeamTree class for theia.'''
 
 # Provides:
-#   class OpticalComponent
+#   class BeamTree
 #       __init__
 #       __str__
 #       lines
@@ -170,7 +170,7 @@ def treeOfBeam(srcBeam, optList, order, threshold):
         return BeamTree()
 
     # stuff used for clipping
-    clippingOpts = ["Mirror", "ThinLens", "ThickLens", "BeamDump"]
+    clippingOpts = ["Mirror", "ThinLens", "ThickLens", "BeamDump", "Special"]
     waist = max(srcBeam.IWx,
                 srcBeam.IWy)
 

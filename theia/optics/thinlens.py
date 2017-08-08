@@ -9,9 +9,9 @@ import numpy as np
 from ..helpers import settings
 from ..helpers.units import mm, cm, deg, pi
 from ..helpers.geometry import rectToSph
-from .lens import Lens
+from .optic import Optic
 
-class ThinLens(Lens):
+class ThinLens(Optic):
     '''
 
     ThinLens class.
@@ -20,28 +20,19 @@ class ThinLens(Lens):
     lengths, diameter, position and orientation. Only the initializer and the
     printing distinguishes thin lenses (in implementation) from other lenses.
 
-    *=== Attributes ===*
-    SetupCount (inherited): class attribute, counts all setup components.
-        [integer]
-    OptCount (inherited): class attribute, counts optical components. [integer]
-    Name: class attribute. [string]
-    HRCenter (inherited): center of the 'chord' of the HR surface. [3D vector]
-    HRNorm (inherited): unitary normal to the 'chord' of the HR (always pointing
-        towards the outside of the component). [3D vector]
-    Thick (inherited): thickness of the optic, counted in opposite direction to
-        HRNorm. [float]
-    Dia (inherited): diameter of the component. [float]
-    Ref (inherited): reference string (for keeping track with the lab). [string]
-    ARCenter (inherited): center of the 'chord' of the AR surface. [3D vector]
-    ARNorm (inherited): unitary normal to the 'chord' of the AR (always pointing
-        towards the outside of the component). [3D vector]
-    N (inherited): refraction index of the material. [float]
-    HRK, ARK (inherited): curvature of the HR, AR surfaces. [float]
-    HRr, HRt, ARr, ARt (inherited): power reflectance and transmission
-        coefficients of the HR and AR surfaces. [float]
-    KeepI (inherited): whether of not to keep data of rays for interference
-        calculations on the HR. [boolean]
-    Focal: Focal length of the lens. [float]
+    Actions:
+        * T on HR: 0
+        * R on HR: + 1
+        * T on AR: 0
+        * R on AR: + 1
+
+    *=== Additional attributes with respect to the Optic class ===*
+
+    Focal: focal length of the lens  as given in initializer. [float]
+
+    *=== Name ===*
+
+    ThinLens
 
     **Note**: the curvature of any surface is positive for a concave surface
     (coating inside the sphere).
@@ -54,6 +45,7 @@ class ThinLens(Lens):
      H***A                               H*********A
      *****                               ********
     *******                             *******
+
 
     '''
 
@@ -69,6 +61,12 @@ class ThinLens(Lens):
         Returns a ThinLens.
 
         '''
+        # actions
+        TonHR = 0
+        RonHR = 1
+        TonAR = 0
+        RonAR = 1
+
         # initialize focal and check data
         self.Focal = float(Focal)
         Theta = float(Theta)
@@ -76,6 +74,8 @@ class ThinLens(Lens):
         Diameter = float(Diameter)
         R = float(R)
         T = float(T)
+        Wedge = 0.
+        Alpha = 0.
 
         #prepare for mother initializer
         HRNorm = np.array([np.sin(Theta)*np.cos(Phi),
@@ -102,11 +102,14 @@ class ThinLens(Lens):
         ARCenter = Center - Thickness*HRNorm/2.
 
         # initialize with lens mother initializer
-        super(Lens, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm, N = N,
+        super(ThinLens, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
+                N = N,
                 HRK = HRK, ARK = ARK,
                 ARr = R, ARt = T, HRr = R, HRt = T, KeepI = KeepI,
                 HRCenter = HRCenter, HRNorm = HRNorm, Thickness = Thickness,
-                Diameter = Diameter, Ref = Ref)
+                Diameter = Diameter, Wedge = Wedge, Alpha = Alpha,
+                TonHR = TonHR, RonHR = RonHR, TonAR = TonAR, RonAR = RonAR,
+                Ref = Ref)
 
         #warns on geometry
         if settings.warning:

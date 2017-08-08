@@ -1,40 +1,48 @@
 \documentclass[a4paper, landscape]{article}
 
 \input{macro}
-\geometry{left=1cm,
-			right=1cm,
-			top=1cm,
-			bottom=1cm}
+\renewcommand{\tt}[1]{\textcolor{blue}{\texttt{#1}}}
+\newcommand{\grey}[1]{\textcolor{purple}{\it{(#1)}}}
+\geometry{left=.1cm,
+			right=.1cm,
+			top=.3cm,
+			bottom=.3cm}
 
 \title{theia Quick Reference}
 
 \begin{document}
 \begin{center}
-\large \tt{theia} Quick Reference (v. 0.1.2)
+\large \tt{theia} Quick Reference (version 0.1.3)
 \end{center}
 
+\fontsize{9}{9}
 
-
-\begin{tabular}{| p{.6cm} | p{8cm}| p{8cm} | p{8cm} |}
+\begin{tabular}{| p{.4cm} | p{15cm}| p{3cm} | p{8.4cm} |}
 \hline
-\textbf{Key} & \textbf{Input Order} & \textbf{Defaults} & \textbf{Remarks} \\ \hline \hline
-\tt{bo} & \tt{X}, \tt{Y}, \tt{Z} (origin of bench) & \tt{X}, \tt{Y}, \tt{Z}~=~0 & This will shift all the coordinates of the following optics and beams (until the next \tt{bo} line) by the amounts given here. If you want to signify that you're back in the general coordinate system, you can put in a blank \tt{bo} line.\\ \hline
+\textbf{Key} & \textbf{Input Order and defaults} & \textbf{Action on beams} \grey{Increase of strayness for R~on~HR, T~on~HR, R~on~AR, T~on~AR}& \textbf{Remarks} \\ \hline \hline
+\tt{bo} & \tt{X}, \tt{Y}, \tt{Z}~=~0 \grey{origin of bench} & & This will shift all the coordinates of the following optics and beams (until the next \tt{bo} line) by the amounts given here (blank \tt{bo} line to return to general system).\\ \hline
 
-\tt{bm} & \tt{Wx}, \tt{Wy} (waist sizes), \tt{WDistx}, \tt{WDisty} (waist positions from beam origin), \tt{Wl}, \tt{P}, \tt{X}, \tt{Y}, \tt{Z} (position of origin in space), \tt{Theta}, \tt{Phi} (orientation), \tt{Alpha} (rotation of eigenbase for orthogonal beams), \tt{Ref}  & \tt{Wx}~=~1.mm, \tt{Wy}~=~1.mm, \tt{WDistx}~=~0., \tt{WDisty}~=~0., \tt{Wl}~=~1064.nm, \tt{P}~=~1.W, \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0., \tt{Theta}~=~pi/2., \tt{Phi}~=~0., \tt{Alpha}~=~0., \tt{Ref}~=~None & \tt{Alpha = 0.} $\leftrightarrow$ eigen X is $\perp$ to beam direction and has maximum $Z$ component. If direction is $\pm e_Z$ then eigen X is $\pm e_X$\\ \hline
+\tt{bm} &  \tt{Wx}~=~1.mm, \tt{Wy}~=~1.mm \grey{waist sizes}, \tt{WDistx}~=~0., \tt{WDisty}~=~0. \grey{waist positions from beam origin}, \tt{Wl}~=~1064.nm, \tt{P}~=~1.W, \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0. \grey{position of origin in space}, \tt{Theta}~=~pi/2., \tt{Phi}~=~0. \grey{orientation} , \tt{Alpha}~=~0. \grey{rotation of eigenbase for orthogonal beams}, \tt{Ref}~=~None & &\tt{Alpha = 0.} $\leftrightarrow$ eigen X is $\perp$ to beam direction and has maximum $Z$ component. If direction is $\pm e_Z$ then eigen X is $\pm e_X$\\ \hline
 
-\tt{mr} & \tt{X}, \tt{Y}, \tt{Z} (position of center of HR chord), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{Wedge}, \tt{Alpha} (wedge and wedge rotation), \tt{HRK}, \tt{ARK} (curvatures), \tt{Diameter}, \tt{Thickness} (of the construction cylinder), \tt{N}, \tt{HRr}, \tt{HRt}, \tt{ARr}, \tt{ARt} (power reflectances and transmittances), \tt{KeepI},  \tt{Ref} & \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0., \tt{Theta}~=~pi/2., \tt{Phi}~=~0., \tt{Wedge}~=~0., \tt{Alpha}~=~0., \tt{HRK}~=~0.01, \tt{ARK}~=~0., \tt{Diameter}~=~10.cm, \tt{Thickness}~=~2.cm, \tt{N}~=~1.4585, \tt{HRr}~=~.99, \tt{HRt}~=~.01, \tt{ARr}~=~.1, \tt{ARt}~=~.9, \tt{KeepI}~=~False, \tt{Ref}~=~None & Wedges are counted positive if you \textit{add} material when you increase the wedge.\\ \hline
+\tt{mr} &   \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0. \grey{position of center of HR chord}, \tt{Theta}~=~pi/2., \tt{Phi}~=~0. \grey{orientation of HR Norm, pointing out}, \tt{Wedge}~=~0., \tt{Alpha}~=~0. \grey{wedge and wedge rotation}, \tt{HRK}~=~0.01, \tt{ARK}~=~0. \grey{curvatures}, \tt{Diameter}~=~10.cm \grey{of the construction cylinder}, \tt{Thickness}~=~2.cm, \tt{N}~=~1.4585, \tt{HRr}~=~.99, \tt{HRt}~=~.01, \tt{ARr}~=~.1, \tt{ARt}~=~.9 \grey{power reflectances and transmittances}, \tt{KeepI}~=~False, \tt{Ref}~=~None & 0, +1, +1, 0 & Wedges are counted positive if you \textit{add} material when you increase the wedge.\\ \hline
 
-\tt{th} & \tt{X}, \tt{Y}, \tt{Z} (position of center of lens), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{Focal} (focal length),  \tt{Diameter}, \tt{R}, \tt{T} (power reflectance and transmittance), \tt{KeepI}, \tt{Ref} & \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0., \tt{Theta}~=~pi/2., \tt{Phi}~=~0., \tt{Focal}~=~10.cm,  \tt{Diameter}~=~5.cm, \tt{R}~=~.1, \tt{T}~=~.9, \tt{KeepI}~=~False,  \tt{Ref}~=~False & All parameters which are not present here are internally ajusted in order to fit the input \tt{Focal}, \tt{Diameter} and a \tt{N}~=~1.4584 value for the optical index\\ \hline
+\tt{bs} &   \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0. \grey{position of center of HR chord}, \tt{Theta}~=~pi/2., \tt{Phi}~=~0. \grey{orientation of HR Norm, pointing out}, \tt{Wedge}~=~0., \tt{Alpha}~=~0. \grey{wedge and wedge rotation}, \tt{HRK}~=~0., \tt{ARK}~=~0. \grey{curvatures}, \tt{Diameter}~=~10.cm \grey{of the construction cylinder}, \tt{Thickness}~=~2.cm, \tt{N}~=~1.4585, \tt{HRr}~=~.5, \tt{HRt}~=~.5, \tt{ARr}~=~.1, \tt{ARt}~=~.9 \grey{power reflectances and transmittances}, \tt{KeepI}~=~False, \tt{Ref}~=~None & 0, 0, 0, 0 & This is very similar to mirror \tt{bm}, but has diferent default values and never increases the strayness of beams.\\ \hline
 
-\tt{tk} & \tt{X}, \tt{Y}, \tt{Z} (position of apex of HR face of lens), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{K1}, \tt{K2} (curvatures), \tt{Diameter},  \tt{Thickness}, \tt{N}, \tt{R}, \tt{T} (power reflectance and transmittance), \tt{KeepI},\tt{Ref} & \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0., \tt{Theta}~=~pi/2., \tt{Phi}~=~0., \tt{K1}~=~.01, \tt{K2}~=~.001, \tt{Diameter}~=~5.cm,  \tt{Thickness}~=~2.cm, \tt{N}~=~1.4585, \tt{R}~=~.1, \tt{T}~=~.9, \tt{KeepI}~=~False,  \tt{Ref}~=~None & \tt{Thickness}: on optical axis (from apex to apex) \\ \hline
 
-\tt{bd} & \tt{X}, \tt{Y}, \tt{Z} (position of center of HR), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{Diameter},  \tt{Thickness}, \tt{Ref} & \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0., \tt{Theta}~=~pi/2., \tt{Phi}~=~0., \tt{Diameter}~=~5.cm,  \tt{Thickness}~=~2.cm,  \tt{Ref}~=~None & \\ \hline
+\tt{th} &   \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0. \grey{position of center of lens}, \tt{Theta}~=~pi/2., \tt{Phi}~=~0. \grey{orientation of HR Norm, pointing out}, \tt{Focal}~=~10.cm,  \tt{Diameter}~=~5.cm, \tt{R}~=~.1, \tt{T}~=~.9 \grey{power reflectance and transmittance, per surface}, \tt{KeepI}~=~False,  \tt{Ref}~=~False & +1, 0, 0, +1 & All parameters which are not present here are internally adjusted in order to fit the input \tt{Focal}, \tt{Diameter} and a \tt{N}~=~1.4584 value for the optical index\\ \hline
 
-\tt{gh} & \tt{X}, \tt{Y}, \tt{Z} (position of center of HR), \tt{Theta}, \tt{Phi} (orientation of HR Norm, pointing out), \tt{Diameter}, \tt{Ref} & \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0., \tt{Theta}~=~pi/2., \tt{Phi}~=~0., \tt{Diameter}~=~5.cm, \tt{Ref}~=~None & This component does not affect the beams, but just allows to have a new entry in the output file for the beam emerging from the ghost surface. It does not have a 3D rendering object associated. \\ \hline
+\tt{tk} &  \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0. \grey{position of apex of HR face of lens}, \tt{Theta}~=~pi/2., \tt{Phi}~=~0. \grey{orientation of HR Norm, pointing out}, \tt{K1}~=~.01, \tt{K2}~=~.001 \grey{curvatures}, \tt{Diameter}~=~5.cm,  \tt{Thickness}~=~2.cm, \tt{N}~=~1.4585, \tt{R}~=~.1, \tt{T}~=~.9 \grey{power reflectance and transmittance}, \tt{KeepI}~=~False,  \tt{Ref}~=~None & +1, 0, 0, +1 &\tt{Thickness}: on optical axis (from apex to apex). Note that in this case the provided HR center corresponds to the position of the \it{apex} of the HR surface, on the contrary of mirrors. \\ \hline
+
+\tt{sp} &   \tt{RonHR}~=~0, \tt{TonHR}~=~0, \tt{RonAR}~=~0, \tt{TonAR}~=~0 \grey{actions on beams}, \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0. \grey{position of center of HR chord}, \tt{Theta}~=~pi/2., \tt{Phi}~=~0. \grey{orientation of HR Norm, pointing out}, \tt{Wedge}~=~0., \tt{Alpha}~=~0. \grey{wedge and wedge rotation}, \tt{HRK}~=~0.01, \tt{ARK}~=~0. \grey{curvatures}, \tt{Diameter}~=~10.cm, \tt{Thickness}~=~2.cm, \tt{N}~=~1.4585, \tt{HRr}~=~.99, \tt{HRt}~=~.01, \tt{ARr}~=~.1, \tt{ARt}~=~.9 \grey{power reflectances and transmittances}, \tt{KeepI}~=~False, \tt{Ref}~=~None & User defined by \tt{RonHR}, \tt{TonHR}, \tt{RonAR}, \tt{TonAR} & This is the object which allows you to specify exactly the action of each surface on reflected and transmitted beams.\\ \hline
+
+
+\tt{bd} &  \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0. \grey{position of center of HR}, \tt{Theta}~=~pi/2., \tt{Phi}~=~0. \grey{orientation of HR Norm, pointing out}, \tt{Diameter}~=~5.cm,  \tt{Thickness}~=~2.cm,  \tt{Ref}~=~None & Stops all beams & \\ \hline
+
+\tt{gh} &   \tt{X}~=~0., \tt{Y}~=~0., \tt{Z}~=~0. \grey{position of center of HR}, \tt{Theta}~=~pi/2., \tt{Phi}~=~0. \grey{orientation of HR Norm, pointing out}, \tt{Diameter}~=~5.cm, \tt{Ref}~=~None & Transmits beams without modification, no reflected beam &This component does not affect the beams, but just allows to have a new entry in the output file for the beam emerging from the ghost surface. It does not have a 3D rendering object associated. \\ \hline
 \end{tabular}
 
 \begin{multicols}{3}
-\paragraph{Keys.} \tt{bo} (new coordinate origin), \tt{bm} (input beam), \tt{mr} (mirror), \tt{th}  (thin lens), \tt{tk} (thick lens), \tt{bd} (beam dump), \tt{gh} (ghost surface)
+\paragraph{Keys.} \tt{bo} (new coordinate origin), \tt{bm} (input beam), \tt{mr} (mirror), \tt{bs} (beam splitter), \tt{th} (thin lens), \tt{tk} (thick lens), \tt{sp} (special surface), \tt{bd} (beam dump), \tt{gh} (ghost surface)
 \paragraph{Units.}(km, m = 1., cm, mm, um, nm), (kW, W = 1., mW, uW, nW), (THz, GHz, MHz, kHz, Hz = 1., mHz, uHz), (ppm = 1.e-6, rad = 1., deg), pi
 \paragraph{Functions.} sin, cos, tan, arcsin, arccos, arctan, sqrt, exp
 
@@ -46,8 +54,6 @@
 
 \includegraphics[scale=.6]{convention.pdf}
 \includegraphics[scale=.6]{spherical.pdf}
-
-
 
 \end{multicols}
 \end{document}
