@@ -115,6 +115,7 @@ ENV/
 # temporary documentation
 doc/tmp/
 doc/*.pdf
+doc/src/*.pdf
 
 # OptoCAD executables
 *.opt
