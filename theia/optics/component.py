@@ -54,7 +54,7 @@ class SetupComponent(object):
         '''
         # allow empty initializer
         if Ref is None:
-            Ref = "Set%s" %str(SetupComponent.SetupCount)
+            Ref = "Set%s" % str(SetupComponent.SetupCount)
         # initialize data
         self.HRCenter = HRCenter
         self.ARCenter = ARCenter

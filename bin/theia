@@ -43,7 +43,7 @@ parser.add_option('-s', '--short-ouput',
                 action = 'store_true', dest = 'short', default = False)
 
 parser.add_option('-v', '--version',
-				help = 'Print verion of theia and exit.',
+				help = 'Print version of theia and exit.',
 				action = 'store_true', dest = 'askedVersion', default = False)
 
 (options, args) = parser.parse_args(sys.argv)

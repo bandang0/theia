@@ -23,11 +23,10 @@ def refrAngle(theta, n1, n2):
 
         May raise a TotalReflectionError.
     '''
-    try:
+    if np.abs(n1*np.sin(theta)/n2) > 1.
+        raise TotalReflectionError('Total reflection occured.')
+    else:
         return np.arcsin(n1*np.sin(theta)/n2)
-    except FloatingPointError:
-        msg = 'Total reflection occured.'
-        raise TotalReflectionError(msg)
 
 def linePlaneInter(pos, dirV, planeC, normV, diameter):
     '''Computes the intersection between a line and a plane.
@@ -105,12 +104,9 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter):
     if np.abs(kurv) < settings.flatK:
         return linePlaneInter(pos, dirV, chordC, chordNorm, diameter)
 
-
     # find center of curvature of surface:
-    try:
-        theta = np.arcsin(diameter*kurv/2.)  # this is half undertending angle
-    except FloatingPointError:
-        theta = pi/2.
+    theta = np.arcsin(diameter*kurv/2.) if np.abs(diameter*kurv/2.) <= 1.\
+                                else pi/2.  # this is half undertending angle
     sphereC = chordC + np.cos(theta)*chordNorm/kurv
     R = 1/kurv  # radius
     PC = sphereC - pos  # vector from pos to center of curvature
@@ -147,7 +143,7 @@ def lineSurfInter(pos, dirV, chordC, chordNorm, kurv, diameter):
             # the intersection point is on the wrong semi-sphere:
             return noInterDict
 
-        if np.linalg.norm(np.cross(localNorm, chordNorm)) < diameter * kurv/2. :
+        if np.linalg.norm(np.cross(localNorm, chordNorm)) < diameter * kurv/2.:
             # it is on the surface
             return {'isHit': True,
                     'distance': lam2,
@@ -355,10 +351,8 @@ def basis(a):
         return u,v
     else:
         theta = np.arccos(np.dot(a, ez))
-        try:
-            u = ez/np.sin(theta) - a/np.tan(theta)
-        except FloatingPointError:  #tan(pi/2) = inf
-            u = ez
+
+        u = ez/np.sin(theta) - a/np.tan(theta)
         v = np.cross(a, u)
         u = u/np.linalg.norm(u)
         v = v/np.linalg.norm(v)

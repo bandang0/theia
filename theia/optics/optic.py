@@ -163,7 +163,7 @@ class Optic(SetupComponent):
                                     self.HRCenter, self.HRNorm,
                                     self.Thick, self.Dia)
 
-        return (HRDict, ARDict, SideDict)
+        return HRDict, ARDict, SideDict
 
     def isHit(self, beam):
         '''Determine if a beam hits the Optic.
@@ -182,17 +182,9 @@ class Optic(SetupComponent):
             'distance': geometrical distance from beam origin to impact. [float]
 
         '''
-        noInterDict = {'isHit': False,
-                        'intersection point': np.array([0., 0., 0.],
-                                                    dtype=np.float64),
-                        'face': None,
-                        'distance': 0.}
 
         # Get isHit dictionaries
-        Dics = self.isHitDics(beam)
-        HRDict = Dics[0]
-        ARDict = Dics[1]
-        SideDict = Dics[2]
+        HRDict, ARDict, SideDict = self.isHitDics(beam)
 
         # face tags
         HRDict['face'] = 'HR'
@@ -203,20 +195,21 @@ class Optic(SetupComponent):
         hitFaces = filter(lambda dic: dic['isHit'], [HRDict, ARDict, SideDict])
 
         if len(hitFaces) == 0:
-            return noInterDict
+            return {'isHit': False,
+                    'intersection point': np.array([0., 0., 0.],
+                                                dtype=np.float64),
+                    'face': None,
+                    'distance': 0.}
 
-        dist = hitFaces[0]['distance']
-        j=0
-
-        for i in range(len(hitFaces)):
-            if hitFaces[i]['distance'] < dist:
-                dist = hitFaces[i]['distance']
-                j=i
+        ans = hitFaces[0]
+        for dic in hitFaces:
+            if dic['distance'] < ans['distance']:
+                ans = dic
 
         return {'isHit': True,
-                'intersection point': hitFaces[j]['intersection point'],
-                'face': hitFaces[j]['face'],
-                'distance': hitFaces[j]['distance']
+                'intersection point': ans['intersection point'],
+                'face': ans['face'],
+                'distance': ans['distance']
                 }
 
     def hit(self, beam, order, threshold):
@@ -251,6 +244,13 @@ class Optic(SetupComponent):
             return self.hitAR(beam, dic['intersection point'], order, threshold)
         else:
             return self.hitSide(beam)
+        return {
+            'HR': lambda beam: self.hitHR(beam,
+                                dic['intersection point'], order, threshold),
+            'AR': lambda beam: self.hitAR(beam,
+                                dic['intersection point'], order, threshold),
+            'Side': lambda beam: self.hitSide(beam)
+                }[dic['face']](beam)
 
     def hitHR(self, beam, point, order, threshold):
         '''Compute the daughter beams after interaction on HR at point.
@@ -266,21 +266,20 @@ class Optic(SetupComponent):
             'r': reflected beam. [GaussianBeam]
 
         '''
+        ans = dict()
 
-        ans = {}
-        d = np.linalg.norm(point - beam.Pos)
+        # Reference to beam acccording to settings
+        BRef = beam.Ref if not settings.short else shortRef(beam.Ref)
+
         # Calculate the local normal in opposite direction
         if self.HRK == 0.:
             localNorm = self.HRNorm
-        else:
-            try:
-                theta = np.arcsin(self.Dia * self.HRK/2.)   #undertending angle
-            except FloatingPointError:
-                theta = pi/2.
+        else:#undertending angle
+            theta = np.arcsin(self.Dia * self.HRK/2.)\
+                if np.abs(self.Dia * self.HRK/2.) < 1. else pi/2.
 
             sphereC = self.HRCenter + np.cos(theta)*self.HRNorm/self.HRK
-            localNorm = sphereC - point
-            localNorm = localNorm/np.linalg.norm(localNorm)
+            localNorm = (sphereC - point)/np.linalg.norm(sphereC - point)
 
         if np.dot(beam.Dir, localNorm) > 0.:
             localNorm = - localNorm
@@ -305,30 +304,27 @@ class Optic(SetupComponent):
         if dir2['TR'] and settings.info \
                 and (beam.N == 1. or not settings.short):
             print "theia: Info: Total reflection of %s on HR of %s." \
-                    %(beam.Ref if not settings.short else shortRef(beam.Ref),
-                                                                    self.Ref)
+                    % (BRef, self.Ref)
 
         # if there is no refracted
         if beam.P * self.HRt < threshold\
-            or beam.StrayOrder + self.TonHR > order\
-            or dir2['t'] is None:
+                or beam.StrayOrder + self.TonHR > order or dir2['t'] is None:
             ans['t'] = None
 
         # if there is no reflected
         if beam.P * self.HRr < threshold\
-            or beam.StrayOrder + self.RonHR > order:
+                or beam.StrayOrder + self.RonHR > order:
             ans['r'] = None
 
         # we're done if there are two Nones
         if len(ans) == 2:
             #warn if its due to power
             if settings.info\
-                and (beam.P * self.HRt < threshold\
+                    and (beam.P * self.HRt < threshold\
                     or beam.P * self.HRr < threshold)\
-                and (beam.N == 1. or not settings.short):
+                    and (beam.N == 1. or not settings.short):
                 print ("theia: Info: Reached power threshold by interaction"\
-                +" (%s on %s, HR).") %(beam.Ref\
-                    if not settings.short else shortRef(beam.Ref), self.Ref)
+                +" (%s on %s, HR).") %(BRef, self.Ref)
             return ans
 
         # Calculate new basis
@@ -343,6 +339,7 @@ class Optic(SetupComponent):
         Lx, Ly = geometry.basis(localNorm)
 
         # Calculate daughter curv tensors
+        d = np.linalg.norm(point - beam.Pos)
         C = np.array([[K, 0.], [0, K]])
         Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
                         [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
@@ -403,19 +400,20 @@ class Optic(SetupComponent):
 
         '''
 
-        ans = {}
-        d = np.linalg.norm(point - beam.Pos)
+        ans = dict()
+
+        # Reference according to settings
+        beam.Ref if not settings.short else shortRef(beam.Ref)
+
         # Calculate the local normal
         if self.ARK == 0.:
             localNorm = self.ARNorm
-        else:
-            try:
-                theta = np.arcsin(self.Dia * self.ARK/2.)   #undertending angle
-            except FloatingPointError:
-                theta = pi/2.
+        else:   #undertending angle
+            theta = np.arcsin(self.Dia * self.ARK/2.)\
+                if np.abs(self.Dia * self.ARK/2.) < 1. else pi/2.
+
             sphereC = self.ARCenter + np.cos(theta)*self.ARNorm/self.ARK
-            localNorm = sphereC - point
-            localNorm = localNorm/np.linalg.norm(localNorm)
+            localNorm = (sphereC - point)/np.linalg.norm(sphereC - point)
 
         if np.dot(beam.Dir, localNorm) > 0.:
             localNorm = - localNorm
@@ -436,16 +434,14 @@ class Optic(SetupComponent):
         dir2 = geometry.newDir(beam.Dir, localNorm, n1, n2)
 
         #warn on total reflection
-        if dir2['TR'] and settings.info \
+        if dir2['TR'] and settings.info\
                 and (beam.N == 1. or not settings.short):
             print "theia: Info: Total reflection of %s on AR of %s." \
-                    %(beam.Ref if not settings.short else shortRef(beam.Ref),
-                                                                    self.Ref)
+                    % (BRef, self.Ref)
 
         # if there is no refracted
         if beam.P * self.ARt < threshold\
-            or beam.StrayOrder + self.TonAR > order\
-            or dir2['t'] is None:
+            or beam.StrayOrder + self.TonAR > order or dir2['t'] is None:
             ans['t'] = None
 
         # if there is no reflected
@@ -455,11 +451,9 @@ class Optic(SetupComponent):
 
         # we're done if there are two Nones
         if len(ans) == 2:
-            if settings.info  \
-                    and (beam.N == 1. or not settings.short):
+            if settings.info and (beam.N == 1. or not settings.short):
                 print ("theia: Info: Reached leaf of tree by interaction"\
-                +" (%s on %s, HR).") %(beam.Ref\
-                    if not settings.short else shortRef(beam.Ref), self.Ref)
+                +" (%s on %s, HR).") % (BRef, self.Ref)
             return ans
 
         # Calculate new basis
@@ -474,6 +468,7 @@ class Optic(SetupComponent):
         Lx, Ly = geometry.basis(localNorm)
 
         # Calculate daughter curv tensors
+        d = np.linalg.norm(point - beam.Pos)
         C = np.array([[K, 0.], [0, K]])
         Ki = np.array([[np.dot(beam.U[0], Lx), np.dot(beam.U[0], Ly)],
                         [np.dot(beam.U[1], Lx), np.dot(beam.U[1], Ly)]])
@@ -502,12 +497,12 @@ class Optic(SetupComponent):
         # Create new beams
         if not 'r' in ans:
             ans['r'] = GaussianBeam(Q = Qr,
-                    Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
-                    N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
-                    StrayOrder = beam.StrayOrder + self.RonAR,
-                    Ref = beam.Ref + 'r',
-                    Optic = self.Ref, Face = 'AR',
-                    Length = 0., OptDist = 0.)
+                Pos = point, Dir = Uzr, Ux = Uxr, Uy = Uyr,
+                N = n1, Wl = beam.Wl, P = beam.P * self.ARr,
+                StrayOrder = beam.StrayOrder + self.RonAR,
+                Ref = beam.Ref + 'r',
+                Optic = self.Ref, Face = 'AR',
+                Length = 0., OptDist = 0.)
 
         if not 't' in ans:
             ans['t'] = GaussianBeam(Q = Qt, Pos = point,
@@ -529,8 +524,7 @@ class Optic(SetupComponent):
         Returns {'t': None, 'r': None}
 
         '''
-        if settings.info  \
-                and (beam.N == 1. or not settings.short):
+        if settings.info  and (beam.N == 1. or not settings.short):
             print ("theia: Info: Reached leaf of tree by interaction "\
             +"(%s on %s, Side).") %(beam.Ref\
                 if not settings.short else shortRef(beam.Ref), self.Ref)
@@ -541,21 +535,16 @@ class Optic(SetupComponent):
         if self.HRK == 0.:
             apex1 = self.HRCenter
         else:
-            try:    # the arcsin may fail because dia/2. > ROC
-                theta1 = np.arcsin(self.Dia * self.HRK/2.)  #semi angles
-            except FloatingPointError:
-            #if it fails then the whole semisphere is in the mirror and apex
-            # is a radius away from Center.
-                theta1 = np.pi/2.
+            theta = np.arcsin(self.Dia * self.ARK/2.)\
+                if np.abs(self.Dia * self.ARK/2.) < 1. else pi/2.
             apex1 = self.HRCenter - (1-np.cos(theta1))*self.HRNorm/self.HRK
 
         if self.ARK == 0.:
             apex2 = self.ARCenter
         else:
-            try:    #same
-                theta2 = np.arcsin(self.Dia * self.ARK/(2.*np.cos(self.Wedge)))
-            except FloatingPointError:
-                theta2 = np.pi/2.
+            theta2 = np.arcsin(self.Dia * self.ARK/(2.*np.cos(self.Wedge)))\
+                if np.abs(self.Dia * self.ARK/(2.*np.cos(self.Wedge))) < 1.\
+                else pi/2.
             apex2 = self.ARCenter - (1-np.cos(theta2))*self.ARNorm/self.ARK
 
         return apex1, apex2
@@ -589,15 +578,15 @@ class Optic(SetupComponent):
 
         if self.N < 1.:
             print "theia: Warning: In %s %s, optical index < 1."\
-                    %(word, self.Ref)
+                    % (word, self.Ref)
 
         if self.HRK != 0. and np.abs(1./self.HRK) < self.Dia/2.:
             print ("theia: Warning: In %s, the diameter of the %s exceeds the"\
-            + " diameter of the HR surface.") %( self.Ref, word)
+            + " diameter of the HR surface.") % (self.Ref, word)
 
         if self.ARK != 0. and np.abs(1./self.ARK) < self.Dia/2.:
             print ("theia: Warning: In %s, the diameter of the %s exceeds the"\
-            + " diameter of the AR surface.") %(self.Ref, word)
+            + " diameter of the AR surface.") % (self.Ref, word)
 
         if self.collision():
             print "theia: Warning: In %s, HR and AR surfaces intersect."\

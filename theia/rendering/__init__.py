@@ -15,4 +15,4 @@ __status__ = "stable"
 __maintainer__ = u"Rapha\u00EBl Duque"
 __email__ = "raphael.duque@polytechnique.edu"
 
-__all__ = []
+__all__ = ['features', 'shapes', 'writer']

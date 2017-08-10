@@ -69,15 +69,12 @@ class Ghost(SetupComponent):
     def lines(self):
         '''Return the list of lines needed to print the object.
         '''
-        ans = []
-        ans.append("Ghost: {" %self.Ref)
-        ans.append("Diameter: %sm" %str(self.Dia))
-        ans.append("Center: %s" %str(self.HRCenter))
         sph = rectToSph(self.HRNorm)
-        ans.append("Norm: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
-        ans.append("}")
-
-        return ans
+        return ["Ghost: {" % self.Ref,
+        "Diameter: %sm" % str(self.Dia),
+        "Center: %s" % str(self.HRCenter),
+        "Norm: (%s, %s)deg" % (str(sph[0]/deg), str(sph[1]/deg)),
+        "}"]
 
     def isHit(self, beam):
         '''Determine if a beam hits the Ghost surface.
@@ -97,12 +94,6 @@ class Ghost(SetupComponent):
 
         '''
 
-        noInterDict = {'isHit': False,
-                        'intersection point': np.array([0., 0., 0.],
-                                                    dtype=np.float64),
-                        'face': None,
-                        'distance': 0.}
-
         # Get impact parameters
         HRDict = linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
                                     self.HRNorm, self.Dia)
@@ -114,7 +105,11 @@ class Ghost(SetupComponent):
                     'distance': HRDict['distance']
                     }
         else:
-            return noInterDict
+            return {'isHit': False,
+                    'intersection point': np.array([0., 0., 0.],
+                                                dtype=np.float64),
+                    'face': None,
+                    'distance': 0.}
 
     def hit(self, beam, order, threshold):
         '''Return the beam simply transmitted by the ghost surface.

@@ -112,19 +112,17 @@ class Mirror(Optic):
 
     def lines(self):
         '''Returns the list of lines necessary to print the object.'''
-        ans = []
-        ans.append("Mirror: %s {" %str(self.Ref))
-        ans.append("Thick: %scm" %str(self.Thick/cm))
-        ans.append("Diameter: %scm" %str(self.Dia/cm) )
-        ans.append("Wedge: %sdeg" %str(self.Wedge/deg) )
-        ans.append("Alpha: %sdeg" %str(self.Alpha/deg))
-        ans.append("HRCenter: %s" %str(self.HRCenter))
         sph = geometry.rectToSph(self.HRNorm)
-        ans.append("HRNorm: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
-        ans.append("Index: %s" %str(self.N))
-        ans.append("HRKurv, ARKurv: %s, %s" %(str(self.HRK), str(self.ARK)))
-        ans.append("HRr, HRt, ARr, ARt: %s, %s, %s, %s" \
-            %(str(self.HRr), str(self.HRt), str(self.ARr), str(self.ARt)))
-        ans.append("}")
 
-        return ans
+        return ["Mirror: %s {" %str(self.Ref),
+        "Thick: %scm" %str(self.Thick/cm),
+        "Diameter: %scm" %str(self.Dia/cm) ,
+        "Wedge: %sdeg" %str(self.Wedge/deg) ,
+        "Alpha: %sdeg" %str(self.Alpha/deg),
+        "HRCenter: %s" %str(self.HRCenter),
+        "HRNorm: (%s, %s)deg" % (str(sph[0]/deg), str(sph[1]/deg)),
+        "Index: %s" %str(self.N),
+        "HRKurv, ARKurv: %s, %s" % (str(self.HRK), str(self.ARK)),
+        "HRr, HRt, ARr, ARt: %s, %s, %s, %s" \
+            % (str(self.HRr), str(self.HRt), str(self.ARr), str(self.ARt)),
+        "}"]

@@ -51,9 +51,9 @@ class GaussianBeam(object):
         results from a transmission on a HR surface or a reflection on a AR
         surface, then its StrayOrder is the StrayOrder of the parent beam + 1.
         [integer]
-    Optic: Ref of optic where the beam departs from (None if laser). [string]
+    Optic: Ref of optic where the beam departs from ('Laser' if laser). [string]
     Face: Face of the optic where the beam departs from. [string]
-    TargetOptic: Ref of the optic where te beam terminates (None if open
+    TargetOptic: Ref of the optic where the beam terminates (None if open
         beam). [string]
     TargetFace: Face of the target optic where the beam terminates. [string]
     DWx: Distance of waist on X. [float]
@@ -124,29 +124,23 @@ class GaussianBeam(object):
         '''Returns the list of lines necessary to print the object.
 
         '''
-        ans = []
-        ans.append("Beam: %s {" %self.Ref )
-        ans.append("Power: %sW/Index: %s/Wavelength: %snm/Length: %sm" \
-                %(str(self.P), str(self.N), str(self.Wl/nm), str(self.Length)))
-        ans.append("Order: %s" %str(self.StrayOrder))
-        ans.append("Origin: %s" %str(self.Pos))
-
         sph = geometry.rectToSph(self.Dir)
-        ans.append("Direction: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
-
         sphx = geometry.rectToSph(self.U[0])
-        ans.append("Ux: (%s, %s)deg" %(str(sphx[0]/deg), str(sphx[1]/deg) ))
-
         sphy = geometry.rectToSph(self.U[1])
-        ans.append("Uy: (%s, %s)deg" %(str(sphy[0]/deg), str(sphy[1]/deg)))
-        ans.append("Waist Pos: (%s, %s)m" %( str(self.DWx), str(self.DWy) ))
-        ans.append("Waist Size: (%s, %s)mm" \
-                    %(str(self.Wx/mm), str(self.Wy/mm)))
-        ans.append("Rayleigh: %sm" % str(self.rayleigh()) )
-        ans.append("ROC: " + str(self.ROC()))
-        ans.append("}")
 
-        return ans
+        return ["Beam: %s {" %self.Ref,
+        "Power: %sW/Index: %s/Wavelength: %snm/Length: %sm" \
+                % (str(self.P), str(self.N), str(self.Wl/nm), str(self.Length)),
+        "Order: %s" %str(self.StrayOrder),
+        "Origin: %s" %str(self.Pos),
+        "Direction: (%s, %s)deg" % (str(sph[0]/deg), str(sph[1]/deg)),
+        "Ux: (%s, %s)deg" % (str(sphx[0]/deg), str(sphx[1]/deg) ),
+        "Uy: (%s, %s)deg" % (str(sphy[0]/deg), str(sphy[1]/deg)),
+        "Waist Pos: (%s, %s)m" % ( str(self.DWx), str(self.DWy) ),
+        "Waist Size: (%s, %s)mm" % (str(self.Wx/mm), str(self.Wy/mm)),
+        "Rayleigh: %sm" % str(self.rayleigh()),
+        "ROC: " + str(self.ROC()),
+        "}"]
 
     def Q(self, d = 0.):
         '''Return the Q tensor at a distance d of origin.
@@ -162,16 +156,13 @@ class GaussianBeam(object):
         What is implemented here is a straightforward calculation to extract
         the q1, q2, and theta of the normal form of Q.
 
-            Returns a dictionary with keys:
-            '1': q1 [complex]
-            '2': q2 [complex]
-            'theta': theta [float]
+            Returns a tuple q1, q2, theta
         '''
-        d = float(d)
+        Q = self.Q(float(d))
 
-        a = self.Q(d)[0][0]
-        b = self.Q(d)[0][1]
-        c = self.Q(d)[1][1]
+        a = Q[0][0]
+        b = Q[0][1]
+        c = Q[1][1]
 
         if a == c:
             theta = pi/4.
@@ -186,67 +177,69 @@ class GaussianBeam(object):
         q1 = np.inf if qxinv == 0. else 1./qxinv
         q2 = np.inf if qyinv == 0. else 1./qyinv
 
-        return {'1': q1, '2': q2, 'theta':theta}
+        return  q1, q2, theta
 
     def ROC(self, dist = 0.):
         '''Return the tuple of ROC of the beam.
 
         '''
         dist = float(dist)
-        Q = self.QParam(dist)
+        q1, q2, _ = self.QParam(dist)
         try:
-            a = 1./np.real(1./Q['1'])
+            a = 1./np.real(1./q1)
         except FloatingPointError:
             a = np.inf
         try:
-            b = 1./np.real(1./Q['2'])
+            b = 1./np.real(1./q2)
         except FloatingPointError:
             b = np.inf
 
-        return  (a, b)
+        return (a, b)
 
     def waistPos(self):
         '''Return the tuple of positions of the waists of the beam along Dir.
 
         '''
-        Q = self.QParam(0.)
-        return (-np.real(Q['1']), -np.real(Q['2']))
+        q1, q2, q3 = self.QParam(0.)
+        return (-np.real(q1), -np.real(q2))
 
     def rayleigh(self):
         '''Return the tuple of Rayleigh ranges of the beam.
 
         '''
-        Q = self.QParam()
-        return (np.abs(np.imag(Q['1'])), np.abs(np.imag(Q['2'])))
+        q1, q2, _ = self.QParam(0.)
+        return (np.abs(np.imag(q1)), np.abs(np.imag(q2)))
 
     def width(self, d = 0.):
-        '''Return the tuple of beam widths.
+        '''Return the tuple of beam widths at distance d.
 
         '''
-        d = float(d)
         lam = self.Wl/self.N
-        zR = self.rayleigh()
-        D = self.waistPos()
+        q1, q2, _ = self.QParam(float(d))
 
-        return (np.sqrt((lam/pi)*((d - D[0])**2. + zR[0]**2.)/zR[0]) ,
-                np.sqrt((lam/pi)*((d - D[1])**2. + zR[1]**2.)/zR[1]))
+        return (np.sqrt((lam/pi)*((d - np.real(q1))**2.\
+                    + np.imag(q1)**2.)/np.imag(q1)),
+                np.sqrt((lam/pi)*((d - np.real(q2))**2.\
+                    + np.imag(q2)**2.)/np.imag(q2)))
 
     def waistSize(self):
         '''Return a tuple with the waist sizes in x and y.
 
         '''
-        pos = self.waistPos()
-        return (self.width(pos[0])[0], self.width(pos[1])[1] )
+        q1, q2, _ = self.QParam()
+        lam = self.Wl/self.N
+
+        return (np.sqrt(lam/pi)*nb.abs(q1)/sqrt(np.imag(q1)) ,
+                np.sqrt(lam/pi)*nb.abs(q2)/sqrt(np.imag(q2)))
 
     def gouy(self, d = 0.):
         '''Return the tuple of Gouy phases.
 
         '''
-        d = float(d)
-        zR = self.rayleigh()
-        WDist = self.waistPos()
-        return (np.arctan((d-WDist[0])/zR[0]),
-                np.arctan((d-WDist[1])/zR[1]))
+        q1, q2, _ = self.QParam(float(d))
+
+        return (np.arctan(np.real(q1)/np.imag(q1)),
+                np.arctan(np.real(q2)/np.imag(q2)))
 
     def initGaussianData(self):
         '''Writes the relevant DW, W, IW data with Q.
@@ -308,10 +301,7 @@ def userGaussianBeam(Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
     QTens = np.array([[1./qx, 0.],[0., 1./qy]],
                         dtype = np.complex64)
 
-    if Ref is None:
-        Ref = "Beam%s-" %str(GaussianBeam.BeamCount)
-    else:
-        Ref = Ref + '-'
+    Ref = "Beam%s-" %str(GaussianBeam.BeamCount) if Ref is None else Ref + '-'
 
     return GaussianBeam(Q = QTens, N = 1., Wl = Wl, P = P,
         Pos = Pos, Dir = Dir,

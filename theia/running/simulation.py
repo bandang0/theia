@@ -60,29 +60,26 @@ class Simulation(object):
 
         self.LName = 'Simulation'
         self.FName = FName
-        self.OptList = []
-        self.InBeams = []
-        self.BeamTreeList = []
+        self.OptList = list()
+        self.InBeams = list()
+        self.BeamTreeList = list()
         self.Order = np.inf
         self.Threshold = -1.*mW
         self.Date = strftime("%c")
 
     def __str__(self):
         '''String representation of the simulation, for print(simulation).'''
-        sList = ["Simulation: %s (%s.*) {" %(str(self.LName), str(self.FName))]
-        sList.append("OptList: {")
+        sList = ["Simulation: %s (%s.*) {" %(str(self.LName), str(self.FName)),
+                "OptList: {"]
         for opt in self.OptList:
             sList = sList + opt.lines()
-        sList.append("}")
-        sList.append("InBeams: {")
+        sList = sList + ["}", "InBeams: {"]
         for beam in self.InBeams:
             sList = sList + beam.lines()
-        sList.append("}")
-        sList.append("BeamTrees: {")
+        sList = sList + ["}", "BeamTrees: {"]
         for tree in self.BeamTreeList:
             sList = sList + tree.lines()
-        sList.append("}")
-        sList.append("}")
+        sList = sList + ["}", "}"]
 
         return formatter(sList)
 
@@ -92,12 +89,10 @@ class Simulation(object):
         Returns the number of optics (not components, optics).
 
         '''
-        n = 0
         for obj in self.OptList:
             if isinstance(obj, Optic):
-                    n = obj.OptCount
-                    break
-        return n
+                    return obj.OptCount
+        return 0
 
     def load(self):
         '''Initialize simulation attributes by input from .tia file.
@@ -111,6 +106,13 @@ class Simulation(object):
 
         # default dictionary for translation
         translateDic = {'X': 0., 'Y': 0., 'Z': 0.}
+        constructors = {'mr': Mirror,
+                    'sp': Special,
+                    'bs': BeamSplitter,
+                    'th': ThinLens,
+                    'tk': ThickLens,
+                    'bd': BeamDump,
+                    'gh': Ghost}
 
         # populate simulation attributes with objects from input
         for uple in finalList:
@@ -123,31 +125,12 @@ class Simulation(object):
                 self.Order = uple[1]
             elif uple[0] == 'threshold':
                 self.Threshold = uple[1]
-            elif uple[0] ==  'bm':
+            elif uple[0] == 'bm':
                 self.InBeams.append(userGaussianBeam(**uple[1]))
-                #translate last read object
-                self.InBeams[len(self.InBeams)-1].translate(**translateDic)
-            elif uple[0] == 'mr':
-                self.OptList.append(Mirror(**uple[1]))
-                self.OptList[len(self.OptList)-1].translate(**translateDic)
-            elif uple[0] == 'sp':
-                self.OptList.append(Special(**uple[1]))
-                self.OptList[len(self.OptList)-1].translate(**translateDic)
-            elif uple[0] == 'bs':
-                self.OptList.append(BeamSplitter(**uple[1]))
-                self.OptList[len(self.OptList)-1].translate(**translateDic)
-            elif uple[0] == 'th':
-                self.OptList.append(ThinLens(**uple[1]))
-                self.OptList[len(self.OptList)-1].translate(**translateDic)
-            elif uple[0] == 'tk':
-                self.OptList.append(ThickLens(**uple[1]))
-                self.OptList[len(self.OptList)-1].translate(**translateDic)
-            elif uple[0] == 'bd':
-                self.OptList.append(BeamDump(**uple[1]))
-                self.OptList[len(self.OptList)-1].translate(**translateDic)
-            elif uple[0] == 'gh':
-                self.OptList.append(Ghost(**uple[1]))
-                self.OptList[len(self.OptList)-1].translate(**translateDic)
+                self.InBeams[-1].translate(**translateDic)
+            elif uple[0] in constructors.keys():
+                self.OptList.append(construtors[uple[0]](**uple[1]))
+                self.OptList[-1].translate(**translateDic)
 
     def run(self):
         '''Run simulation with input as read by load.
@@ -168,33 +151,32 @@ class Simulation(object):
             + " termination not guaranteed."
 
         # reinitialize treeList
-        self.BeamTreeList = []
+        self.BeamTreeList = list()
 
-        for k in range(len(self.InBeams)):
-            self.BeamTreeList.append(beamtree.treeOfBeam(self.InBeams[k],
+        for beam in self.InBeams:
+            self.BeamTreeList.append(beamtree.treeOfBeam(beam,
             self.OptList, self.Order, self.Threshold ))
 
     def writeOut(self):
         '''Write the results from the simulation in the .out file.'''
-        outList = []
-        outList.append("######## theia output file for simulation: ########")
-        outList.append("\t\t\t %s\n" %self.LName)
-        outList.append('#'*10 + " META DATA " + '#'*10)
-        outList.append("Generated at: %s" %strftime("%c"))
-        outList.append("theia version: %s" %__version__)
-        outList.append("Options: {")
-        outList.append("Input file: %s.tia" %self.FName)
-        outList.append("Anti-clipping: %s" %str(settings.antiClip))
-        outList.append("Short output: %s" %str(settings.short))
-        outList.append("}\n")
+        outList = ["######## theia output file for simulation: ########",
+        "\t\t\t %s\n" %self.LName,
+        '#'*10 + " META DATA " + '#'*10,
+        "Generated at: %s" %strftime("%c"),
+        "theia version: %s" %__version__,
+        "Options: {",
+        "Input file: %s.tia" %self.FName,
+        "Anti-clipping: %s" %str(settings.antiClip),
+        "Short output: %s" %str(settings.short),
+        "}\n",
 
-        outList.append('#' *10 + ' SIMULATION DATA ' + '#' * 10)
-        outList.append("Simulation Order: %s" %str(self.Order) )
-        outList.append("Simulation Threshold: %smW" %str(self.Threshold/mW))
-        outList.append("Number of Components: %s" %str(len(self.OptList)))
-        outList.append("Number of Optics: %s\n" %str(self.numberOfOptics()))
-        outList.append("Simulation: %s (%s.*) {" %(self.LName, self.FName))
-        outList.append("Components: {")
+        '#' *10 + ' SIMULATION DATA ' + '#' * 10,
+        "Simulation Order: %s" %str(self.Order) ,
+        "Simulation Threshold: %smW" %str(self.Threshold/mW),
+        "Number of Components: %s" %str(len(self.OptList)),
+        "Number of Optics: %s\n" %str(self.numberOfOptics()),
+        "Simulation: %s (%s.*) {" %(self.LName, self.FName),
+        "Components: {"]
 
         for opt in self.OptList:
             outList.append("%s (%s) %s" %(opt.Name, opt.Ref, str(opt.HRCenter)))
@@ -204,13 +186,13 @@ class Simulation(object):
         for tree in self.BeamTreeList:
             outList = outList + tree.lines()
 
-        outList.append("}")
-        outList.append("}\n")
+        outList = outList + ["}","}\n"]
 
         outList.append('#' * 10 + " BEAM LISTING " + '#' * 10)
         for tree in self.BeamTreeList:
-            outList.append("Tree: Root beam = %s {" % (tree.Root.Ref\
-                if not settings.short else shortRef(tree.Root.Ref)))
+            BRef = tree.Root.Ref if not settings.short\
+                else shortRef(tree.Root.Ref)
+            outList.append("Tree: Root beam = %s {" % BRef)
             outList = outList + tree.outputLines()
             outList.append("}")
 

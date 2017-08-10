@@ -8,13 +8,14 @@
 #	errorRecursion
 #	errorAtSpecifiedLocation
 #	errorWhereIs
+#   errorWhereIsNotFound
 #	errorUnknown
 
 usage = "Usage: theia [options] FNAME\n\nArguments:\n"\
         + "  FNAME\t\t .tia format input file name."
 
 lhelp = "specify the FreeCAD library location. If none is specified, theia "\
-		+ "finds it using the UNIX `whereis` command. If option '-c', "\
+		+ "finds it using the Unix `whereis` command. If option '-c', "\
 		+ "'--no-CAD'  is used, the FreeCAD search and import are skipped "\
 		+ "as a whole."
 
@@ -53,6 +54,12 @@ errorAtSpecifiedLocation = "theia: Error: The FreeCAD library was not found "\
 errorWhereIs = "theia: Error: Unix command 'whereis freecad' did not yield "\
 	+ "any directory. Please make sure you have FreeCAD installed and that "\
 	+ "library location is in your $PATH.\nAborting"
+
+errorWhereIsNotFound = "theia: Error: It seems that the Unix utility "\
+    + "`whereis ` is not installed, thus theia cannot find the FreeCAD "\
+    + "libraries.\n"\
+    + "Either specify their location with the '-l, --FreeCAD-libs' option, "\
+    + "or use the '-c --no-CAD' option to skip the CAD file writing step."
 
 errorUnknown = "theia: Error: %s was used as the source directory for the "\
 	+ "FreeCAD library but an error occured, make sure your FreeCAD build is "\

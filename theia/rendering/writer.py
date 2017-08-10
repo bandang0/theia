@@ -39,9 +39,8 @@ def writeToCAD(component, doc):
                 'Special': FCSpecial}
 
     #First take care of optics
-    if component.Name \
-        in ['Mirror', 'ThickLens', 'ThinLens', 'BeamDump', 'BeamSplitter',
-            'Special']:
+    if component.Name in ['Mirror', 'ThickLens', 'ThinLens', 'BeamDump',
+                            'BeamSplitter', 'Special']:
         FCDic[component.Name](doc.addObject("Part::FeaturePython",
                             component.Ref), component)
 

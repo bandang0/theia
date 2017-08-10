@@ -96,27 +96,16 @@ class ThickLens(Optic):
         Apex2 = Apex1 + Thickness * ARNorm    #thickness on axis
 
         # half angles
-        try:
-            theta1 = np.abs(np.arcsin(Diameter * K1/2. ))
-        except FloatingPointError:
-            theta1 = pi/2.
-        try:
-            theta2 = np.abs(np.arcsin(Diameter * K2/2. ))
-        except FloatingPointError:
-            theta2 = pi/2.
+        theta1 = np.abs(np.arcsin(Diameter * K1/2. ))\
+            if np.abs(Diameter * K1 /2.) < 1. else pi/2.
+        theta2 = np.abs(np.arcsin(Diameter * K2/2. ))\
+            if np.abs(Diameter * K2 /2.) < 1. else pi/2.
 
         # real HR and AR centers
-        if np.abs(K1) > 0.:
-            HRCenter = Apex1\
-                        + (1. - np.cos(theta1))*HRNorm/K1
-        else:
-            HRCenter = Apex1
-
-        if np.abs(K2) > 0.:
-            ARCenter = Apex2\
-                        + (1. - np.cos(theta2))*ARNorm/K2
-        else:
-            ARCenter = Apex2
+        HRCenter = Apex1 + (1. - np.cos(theta1))*HRNorm/K1\
+            if np.abs(K1) > 0. else Apex1
+        HRCenter = Apex2 + (1. - np.cos(theta2))*HRNorm/K2\
+            if np.abs(K2) > 0. else Apex2
 
         # initialize with base initializer
         super(ThickLens, self).__init__(ARCenter = ARCenter, ARNorm = ARNorm,
@@ -135,16 +124,13 @@ class ThickLens(Optic):
     def lines(self):
         '''Returns the list of lines necessary to print the object.
         '''
-        ans = []
-        ans.append("ThickLens: %s{" %str(self.Ref))
-        ans.append("Thick: %scm" %str(self.Thick/cm))
-        ans.append("Diameter: %scm" %str(self.Dia/cm) )
-        ans.append("Center: %s" %str(self.HRCenter))
         sph = rectToSph(self.HRNorm)
-        ans.append("Norm: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
-        ans.append("Index: %s" %str(self.N))
-        ans.append("HRKurv, ARKurv: %s, %s" %(str(self.HRK), str(self.ARK)))
-        ans.append("R, T: %s, %s" %(str(self.HRr),str(self.HRt)) )
-        ans.append("}")
-
-        return ans
+        return ["ThickLens: %s{" % str(self.Ref),
+        "Thick: %scm" % str(self.Thick/cm),
+        "Diameter: %scm" % str(self.Dia/cm) ,
+        "Center: %s" % str(self.HRCenter),
+        "Norm: (%s, %s)deg" % (str(sph[0]/deg), str(sph[1]/deg)),
+        "Index: %s" % str(self.N),
+        "HRKurv, ARKurv: %s, %s" % (str(self.HRK), str(self.ARK)),
+        "R, T: %s, %s" % (str(self.HRr),str(self.HRt)),
+        "}"]

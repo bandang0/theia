@@ -86,15 +86,16 @@ def formatter(stringList):
 
     return ans
 
-def shortRef(string):
+def shortRef(inStr):
     '''Returns the short reference corresponding to string.
 
     Change all 't2nrt' in 'R', all 't(2n+1)rt' in 'T' and 'r' in 'R'
     in string. Used to write short references to beams.
 
     '''
-    prefix = string[:string.find('-')+1]
-    s1 = re.sub("tr(rr)*t", "R", string[string.find('-')+1:])
+    f = inStr.find('-')
+    prefix = inStr[:f+1]
+    s1 = re.sub("tr(rr)*t", "R", inStr[f+1:])
     s2 = re.sub("t(rr)+t", "T", s1)
     s3 = re.sub("tt", "T", s2)
     s4 = re.sub("t", "T", s3)

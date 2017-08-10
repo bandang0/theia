@@ -78,7 +78,7 @@ def beamShape(beam):
     L = beam.Length if beam.Length > 0. else 1.e6
 
     #geometrical data of the beam envelope
-    theta = np.real(beam.QParam()['theta'])
+    theta = np.real(beam.QParam()[2])
     Wx = beam.Wx
     Wy = beam.Wy
 

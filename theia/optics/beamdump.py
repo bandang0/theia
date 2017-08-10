@@ -70,16 +70,13 @@ class BeamDump(SetupComponent):
     def lines(self):
         '''Return the list of lines needed to print the object.
         '''
-        ans = []
-        ans.append("BeamDump: %s {" %self.Ref)
-        ans.append("Thick: %sm" %str(self.Thick))
-        ans.append("Diameter: %sm" %str(self.Dia))
-        ans.append("Center: %s" %str(self.HRCenter))
         sph = rectToSph(self.HRNorm)
-        ans.append("Norm: (%s, %s)deg" %(str(sph[0]/deg), str(sph[1]/deg)))
-        ans.append("}")
-
-        return ans
+        return ["BeamDump: %s {" % self.Ref,
+        "Thick: %sm" % str(self.Thick),
+        "Diameter: %sm" % str(self.Dia),
+        "Center: %s" % str(self.HRCenter),
+        "Norm: (%s, %s)deg" % (str(sph[0]/deg), str(sph[1]/deg)),
+        "}"]
 
     def isHit(self, beam):
         '''Determine if a beam hits the BeamDump.
@@ -98,12 +95,6 @@ class BeamDump(SetupComponent):
             'distance': geometrical distance from beam origin to impact. [float]
 
         '''
-
-        noInterDict = {'isHit': False,
-                        'intersection point': np.array([0., 0., 0.],
-                                                    dtype=np.float64),
-                        'face': None,
-                        'distance': 0.}
 
         # Get impact parameters
         HRDict = linePlaneInter(beam.Pos, beam.Dir, self.HRCenter,
@@ -127,20 +118,21 @@ class BeamDump(SetupComponent):
         hitFaces = filter(lambda dic: dic['isHit'], [HRDict, ARDict, SideDict])
 
         if len(hitFaces) == 0:
-            return noInterDict
+            return {'isHit': False,
+                            'intersection point': np.array([0., 0., 0.],
+                                                        dtype=np.float64),
+                            'face': None,
+                            'distance': 0.}
 
-        dist = hitFaces[0]['distance']
-        j=0
-
-        for i in range(len(hitFaces)):
-            if hitFaces[i]['distance'] < dist:
-                dist = hitFaces[i]['distance']
-                j=i
+        ans = hitFaces[0]
+        for dic in hitFaces:
+            if dic['distance'] < ans['distance']:
+                ans = dic
 
         return {'isHit': True,
-                'intersection point': hitFaces[j]['intersection point'],
-                'face': hitFaces[j]['face'],
-                'distance': hitFaces[j]['distance']
+                'intersection point': ans['intersection point'],
+                'face': ans['face'],
+                'distance': ans['distance']
                 }
 
     def hit(self, beam, order, threshold):
@@ -170,7 +162,7 @@ class BeamDump(SetupComponent):
 
         if settings.info and (beam.N == 1. or not settings.short):
             print "theia: Info: Reached beam stop (%s on %s)." \
-                    %(beam.Ref if not settings.short else shortRef(beam.Ref),
+                    % (beam.Ref if not settings.short else shortRef(beam.Ref),
                         self.Ref)
 
         return {'r': None, 't': None}
