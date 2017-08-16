@@ -38,7 +38,7 @@ parser.add_option('-a', '--anti-clipping',
                 help = 'Include anti-clipping in simulation.',
                 action = 'store_true', dest = 'antiClip', default = False)
 
-parser.add_option('-s', '--short-ouput',
+parser.add_option('-s', '--short-output',
                 help = shelp,
                 action = 'store_true', dest = 'short', default = False)
 

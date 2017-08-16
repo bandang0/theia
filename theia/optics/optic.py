@@ -238,12 +238,6 @@ class Optic(SetupComponent):
         beam.TWx = endSize[0]
         beam.TWy = endSize[1]
 
-        if dic['face'] == 'HR':
-            return self.hitHR(beam, dic['intersection point'], order, threshold)
-        elif dic['face'] == 'AR':
-            return self.hitAR(beam, dic['intersection point'], order, threshold)
-        else:
-            return self.hitSide(beam)
         return {
             'HR': lambda beam: self.hitHR(beam,
                                 dic['intersection point'], order, threshold),

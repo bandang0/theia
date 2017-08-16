@@ -40,13 +40,15 @@ def readIn(name):
 
     #error messages
     malformed = "Malformed input in %s, line %s. Could not %s '%s'"
+
+    #possible tags in beginning of lines
+    tags = ['bm', 'mr', 'bs', 'sp', 'bo', 'th', 'tk', 'bd', 'gh']
     ans = list()
-    j = 0   #counts lines
+
     with open(name, 'r') as inF:
-        for line in inF:
-            j = j + 1
+        for (j, line) in enumerate(inF):
             line = line.translate(None, '\t \n')  #no spaces or tabs or newline
-            if line.find('#') > -1:
+            if '#' in line:
                 line = line[0:line.find('#')]   #no comments
             if len(line) < 2:
                 continue
@@ -56,10 +58,10 @@ def readIn(name):
                     ans.append(('order', int(eval(word))))
                 except (SyntaxError, NameError):
                     raise InputError((malformed + '.') \
-                                    %(fileName, str(j), 'parse', word))
+                                    %(fileName, str(j + 1), 'parse', word))
                 except TypeError:
                     raise InputError((malformed + 'to int') \
-                                    %(fileName, str(j), 'cast', word))
+                                    %(fileName, str(j + 1), 'cast', word))
 
             elif line[0:9] == 'threshold':
                 word = line[10:]
@@ -67,29 +69,13 @@ def readIn(name):
                     ans.append(('threshold', float(eval(word))))
                 except (SyntaxError, NameError):
                     raise InputError(malformed + "."\
-                                    %(fileName, str(j), 'parse', word))
+                                    %(fileName, str(j + 1), 'parse', word))
                 except TypeError:
                     raise InputError((malformed + "to float.") \
-                                    %(fileName, str(j),'cast', word))
+                                    %(fileName, str(j + 1), 'cast', word))
 
-            elif line[0:2] == 'bm':
-                ans.append(('bm',dicOf('bm',line[2:],name,j)))
-            elif line[0:2] == 'mr':
-                ans.append(('mr',dicOf('mr',line[2:],name,j)))
-            elif line[0:2] == 'sp':
-                ans.append(('sp',dicOf('sp',line[2:],name,j)))
-            elif line[0:2] == 'bs':
-                ans.append(('bs',dicOf('bs',line[2:],name,j)))
-            elif line[0:2] == 'th':
-                ans.append(('th',dicOf('th',line[2:],name,j)))
-            elif line[0:2] == 'tk':
-                ans.append(('tk',dicOf('tk',line[2:],name,j)))
-            elif line[0:2] == 'bd':
-                ans.append(('bd',dicOf('bd',line[2:],name,j)))
-            elif line[0:2] == 'gh':
-                ans.append(('gh',dicOf('gh',line[2:],name,j)))
-            elif line[0:2] == 'bo':
-                ans.append(('bo',dicOf('bo',line[2:],name,j)))
+            elif line[0:2] in tags:
+                ans.append((line[0:2], dicOf(line[0:2], line[2:], name, j + 1)))
             else:
                 ans.append(('LName', line[0:]))
 
@@ -110,53 +96,43 @@ def dicOf(st, line, fileName, lineNumber):
     '''
     #error message
     malformed = "Malformed input in %s, line %s, entry %s"
-    ans = {}
+    ans = dict()
 
     #allow empty constructor
     if line == '':
         return ans
 
-    words = line.split(',')
-    i = 0
-    while i < len(words):    #inputs without '='
-        word = words[i]
-        if '=' in word:
-            break
-        try:
-            ans[settings.inOrder[st][i]] = eval(words[i])
-        except SyntaxError:
-            raise InputError((malformed + ". Could not parse '%s'.") \
-                    % (fileName, lineNumber, str(i + 1), word))
-        except NameError:
-            raise InputError(
-                    (malformed  + ". Did not recognize reference in '%s'.")\
-                    % (fileName, lineNumber, str(i + 1), word))
-        except IndexError:
-            raise InputError((malformed + ". To many arguments given.")\
-                    % (fileName, lineNumber, str(i + 1)))
-        i = i + 1
+    explicit = False
 
-    while i < len(words):   #inputs with '='
-        word = words[i]
-        if not '=' in word:
-            raise InputError(
-       (malformed + ". Found non explicit entry '%s' among explicit entries.")\
+    if len(words) > len(settings.inOrder[st]):
+        raise InputError(
+        "Malformed input in %s, line %s. To many arguments given."\
+                        % (fileName, str(lineNumber)))
+
+    for (i, word) in enumerate(words):
+        if '=' in word:
+            explicit = True
+        if explicit and not '=' in word:
+             raise InputError(
+      (malformed + ". Found non explicit entry '%s' among explicit entries.")\
             % (fileName, lineNumber, str(i + 1), word))
-        var = word[0:word.find('=')]
-        if var not in settings.inOrder[st]:
-            raise InputError(
-            (malformed + ". Unknown constructor parameter '%s'.")\
-                % (fileName, lineNumber, str(i + 1), var))
-        val = word[word.find('=') + 1:]
+
+        if explicit:
+            var, val = word[:word.find('=')], word[word.find('=') + 1:]
+            if var not in settings.inOrder[st]:
+                raise InputError(
+                (malformed + ". Unknown constructor parameter '%s'.")\
+                    % (fileName, lineNumber, str(i + 1), var))
+        else:
+            var, val = settings.inOrder[st][i], word
+
         try:
             ans[var] = eval(val)
         except SyntaxError:
-            raise InputError((malformed + ". Could not parse '%s'.")\
+           raise InputError((malformed + ". Could not parse '%s'.")\
                 %(fileName, lineNumber, str(i + 1), val))
         except NameError:
             raise InputError(
                 (malformed + ". Did not recognize reference in '%s'.")\
                     % (fileName, lineNumber, str(i + 1), val))
-        i = i + 1
-
     return ans
