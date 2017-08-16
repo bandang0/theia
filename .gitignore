@@ -121,10 +121,6 @@ doc/src/*.pdf
 # OptoCAD executables
 *.opt
 
-# trash 
-trash.py
-trash/
-
 #html documentation
 html/
 
