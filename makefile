@@ -1,7 +1,7 @@
 # makefile for theia
 
 #variables
-EPYOPTS = --name=theia -u http://theia.hopto.org:56000 --graph=all \
+EPYOPTS = --name=theia -u http://theia.hopto.org --graph=all \
  		--inheritance=listed -v
 PDFLATEXCMD = pdflatex -interaction=nonstopmode
 

@@ -9,6 +9,7 @@ setup(
     author = u"Rapha\u00EBl Duque",
     description = "3D Gaussian beam tracing and visualization",
 	license = "GNU GPLv3+",
+    url = "http://theia.hopto.org",
 
 	#Requires and entries
     packages = find_packages(exclude='tests'),
