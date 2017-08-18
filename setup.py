@@ -8,7 +8,7 @@ setup(
     version = "0.1.3",
     author = u"Rapha\u00EBl Duque",
     description = "3D Gaussian beam tracing and visualization",
-	license = "GNU GPLv3+",
+    license = "GNU GPLv3+",
     url = "http://theia.hopto.org",
 
 	#Requires and entries
