@@ -229,8 +229,8 @@ class GaussianBeam(object):
         q1, q2, _ = self.QParam()
         lam = self.Wl/self.N
 
-        return (np.sqrt(lam/pi)*nb.abs(q1)/sqrt(np.imag(q1)) ,
-                np.sqrt(lam/pi)*nb.abs(q2)/sqrt(np.imag(q2)))
+        return (np.sqrt(lam/pi)*np.abs(q1)/np.sqrt(np.imag(q1)) ,
+                np.sqrt(lam/pi)*np.abs(q2)/np.sqrt(np.imag(q2)))
 
     def gouy(self, d = 0.):
         '''Return the tuple of Gouy phases.
@@ -293,7 +293,7 @@ def userGaussianBeam(Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
     u = np.cos(Alpha)*u1 + np.sin(Alpha)*v1
 
     # Q tensor for orthogonal beam
-    Wl = float(Wl)
+    Wl = np.abs(float(Wl))
     Wx = float(Wx)
     Wy = float(Wy)
     qx = complex(- float(WDistx)  + 1.j * pi*Wx**2./Wl )

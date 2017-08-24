@@ -23,7 +23,7 @@ def refrAngle(theta, n1, n2):
 
         May raise a TotalReflectionError.
     '''
-    if np.abs(n1*np.sin(theta)/n2) > 1.
+    if np.abs(n1*np.sin(theta)/n2) > 1.:
         raise TotalReflectionError('Total reflection occured.')
     else:
         return np.arcsin(n1*np.sin(theta)/n2)

@@ -59,7 +59,7 @@ test-rendering:
 test-tree:
 	@cd tests ; pythontest_tree.py
 
-test-running:
+test-simulation:
 	@cd tests ; python test_simulation.py
 
 test-syntax:
@@ -73,6 +73,7 @@ test-plain:
 
 test-regex:
 	@cd tests ; python test_regex.py
+
 #compile pdf (do it twice for all the refs to fall into place)
 compile-pdf:
 	-cd doc/src ; $(PDFLATEXCMD) primer.tex

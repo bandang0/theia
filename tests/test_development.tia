@@ -9,11 +9,22 @@ threshold = 1.*mW
 # input beam
 #bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Ref
 bo 12, 2, 0
+bm 0.1*mm, 0.2*mm, 0., 1*m, -2000*nm, P = 2., X = 0., Y = 0., Z = 0., Ref = 'Laser'
 
 # mirror (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
 #mr	X	Y	Z	Theta	Phi	Wedge	Alpha	HRK	ARK	Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Ref
+mr 1.2*m, 3*m, 2.1, 45 * deg, 68 *deg, 0., 0., 23*cm , 5*cm, 0.4, Ref = 'M1'
+tk 2.3,  True,  3.4, 2., Ref = 'L1'
+th 0., 0., 0., Focal = -2.3*m, Ref = 'L2'
 
-bo X = 0, Z = 5
+bs 3.4 , 0., 0., 34., 54., 434., 3453.,3345.,6.45,3.76,345634.5,34.,456.,34.56,54.,4.56, 655., Ref = 'BS'
+
+sp 2., 0. ,0. ,.1, 10, 0., 0., Ref = 'Yoohoo'
+
+bo X = 12, Z = 5
+bd Ref = 23
+gh X = 2, Ref = ''
+
 
 #mr X = 2*m, Phi = 3.141592, HRK = 1e-2, ARK = 0, Wedge = 0*deg, Diameter = 10*cm, Thickness = 5*cm, Alpha = 90*deg, N= 1.1,  Ref = 'M1'
 

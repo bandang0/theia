@@ -102,6 +102,7 @@ def dicOf(st, line, fileName, lineNumber):
     if line == '':
         return ans
 
+    words = line.split(',')
     explicit = False
 
     if len(words) > len(settings.inOrder[st]):
@@ -127,7 +128,7 @@ def dicOf(st, line, fileName, lineNumber):
             var, val = settings.inOrder[st][i], word
 
         try:
-            ans[var] = eval(val)
+            ans[var] = settings.types[var](eval(val))
         except SyntaxError:
            raise InputError((malformed + ". Could not parse '%s'.")\
                 %(fileName, lineNumber, str(i + 1), val))
@@ -135,4 +136,11 @@ def dicOf(st, line, fileName, lineNumber):
             raise InputError(
                 (malformed + ". Did not recognize reference in '%s'.")\
                     % (fileName, lineNumber, str(i + 1), val))
+        except ValueError:
+            raise InputError(
+                (malformed + ". Expected %s for parameter %s, "\
+                            + "but got '%s' which evaluates to %s.")\
+                    % (fileName, lineNumber, str(i + 1),
+                        settings.typeStrings[settings.types[var]], var, val,
+                        settings.typeStrings[type(eval(val))]))
     return ans

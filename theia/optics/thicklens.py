@@ -104,7 +104,7 @@ class ThickLens(Optic):
         # real HR and AR centers
         HRCenter = Apex1 + (1. - np.cos(theta1))*HRNorm/K1\
             if np.abs(K1) > 0. else Apex1
-        HRCenter = Apex2 + (1. - np.cos(theta2))*HRNorm/K2\
+        ARCenter = Apex2 + (1. - np.cos(theta2))*ARNorm/K2\
             if np.abs(K2) > 0. else Apex2
 
         # initialize with base initializer

@@ -6,7 +6,7 @@
 #       lines
 
 import numpy as np
-from ..helpers import settings
+from ..helpers import settings, geometry
 from ..helpers.units import deg, cm, pi
 from .optic import Optic
 

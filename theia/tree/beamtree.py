@@ -49,10 +49,10 @@ class BeamTree(object):
 
     def lines(self):
         '''Returns the list of lines necessary to print the object.'''
-        return ["Tree: {"
+        return ["Tree: {",
         "Root beam: %s" %(self.Root.Ref if not settings.short\
-                                        else shortRef(self.Root.Ref))
-        "Number of beams: %s" %str(self.numberOfBeams())
+                                        else shortRef(self.Root.Ref)),
+        "Number of beams: %s" %str(self.numberOfBeams()),
         "}"]
 
     def beamList(self):
@@ -80,8 +80,8 @@ class BeamTree(object):
         '''Return the total number of beams.'''
         if self.Root is None:
             return 0
-        return 1    + (self.R.numberOfBeams if self.R is not None else 0)\
-                    + (self.T.numberOfBeams if self.R is not None else 0)
+        return 1    + (self.R.numberOfBeams() if self.R is not None else 0)\
+                    + (self.T.numberOfBeams() if self.T is not None else 0)
 
     def outputLines(self):
         '''Return the list of lines to write the output of simulation.'''
@@ -95,11 +95,11 @@ class BeamTree(object):
             else:
                 if self.R is None and self.T is None:
                     sList = ["(%s, %s) %sm [end] (%s, %s) %s {" \
-                        % (beam.Optic, beam.face, str(beam.Length),
+                        % (beam.Optic, beam.Face, str(beam.Length),
                             beam.TargetOptic, beam.TargetFace, Ref)]
                 else:
                     sList = ["(%s, %s) %sm (%s, %s) %s {" \
-                        % (beam.Optic, beam.face, str(beam.Length),
+                        % (beam.Optic, beam.Face, str(beam.Length),
                             beam.TargetOptic, beam.TargetFace, Ref)]
 
             sList = sList + ["Waist Pos: (%s, %s)m" \

@@ -270,7 +270,7 @@ class Optic(SetupComponent):
             localNorm = self.HRNorm
         else:#undertending angle
             theta = np.arcsin(self.Dia * self.HRK/2.)\
-                if np.abs(self.Dia * self.HRK/2.) < 1. else pi/2.
+                if np.abs(self.Dia * self.HRK/2.) < 1. else np.pi/2.
 
             sphereC = self.HRCenter + np.cos(theta)*self.HRNorm/self.HRK
             localNorm = (sphereC - point)/np.linalg.norm(sphereC - point)
@@ -397,7 +397,7 @@ class Optic(SetupComponent):
         ans = dict()
 
         # Reference according to settings
-        beam.Ref if not settings.short else shortRef(beam.Ref)
+        BRef = beam.Ref if not settings.short else shortRef(beam.Ref)
 
         # Calculate the local normal
         if self.ARK == 0.:
@@ -529,8 +529,8 @@ class Optic(SetupComponent):
         if self.HRK == 0.:
             apex1 = self.HRCenter
         else:
-            theta = np.arcsin(self.Dia * self.ARK/2.)\
-                if np.abs(self.Dia * self.ARK/2.) < 1. else pi/2.
+            theta1 = np.arcsin(self.Dia * self.ARK/2.)\
+                if np.abs(self.Dia * self.ARK/2.) < 1. else np.pi/2.
             apex1 = self.HRCenter - (1-np.cos(theta1))*self.HRNorm/self.HRK
 
         if self.ARK == 0.:
@@ -538,7 +538,7 @@ class Optic(SetupComponent):
         else:
             theta2 = np.arcsin(self.Dia * self.ARK/(2.*np.cos(self.Wedge)))\
                 if np.abs(self.Dia * self.ARK/(2.*np.cos(self.Wedge))) < 1.\
-                else pi/2.
+                else np.pi/2.
             apex2 = self.ARCenter - (1-np.cos(theta2))*self.ARNorm/self.ARK
 
         return apex1, apex2

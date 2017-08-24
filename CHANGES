@@ -1,3 +1,11 @@
+theia 0.1.3:
+    minor bug fixes
+    special optical component
+    type safety when parsing input file
+    short output option
+    simpler structure
+
+-----------
 theia 0.1.2:
     clipping and anti-clipping warnings
     loosened requirements and compatibility with numpy 1.7.1

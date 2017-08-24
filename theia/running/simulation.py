@@ -129,7 +129,7 @@ class Simulation(object):
                 self.InBeams.append(userGaussianBeam(**uple[1]))
                 self.InBeams[-1].translate(**translateDic)
             elif uple[0] in constructors.keys():
-                self.OptList.append(construtors[uple[0]](**uple[1]))
+                self.OptList.append(constructors[uple[0]](**uple[1]))
                 self.OptList[-1].translate(**translateDic)
 
     def run(self):

@@ -1,13 +1,13 @@
 # This is a tutorial file which is particularly fit for learning because
 #it uses all the possible optics available in theia (thinlens, thicklens,
-#mirror, beamdump, ghost surface).
+#mirror, beam-splitter, special optic, beamdump, ghost surface).
 
 # Here, first line without a comment, has the longname
 All of theia!
 
 #Threshold and order each on their own line
 order = 1
-threshold = .005*W
+threshold = 1*mW
 
 # input beam
 #bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Ref
@@ -29,10 +29,18 @@ bo 101*cm, 0, 0
 #mr	X	Y	Z	Theta	Phi				Wedge			Alpha	HRK			ARK			Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Ref
 mr 						Phi = -135*deg, Wedge = 0*deg,			HRK = 0., 	ARK = 0,  	Diameter = 10*cm, Thickness = 3*cm, HRr = 0.998, HRt = 0.002, Alpha = 0*deg, N= 1.1, Ref = 'M1'
 
+# beam-splitter (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
+#bs	X	Y	Z	Theta	Phi				Wedge			Alpha	HRK			ARK			Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Ref
+bs 	0., -20.*cm,		Phi = 86*deg, Wedge = 0*deg,			HRK = 0., 	ARK = 0,  	Diameter = 8*cm, Thickness = 3*cm, HRr = 0.5, HRt = 0.5, Alpha = 0*deg, N= 1.1, Ref = 'BS'
+
+# special optic (remember that in this case X,Y,Z are coordinates of the center of the chord of the HR)
+#sp RonHR TonHR RonAR TonAR	X	Y	Z	Theta	Phi				Wedge			Alpha	HRK			ARK			Diameter	Thickness	N	HRr	HRt	ARr	ARt	KeepI	Ref
+sp 	2,    0,    0,    0,        Y = -60.*cm,    Phi = 90*deg, Wedge = 0*deg,			HRK = 0., 	ARK = 0,  	Diameter = 10*cm, Thickness = 3*cm, HRr = 0.5, HRt = 0.5, Alpha = 0*deg, N= 1.1, Ref = 'SP'
+
 #beamdump (X,Y,Z is the center of the principal face)
 #bd	X		Y			Z	Theta	Phi			Dia		Thickness		Ref
-bd 0*cm, 	-43.0*cm, 	0., 90*deg, 90*deg, 	7*cm, 	2*mm, 	 'BD'
+bd 0*cm, 	-83.0*cm, 	0., 90*deg, 90*deg, 	7*cm, 	2*mm, 	 'BD'
 
 #ghost surface
 #gh X       Y           Z    Theta       Phi     Diameter,   Ref
-gh 0.1,     -43.0*cm,   0.,  90*deg,    90*deg,  5*cm,       'Ghost'
+gh 0.1,     -83.0*cm,   0.,  90*deg,    90*deg,  5*cm,       'Ghost'

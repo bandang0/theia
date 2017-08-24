@@ -29,6 +29,8 @@ def init(dic):
 
     #dictionary of orders in which input is given in .tia
     global inOrder
+    global types
+    global typeStrings
 
     #geometry
     zero = 1.e-10
@@ -65,6 +67,21 @@ def init(dic):
     'bd': ['X','Y','Z','Theta','Phi','Diameter','Thickness', 'Ref'],
     'gh': ['X','Y','Z','Theta','Phi','Diameter', 'Ref'],
     'bo': ['X', 'Y', 'Z']}
+
+    # expected types of inputs
+    types = {'X': float, 'Y': float, 'Z': float,
+            'Theta': float, 'Phi': float, 'Diameter': float,
+            'Thickness': float, 'Ref': str, 'K1': float, 'K2': float,
+            'KeepI': bool, 'T': float, 'R': float, 'N': float, 'Focal': float,
+            'HRK': float, 'ARK': float,
+            'HRr': float, 'HRt': float,'ARr': float,'ARt': float,
+            'Wedge': float, 'Alpha': float,
+            'RonHR': int, 'TonHR': int, 'RonAR': int, 'TonAR': int,
+            'Wx': float, 'Wy': float, 'WDistx': float, 'WDisty': float,
+            'Wl': float, 'P': float}
+
+    #strings to print types
+    typeStrings = {float: 'float', int: 'int', str: 'string', bool: 'boolean'}
 
     #parsed from command line
     info = dic['info']

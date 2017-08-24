@@ -5,6 +5,7 @@ import sys
 THEIAPATH = '/home/dev0/theia'    # path to access modules of theia
 FREECADPATH = '/usr/lib/freecad/lib'	# and freecad
 sys.path.insert(0, THEIAPATH)
+sys.path.append(FREECADPATH)
 
 import theia
 from theia.helpers import settings, tools
@@ -21,7 +22,7 @@ settings.init(dic)
 
 
 # Create simulation object:
-simu = simulation.Simulation(FName = 'devTest')
+simu = simulation.Simulation(FName = 'test_simulation')
 
 # test functions
 @tools.timer
@@ -33,8 +34,12 @@ def runner():
     simu.run()
 
 @tools.timer
-def writer():
+def writeOut():
 	simu.writeOut()
+
+@tools.timer
+def writeCAD():
+	simu.writeCAD()
 
 # load input data
 loader()
@@ -43,4 +48,7 @@ loader()
 runner()
 
 # write out
-writer()
+writeOut()
+
+# write CAD
+writeCAD()
