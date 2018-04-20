@@ -24,7 +24,7 @@ shelp = 'Exclude beams propagating inside optics from text output, terminal'\
         + ' are referenced to in these files and in the terminal output.'
 
 welcome = u'''
-\ttheia (C) 2017 Rapha\u00EBl Duque
+\ttheia (C) 2017-2018 Rapha\u00EBl Duque
 \tLicense: GNU GPLv3+ <http://gnu.org/licenses/gpl.html>
 \tThis is free software: you are free to change and redistribute it.
 \tThere is ABSOLUTELY NO WARRANTY, to the extent permitted by law.
