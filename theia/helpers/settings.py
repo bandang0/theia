@@ -66,6 +66,7 @@ def init(dic):
 
     'bd': ['X','Y','Z','Theta','Phi','Diameter','Thickness', 'Ref'],
     'gh': ['X','Y','Z','Theta','Phi','Diameter', 'Ref'],
+    'fl': ['X', 'Y', 'Z', 'Theta', 'Phi', 'Diameter', 'Thickness', 'Wl', 'Ref'],
     'bo': ['X', 'Y', 'Z']}
 
     # expected types of inputs

@@ -1,0 +1,20 @@
+# theia input file for a simulation with filters
+
+# In this simulation, various lasers with different wavelengths are directed
+# towards a filter.
+
+Periscope Simulation
+
+#Threshold and order each on their own line
+order = 0
+threshold = .5*mW
+
+# input beams
+#bm	Wx	Wy	WDistx	WDisty	Wl	P	X	Y	Z	Theta	Phi	Alpha	Ref
+bm 5*mm, 5*mm, Wl = 1064 * nm, Y = 0. * cm, Ref = 'La1064'
+bm 5*mm, 5*mm, Wl = 800 * nm, Y = 20 * cm, Ref = 'La800'
+bm 10*mm, 10*mm, Wl = 400 * nm, Y = -20 * cm, Ref = 'La400'
+
+# filter at 800nm (X,Y,Z is the center of the thin lens)
+#fl	X		Y	Z	Theta	 Phi	    Diameter	Thickness Wl Ref
+fl 100*cm,  0,  0,  90 * deg, 180 * deg, 1 * m,      10 * cm,  800 * nm,  'F1'

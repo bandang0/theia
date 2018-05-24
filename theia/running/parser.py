@@ -42,7 +42,7 @@ def readIn(name):
     malformed = "Malformed input in %s, line %s. Could not %s '%s'"
 
     #possible tags in beginning of lines
-    tags = ['bm', 'mr', 'bs', 'sp', 'bo', 'th', 'tk', 'bd', 'gh']
+    tags = ['bm', 'mr', 'bs', 'sp', 'bo', 'th', 'tk', 'bd', 'fl', 'gh']
     ans = list()
 
     with open(name, 'r') as inF:

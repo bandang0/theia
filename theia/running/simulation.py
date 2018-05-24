@@ -24,6 +24,7 @@ from ..optics.thicklens import ThickLens
 from ..optics.mirror import Mirror
 from ..optics.beamsplitter import BeamSplitter
 from ..optics.special import Special
+from ..optics.filter import Filter
 from ..optics.ghost import Ghost
 from ..tree import beamtree
 from . import parser
@@ -112,6 +113,7 @@ class Simulation(object):
                     'th': ThinLens,
                     'tk': ThickLens,
                     'bd': BeamDump,
+                    'fl': Filter,
                     'gh': Ghost}
 
         # populate simulation attributes with objects from input

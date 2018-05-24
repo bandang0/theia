@@ -136,3 +136,16 @@ def beamShape(beam):
     except Part.OCCError:
         return Part.makeLine(Base.Vector(0., 0., 0.),
                                 Base.Vector(tuple(L * beam.Dir/fact)))
+
+def filterShape(fil):
+    '''Computes the 3D representation of the beamdump, for a CAD file obj.
+
+    beam: beam to represent. [GaussianBeam]
+
+    Returns a shape for a CAD file object.
+
+    '''
+    fact = settings.FCFactor    #factor for units in CAD
+    return Part.makeCylinder((fil.Dia/2.)/fact, fil.Thick/fact,
+                                Base.Vector(0,0,0),
+                                Base.Vector(tuple(-fil.HRNorm)))

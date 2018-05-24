@@ -11,9 +11,9 @@
 
 from FreeCAD import Base
 from ..helpers import settings
-from ..helpers.units import deg
+from ..helpers.units import deg, nm
 from .shapes import mirrorShape, lensShape, beamDumpShape, beamShape
-from .shapes import beamSplitterShape
+from .shapes import beamSplitterShape, filterShape
 
 class FCObject(object):
     '''Mother class for all FreeCAD objects.
@@ -170,3 +170,15 @@ class FCBeam(FCObject):
 
         #placement
         obj.Placement.Base = Base.Vector(tuple(beam.Pos/self.fact))
+
+class FCFilter(FCObject):
+    def __init__(self, obj, fil):
+        super(FCFilter, self).__init__(obj)
+        obj.Shape = filterShape(fil)
+        obj.addProperty("App::PropertyDistance", "Thick", "BeamDump",
+                "Thickness of beamdump").Thick = fil.Thick/self.fact
+        obj.addProperty("App::PropertyDistance", "Dia", "BeamDump",
+                "Diameter").Dia = fil.Dia/self.fact
+        obj.addProperty("App::PropertyString", "Wl", "Filter",
+                "Passing Wavelength").Wl = str(fil.Wl/nm) + ' nm'
+        obj.Placement.Base = Base.Vector(tuple(fil.HRCenter/self.fact))

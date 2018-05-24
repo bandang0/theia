@@ -9,6 +9,7 @@ import Part
 from ..helpers import settings
 from ..helpers.tools import shortRef
 from .features import FCMirror, FCBeamSplitter, FCLens, FCBeamDump, FCBeam
+from .features import FCFilter
 from .features import FCSpecial
 
 def writeToCAD(component, doc):
@@ -36,11 +37,12 @@ def writeToCAD(component, doc):
                 'ThinLens': FCLens,
                 'BeamDump': FCBeamDump,
                 'BeamSplitter': FCBeamSplitter,
-                'Special': FCSpecial}
+                'Special': FCSpecial,
+                'Filter': FCFilter}
 
     #First take care of optics
     if component.Name in ['Mirror', 'ThickLens', 'ThinLens', 'BeamDump',
-                            'BeamSplitter', 'Special']:
+                            'BeamSplitter', 'Special', 'Filter']:
         FCDic[component.Name](doc.addObject("Part::FeaturePython",
                             component.Ref), component)
 
