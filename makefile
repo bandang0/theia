@@ -7,38 +7,38 @@ PDFLATEXCMD = pdflatex -interaction=nonstopmode
 
 # remove compiled modules
 clean-pyc:
-	find . -name "*.pyc" -exec rm --force {} +
+	find . -name "*.pyc" -exec rm -r {} +
 
 # remove compiled documentation
 clean-doc:
-	find doc/ -name "*.vrb" -exec rm --force {} +
-	find doc/ -name "*.toc" -exec rm --force {} +
-	find doc/ -name "*.synctex.gz" -exec rm --force {} +
-	find doc/ -name "*.snm" -exec rm --force {} +
-	find doc/ -name "*.out" -exec rm --force {} +
-	find doc/ -name "*.nav" -exec rm --force {} +
-	find doc/ -name "*.log" -exec rm --force {} +
-	find doc/ -name "*.aux" -exec rm --force {} +
-	find doc/ -name "*.dvi" -exec rm --force {} +
-	find doc/ -name "*.idx" -exec rm --force {} +
-	find doc/ -name "*.ilg" -exec rm --force {} +
-	find doc/ -name "*.ps" -exec rm --force {} +
+	find doc/ -name "*.vrb" -exec rm -r {} +
+	find doc/ -name "*.toc" -exec rm -r {} +
+	find doc/ -name "*.synctex.gz" -exec rm -r {} +
+	find doc/ -name "*.snm" -exec rm -r {} +
+	find doc/ -name "*.out" -exec rm -r {} +
+	find doc/ -name "*.nav" -exec rm -r {} +
+	find doc/ -name "*.log" -exec rm -r {} +
+	find doc/ -name "*.aux" -exec rm -r {} +
+	find doc/ -name "*.dvi" -exec rm -r {} +
+	find doc/ -name "*.idx" -exec rm -r {} +
+	find doc/ -name "*.ilg" -exec rm -r {} +
+	find doc/ -name "*.ps" -exec rm -r {} +
 
 # remove compiled tutos
 clean-tutos:
-	find tutos/ -name "*.opt" -exec rm --force {} +
-	find tutos/ -name "*.opt.ps" -exec rm --force {} +
-	find tutos/ -name "*.out" -exec rm --force {} +
-	find tutos/ -name "*.fcstd" -exec rm --force {} +
-	find tutos/ -name "*.fcstd1" -exec rm --force {} +
+	find tutos/ -name "*.opt" -exec rm -r {} +
+	find tutos/ -name "*.opt.ps" -exec rm -r {} +
+	find tutos/ -name "*.out" -exec rm -r {} +
+	find tutos/ -name "*.fcstd" -exec rm -r {} +
+	find tutos/ -name "*.fcstd1" -exec rm -r {} +
 
 # clean tests results
 clean-tests:
-	find tests/ -name "*.opt" -exec rm --force {} +
-	find tests/ -name "*.opt.ps" -exec rm --force {} +
-	find tests/ -name "*.out" -exec rm --force {} +
-	find tests/ -name "*.fcstd" -exec rm --force {} +
-	find tests/ -name "*.fcstd1" -exec rm --force {} +
+	find tests/ -name "*.opt" -exec rm -r {} +
+	find tests/ -name "*.opt.ps" -exec rm -r {} +
+	find tests/ -name "*.out" -exec rm -r {} +
+	find tests/ -name "*.fcstd" -exec rm -r {} +
+	find tests/ -name "*.fcstd1" -exec rm -r {} +
 
 # clean all
 clean-all: clean-pyc clean-doc clean-tutos clean-tests
