@@ -74,7 +74,7 @@ class GaussianBeam(object):
         '''Beam initializer.
 
         This is the initializer used internally for beam creation, for user
-        inputed beams, see function userGaussianBeam.
+        inputted beams, see function userGaussianBeam.
 
         Returns a Gaussian beam with attributes as the parameters.
 
@@ -271,12 +271,12 @@ def userGaussianBeam(Wx = 1.e-3, Wy = 1.e-3, WDistx = 0., WDisty = 0.,
                     Wl = 1064.e-9, P = 1., X = 0., Y = 0., Z = 0.,
                     Theta = pi/2., Phi = 0., Alpha = 0.,
                     Ref = None):
-    '''Constructor used for user inputed beams, separated from the class
+    '''Constructor used for user inputted beams, separated from the class
     initializer because the internal state of a beam is very different from
     the input of this user-defined beam.
 
     Input parameters are processed to make arguments for the class
-    contructor and then the corresponding beam is returned.
+    constructor and then the corresponding beam is returned.
     '''
 
     #externs

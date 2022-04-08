@@ -425,7 +425,7 @@ def pong():
     keydown2 = input_key(name2, 'down')
 
     curses.initscr()
-    win = curses.newwin(HEIGHT, WIDTH, 0, 0) #y,x coordiates
+    win = curses.newwin(HEIGHT, WIDTH, 0, 0) #y,x coordinates
     win.keypad(1)
     curses.noecho()
     curses.curs_set(0)

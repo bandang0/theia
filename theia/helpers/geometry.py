@@ -24,14 +24,14 @@ def refrAngle(theta, n1, n2):
         May raise a TotalReflectionError.
     '''
     if np.abs(n1*np.sin(theta)/n2) > 1.:
-        raise TotalReflectionError('Total reflection occured.')
+        raise TotalReflectionError('Total reflection occurred.')
     else:
         return np.arcsin(n1*np.sin(theta)/n2)
 
 def linePlaneInter(pos, dirV, planeC, normV, diameter):
     '''Computes the intersection between a line and a plane.
 
-    pos: position of the begining of the line. [3D vector]
+    pos: position of the beginning of the line. [3D vector]
     dirV: directing vector of the line. [3D vector]
     planeC: position of the center of the plane. [3D vector]
     normV: vector normal to the plane. [3D vector]

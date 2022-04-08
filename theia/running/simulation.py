@@ -97,7 +97,7 @@ class Simulation(object):
     def load(self):
         '''Initialize simulation attributes by input from .tia file.
 
-        See documantation for the format of the input file.
+        See documentation for the format of the input file.
 
         No return value.
 

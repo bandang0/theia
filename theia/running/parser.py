@@ -86,9 +86,9 @@ def dicOf(st, line, fileName, lineNumber):
 
     st: object tag, 'bm', 'th', ... [string]
     line: line of data in .tia format (supposed no spaces nor tabs nor comments)
-    and without the obect tag. [string]
+    and without the object tag. [string]
     fileName: name of file (used to write errors). [string]
-    lineNumber: number fo this line in the file (used to write errors). [int]
+    lineNumber: number for this line in the file (used to write errors). [int]
 
 	May raise an InputError
 	Returns a dictionary ready for construction.
