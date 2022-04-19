@@ -19,11 +19,11 @@ def init(dic):
     global antiClip
     global short
     global clipFactor   # portion of beam inside optic to determine whether
-                        # clipping has occured.
+                        # clipping has occurred.
     global FCFactor     # factor to compensate for FreeCAD units
 
     #geometry
-    global zero #geometrical 0 distance (for seperation)
+    global zero #geometrical 0 distance (for separation)
     global inf  # geometrical infinite
     global flatK    # curvature of a flat surface
 

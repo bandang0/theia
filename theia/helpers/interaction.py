@@ -62,5 +62,5 @@ errorWhereIsNotFound = "theia: Error: It seems that the Unix utility "\
     + "or use the '-c --no-CAD' option to skip the CAD file writing step."
 
 errorUnknown = "theia: Error: %s was used as the source directory for the "\
-	+ "FreeCAD library but an error occured, make sure your FreeCAD build is "\
+	+ "FreeCAD library but an error occurred, make sure your FreeCAD build is "\
 	+ "correct.\nAborting."

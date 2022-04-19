@@ -36,7 +36,7 @@ class Optic(SetupComponent):
     All the optics which transmit or reflect beams (beam splitters, mirrors,
     thin and thick lenses and special optics) inherit from this class. A
     particular type of optic is characterized by its action integers and by the
-    inputs provided to the constuctors by the users. Everything else of the
+    inputs provided to the constructors by the users. Everything else of the
     optics follow the shape of this Optic class.
 
 
@@ -65,7 +65,7 @@ class Optic(SetupComponent):
     Alpha: angle of the rotation to describe the orientation of the wedge.
         See the documentation for details on this angle. [float]
     TonHR, RonHR, TonAR, RonAR: amount by which the orders of the beams will
-        be increased upon relfection or transmission on AR or HR surfaces.
+        be increased upon reflection or transmission on AR or HR surfaces.
         These are the principal parameters which distinguish mirrors and lenses
         and beamsplitters, etc.
 
@@ -262,7 +262,7 @@ class Optic(SetupComponent):
         '''
         ans = dict()
 
-        # Reference to beam acccording to settings
+        # Reference to beam according to settings
         BRef = beam.Ref if not settings.short else shortRef(beam.Ref)
 
         # Calculate the local normal in opposite direction

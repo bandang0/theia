@@ -17,7 +17,7 @@ class Cavity(OpticalComponent):
     and the corresponding power inside the cavity is used to calculate the
     output beam power. The output beam has the cavity mode's characteristics.
 
-    Cavitis also have the particularity of being verified for alignement by the
+    Cavitis also have the particularity of being verified for alignment by the
     simulation before running and the user is warned.
 
     *=== Attributes ===*

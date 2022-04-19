@@ -200,7 +200,7 @@ The general usage of \tt{theia} is: \tt{theia [options] FNAME}, where:
 
 Warnings are always issued when clipping occurs (except if the \tt{-w, --no-warn} option is used), but calculations for anti-clipping are heavier (they add approximately half more tracing calculations), and are only done if the \tt{-a, --anti-clipping} option is used. If it is, then corresponding warnings are issued.
 
-\paragraph{Note on the \tt{FreeCAD} libraries.}\tt{theia} writes the 3D visualization information for the simulation to a CAD file to be read by \tt{FreeCAD}. If you do not wish to write the CAD file or or if you do not have the \tt{FreeCAD} libraries installed, you may use the \tt{-c} command line option.
+\paragraph{Note on the \tt{FreeCAD} libraries.}\tt{theia} writes the 3D visualization information for the simulation to a CAD file to be read by \tt{FreeCAD}. If you do not wish to write the CAD file or if you do not have the \tt{FreeCAD} libraries installed, you may use the \tt{-c} command line option.
 
 On the contrary, if you have the \tt{FreeCAD} libraries and you know where they are (usually \tt{usr/lib/freecad/lib}), you can save \tt{theia} the effort of finding them by aliasing \tt{theia} with \tt{theia -l [WHERE YOUR FREECAD LIB IS]}.
 
@@ -408,7 +408,7 @@ Figure \ref{inheritancehierarchy} presents the inheritance hierarchy of the clas
 \paragraph{A word on initializer default values.}We try to avoid surprises and stay consistent throughout the code with the following policies concerning classes at the leaves of the inheritance graph:
 
 \begin{enumerate}
-\item For classes whose initializers will be called only with input form users (read from an input file or in a a script), \textit{every} parameter of the constructor has a default value and the constructor can be called \textit{without arguments}. What's more, the input of the user is processed through the class initializer and then fed to the initializer of the mother class. For example, the user may provide \tt{X}, \tt{Y} and \tt{Z} to the constructor she or he calls, then these are processed and it is \tt{[X, Y, Z]} as a list (with types checked etc.) which is fed to the mother initializer.
+\item For classes whose initializers will be called only with input form users (read from an input file or in a script), \textit{every} parameter of the constructor has a default value and the constructor can be called \textit{without arguments}. What's more, the input of the user is processed through the class initializer and then fed to the initializer of the mother class. For example, the user may provide \tt{X}, \tt{Y} and \tt{Z} to the constructor she or he calls, then these are processed and it is \tt{[X, Y, Z]} as a list (with types checked etc.) which is fed to the mother initializer.
 
 \item For classes whose initializers are called solely internally, there are \textit{no default values}. These are the constructors of \tt{SetupComponent}, \tt{Optic}.
 
@@ -453,7 +453,7 @@ Here (figure \ref{callgraph}) is the call graph of the \tt{theia} CLI tool, from
 \item Class doc-string: present class attributes before instance attributes and mention if they are inherited.
 \end{itemize}
 
-\paragraph{Writing to \tt{stdout} and files.}Many classes reimplement the \tt{\_\_str\_\_} method to have \tt{print(object)} print a neatly formated description of the object. To this effect there are two important methods: \tt{lines} (instance method) and \tt{helpers.tools.formatter} (global scope function). \tt{formatter} takes a list of strings (lines to output) and makes C-style indented output with curly braces in the right place in one large string. Basically, one has:
+\paragraph{Writing to \tt{stdout} and files.}Many classes reimplement the \tt{\_\_str\_\_} method to have \tt{print(object)} print a neatly formatted description of the object. To this effect there are two important methods: \tt{lines} (instance method) and \tt{helpers.tools.formatter} (global scope function). \tt{formatter} takes a list of strings (lines to output) and makes C-style indented output with curly braces in the right place in one large string. Basically, one has:
 
 \begin{lstlisting}
 # inside class scope

@@ -4,7 +4,7 @@
 #and a gussian beam with parameters resonant with this cavity in placed inside
 #we observe as expected (and hoped) that the gaussian bem reproduces itself
 #after each reflexion. After 72 reflexions, the beam has the same waist position
-#with a precison of 1.e-9 and the same Rayleigh range and ROC with a precison
+#with a precision of 1.e-9 and the same Rayleigh range and ROC with a precision
 #of 1.e-4.
 
 CavitySimulation
